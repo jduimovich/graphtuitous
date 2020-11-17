@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
       - name: demoservice
-        image: jduimovich/rgb:975e55c
+        image: jduimovich/rgb:e4692d1
         resources:
           limits:
             cpu: "200m"
