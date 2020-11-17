@@ -26,7 +26,7 @@ verify_env "DOCKER_PW"  secret
 PWD=`pwd`
 export CONTAINER_BASE=`basename $PWD`
 verify_env "CONTAINER_BASE"
-export REVISION=$(git rev-parse --abbrev-ref HEAD)
+export REVISION=$(git rev-parse --short HEAD)
 verify_env "REVISION"
 export FULL_CONTAINER_SPEC=$DOCKER_USER/$CONTAINER_BASE:$REVISION
 verify_env "FULL_CONTAINER_SPEC"
