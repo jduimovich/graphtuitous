@@ -1,0 +1,21 @@
+
+grep blue app.js > /dev/null
+if [ $? -eq 0 ] ; then
+    echo change colour to green
+else 
+    grep green app.js > /dev/null
+    if [ $? -eq 0 ] ; then
+        echo change colour to red
+    else 
+        grep red app.js > /dev/null
+        if [ $? -eq 0 ] ; then
+            echo change colour to blue
+        fi;
+    fi;
+fi;
+
+git add .
+git commit -m "demo"
+sh lbuild push
+sh update-yaml
+kubectl apply -f deploy
