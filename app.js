@@ -5,7 +5,7 @@ const { exec } = require('child_process');
 var os = require('os');
 
 var APP_VERSION = '2.0';
-var APP_COLOUR = 'red'; 
+var APP_COLOUR = 'blue'; 
 var HOSTNAME = os.hostname();
  
 var SIM= process.env.SIM;
@@ -14,7 +14,7 @@ var sim = {
 	"balance": 50,
 	"v1": 1.0,
 	"v2": 2.0,
-	"c1": "red",
+	"c1": "blue",
 	"c2": "yellow"
 };
 
