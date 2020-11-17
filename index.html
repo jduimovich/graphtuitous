@@ -122,6 +122,8 @@
         versions[countData.colour] = dataForColour;
       }
       dataForColour.count++;
+      dataForColour.allTimeCount = countData.count;
+
       configuration.history.push(countData);
       while (configuration.history.length > configuration.max_history) {
         var remove = configuration.history.shift();
