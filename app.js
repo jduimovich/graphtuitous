@@ -5,7 +5,7 @@ const { exec } = require('child_process');
 var os = require('os');
 
 var APP_VERSION = '2.0';
-var APP_COLOUR = 'green'; 
+var APP_COLOUR = 'blue'; 
 var HOSTNAME = os.hostname();
  
 var SIM= process.env.SIM;
@@ -15,7 +15,7 @@ var sim = {
 	"v1": 1.0,
 	"v2": 2.0,
 	"c1": "blue",
-	"c2": "green"
+	"c2": "yellow"
 };
 
 function getRandomInt(max) {

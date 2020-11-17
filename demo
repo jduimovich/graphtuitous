@@ -2,20 +2,22 @@
 grep blue app.js > /dev/null
 if [ $? -eq 0 ] ; then
     echo change colour to green
-    sed -i 's/blue/green/g' app.js
+    sed -i'.bak' 's/blue/green/g' app.js
 else 
     grep green app.js > /dev/null
     if [ $? -eq 0 ] ; then
         echo change colour to red
-        sed -i 's/green/red/g' app.js
+        sed -i'.bak' 's/green/red/g' app.js
     else 
         grep red app.js > /dev/null
         if [ $? -eq 0 ] ; then
             echo change colour to blue
-            sed -i 's/red/blue/g' app.js
+            sed -i'.bak' 's/red/blue/g' app.js
         fi;
     fi;
 fi;
+rm -rf app.js.bak
+
 
 git add .
 git commit -m "demo"
