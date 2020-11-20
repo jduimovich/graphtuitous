@@ -1,0 +1,18 @@
+PWD=`pwd`
+export CONTAINER_BASE=`basename $PWD`  
+
+
+
+sed -i'.bak' 's/red/blue/g' app.js
+export REVISION=blue
+export FULL_CONTAINER_SPEC=$DOCKER_USER/$CONTAINER_BASE:$REVISION
+echo Building  $FULL_CONTAINER_SPEC "\n"
+docker build  -t $FULL_CONTAINER_SPEC . 
+docker push $FULL_CONTAINER_SPEC 
+
+sed -i'.bak' 's/blue/red/g' app.js
+export REVISION=red
+export FULL_CONTAINER_SPEC=$DOCKER_USER/$CONTAINER_BASE:$REVISION
+echo Building  $FULL_CONTAINER_SPEC "\n"
+docker build  -t $FULL_CONTAINER_SPEC . 
+docker push $FULL_CONTAINER_SPEC 
