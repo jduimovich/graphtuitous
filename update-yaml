@@ -9,7 +9,7 @@ yq w -i deploy/service.yaml metadata.labels.app $SERVICE_NAME
 yq w -i deploy/service.yaml spec.selector.app $SERVICE_NAME 
 
 
-yq w -i deploy/deployment.yaml metadata.name $SERVICE_NAME
+yq w -i deploy/deployment.yaml metadata.name $SERVICE_NAME-v1
 yq w -i deploy/deployment.yaml metadata.labels.app $SERVICE_NAME
 yq w -i deploy/deployment.yaml spec.selector.matchLabels.app $SERVICE_NAME
 yq w -i deploy/deployment.yaml spec.template.metadata.labels.app $SERVICE_NAME 

@@ -1,25 +1,22 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: rgb-service
+  name: rgb-service-v1
   labels:
     app: rgb-service
-    version: v1
 spec:
   replicas: 2
   selector:
     matchLabels:
       app: rgb-service
-      version: v1
   template:
     metadata:
       labels:
         app: rgb-service
-        version: v1
     spec:
       containers:
-      - name: demoservice
-        image: jduimovich/rgb:18f14e5
+      - name: rgb-service
+        image: jduimovich/rgb:d0ce147
         resources:
           limits:
             cpu: "200m"
@@ -27,6 +24,6 @@ spec:
           requests:
             cpu: "100m"
             memory: "64Mi"
-        imagePullPolicy: IfNotPresent
+        imagePullPolicy: Always
         ports:
         - containerPort: 8080
