@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: rgb-service-v1
+  name: rgb-service-v2
   labels:
     app: rgb-service
 spec:
