@@ -7,7 +7,7 @@ It will return a JSON object.
 { 
 	"version": 1.0, 
 	"colour": "green",
-	"mode": "slow/fast"
+	"compute": "fib(12)"
 }
 
 ```
@@ -15,7 +15,7 @@ It will return a JSON object.
 
 `colour` is for demo usage where variable can be used to show visual differences between services (multiple deployment versions backing services).
 
-`mode` is to enable demo of performance analysis. 
+`compute` is the function run which spent compute.
 
 
 
