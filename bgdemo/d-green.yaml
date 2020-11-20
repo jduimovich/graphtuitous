@@ -1,21 +1,21 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: rgb-service-v2
+  name: rgb-service-v1
   labels:
-    app: rgb-service 
+    app: rgb-service
 spec:
   replicas: 2
   selector:
     matchLabels:
-      app: rgb-service 
+      app: rgb-service
   template:
     metadata:
       labels:
-        app: rgb-service 
+        app: rgb-service
     spec:
       containers:
-      - name: rgb-service 
+      - name: rgb-service
         image: jduimovich/rgb:green
         resources:
           limits:
