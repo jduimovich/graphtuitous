@@ -8,164 +8,222 @@
 </head>
 
 <body>
-  <h1>RGB History</h1>
+  <h1>Call Benchmark History</h1>
+  <div id='barChart2'></div>
   <div id='barChart'></div>
+  <div id='barChart3'></div>
   <table style="width:100%">
-    <tr> 
+    <tr>
       <td>
         <p>
-          <div id="trim"> History </div>
-          <input type="range" min="10" max="500" value="100" class="slider" id="trimmer">
+        <div id="trim"> History </div>
+        <input type="range" min="10" max="1000" value="200" class="slider" id="trimmer">
         </p>
       </td>
       <td>
         <p>
-          <div id="pollrate"> Poll Rate </div>
-          <input type="range" min="10" max="1000" value="100" class="slider" id="poller">
+        <div id="pollrate"> Poll Rate </div>
+        <input type="range" min="10" max="10000" value="50" class="slider" id="poller">
         </p>
       </td>
     </tr>
   </table>
-  <div id="json"> 
+  <div id="json">
 
 
- 
-  <script>
-    function getJSONAndUpdate(url, updateCB, errorCB) {
-      var xhttp = new XMLHttpRequest();
-      xhttp.onreadystatechange = function () {
-        if (this.readyState == 4) {
-          if (this.status == 200) { 
-            try {
-              const data = JSON.parse(this.responseText);
-              data.url = url;
-              updateCB(data);
-            } catch(err) { 
-              // keep going 
-              const data = { "left": 0, "right": 0, "url": url};
-              updateCB(data);
-            }  
-          } else {
-            if (errorCB) errorCB();
+
+    <script>
+      function getJSONAndUpdate(url, updateCB, errorCB) {
+        var start = new Date();
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function () {
+          if (this.readyState == 4) {
+            if (this.status == 200) {
+              try {
+                const data = JSON.parse(this.responseText);
+                data.url = url;
+                var end = new Date();
+                data.elapsed = end - start;
+                updateCB(data);
+              } catch (err) {
+                // keep going 
+                const data = {
+                  "colour": "red",
+                  "compute": "failed",
+                  "count": 0,
+                  "time": 100,
+                  "version":
+                    "0.0"
+                };
+                updateCB(data);
+              }
+            } else {
+              if (errorCB) errorCB();
+            }
           }
-        }
+        };
+        xhttp.open("GET", url, true);
+        xhttp.setRequestHeader('Content-type', 'application/json');
+        xhttp.setRequestHeader('Accept', 'application/json');
+        xhttp.setRequestHeader('cache-control', 'no-cache, must-revalidate, post-check=0, pre-check=0');
+        xhttp.setRequestHeader('cache-control', 'max-age=0');
+        xhttp.setRequestHeader('expires', '0');
+        xhttp.setRequestHeader('expires', 'Tue, 01 Jan 1980 1:00:00 GMT');
+        xhttp.setRequestHeader('pragma', 'no-cache');
+        xhttp.send();
+
+      }
+      var configuration = {
+        "history": [],
+        "max_history": 1000,
+        "total": 0,
+        "url": 'test',
+        "period": 50,
+        "debug": true
       };
-      xhttp.open("GET", url, true);
-      xhttp.setRequestHeader('Content-type', 'application/json');
-      xhttp.setRequestHeader('Accept', 'application/json');
-      xhttp.setRequestHeader('cache-control', 'no-cache, must-revalidate, post-check=0, pre-check=0');
-      xhttp.setRequestHeader('cache-control', 'max-age=0');
-      xhttp.setRequestHeader('expires', '0');
-      xhttp.setRequestHeader('expires', 'Tue, 01 Jan 1980 1:00:00 GMT');
-      xhttp.setRequestHeader('pragma', 'no-cache');
-      xhttp.send();
-    }
-    var configuration = {
-      "versions": new Object(),
-      "total": 0,
-      "max_history": 100,
-      "history": [],
-      "url": 'test',
-      "debug": false,
-      "period": 30,
-      "enableAB": false
-    };
-
-    function prettyPrintLeftRight(left) {
-      return "L/R Balance = " + left + "/" + (100 - left)
-    }
- 
-    function setBalance(balance, cb) {
-      getJSONAndUpdate("config?balance=" + balance, cb);
-    }
- 
-
-    function updateBalance(ret) {
-      document.getElementById("mode").innerHTML = prettyPrintLeftRight(ret.left);
-    }
-    function updateBalanceAndSlider(ret) {
-      updateBalance(ret);
-      
-      slider.value = ret.left;
-      
-    }
-  
-
-    var trimmer = document.getElementById("trimmer");
-    trimmer.oninput = function () {
-      document.getElementById("trim").innerHTML = 'History: ' + this.value;
-      configuration.max_history = this.value;
-    }
-    trimmer.onchange = trimmer.oninput;
-    function setPeriod(p) {
-      document.getElementById("pollrate").innerHTML =
-        'Poll Rate: ' + p + ' ms';
-      configuration.period = p;
-      poller.value = p;
-    }
-    var poller = document.getElementById("poller");
-    poller.oninput = function () {
-      setPeriod(this.value)
-    }
-    poller.onchange = poller.oninput;
-
-    function countResponses_then_resetPoll(countData) {
-      if (countData.colour == undefined) { 
-        hookpoll();
-        return;
+      function setInnerHtml(id, html) {
+        document.getElementById(id).innerHTML = html;
       }
-
-      var versions = configuration.versions;
-      var dataForColour = versions[countData.colour];
-      if (!dataForColour) {
-        dataForColour = { "count": 0, "version": countData.version };
-        versions[countData.colour] = dataForColour;
+      var trimmer = document.getElementById("trimmer");
+      trimmer.oninput = function () {
+        setInnerHtml("trim", 'History: ' + this.value);
+        configuration.max_history = this.value;
       }
-      dataForColour.count++;
-      dataForColour.allTimeCount = countData.count;
-
-      configuration.history.push(countData);
-      while (configuration.history.length > configuration.max_history) {
-        var remove = configuration.history.shift();
-        var dataForColour = configuration.versions[remove.colour];
-        dataForColour.count--;
+      trimmer.onchange = trimmer.oninput;
+      function setPeriod(p) {
+        setInnerHtml("pollrate", 'Poll Rate: ' + p + ' ms');
+        configuration.period = p;
+        poller.value = p;
       }
-      showResposeText(configuration)
-      hookpoll();
-      showBarChart(configuration);
-    }
-
-    function showBarChart(configuration) {
-      var all = configuration.versions;
-      var colours = Object.keys(all);
-      colours.sort(function (a, b) { return all[a].version - all[b].version; });
-      var totalRequests = 0;
-      for (var i = 0; i < colours.length; i++) {
-        var dataforcolour = all[colours[i]];
-        if (dataforcolour.count > 0) {
-          totalRequests += dataforcolour.count;
+      var poller = document.getElementById("poller");
+      poller.oninput = function () {
+        setPeriod(this.value)
+      }
+      poller.onchange = poller.oninput;
+      function countResponses_then_resetPoll(countData) {
+        configuration.history.push(countData);
+        while (configuration.history.length > configuration.max_history) {
+          var remove = configuration.history.shift();
         }
+        showResposeText(countData)
+        hookpoll();
+        showBarChart(configuration);
+        showBarChart3(configuration);
       }
-      var newData = [];
-      var xValue = ['Microservice endpoint = /test '];
-      var ab = ['A', 'B', 'C', 'D', 'E', 'F'];
-      var abi = 0;
-      for (var i = 0; i < colours.length; i++) {
-        var dataforcolour = all[colours[i]];
-        if (dataforcolour.count >= 0) {
+      function BarChartData() {
+        this.text = [];
+        this.colours = [];
+        this.xValues = [];
+        this.yValues = [];
+      }
+
+      function showBarChart(configuration) {
+        var history = configuration.history;
+        var chart = new BarChartData();
+        var elapsed = new BarChartData();
+
+        var padding = configuration.max_history - history.length;
+        if (padding < 0) padding = 0;
+
+        for (var i = 0; i < padding; i++) {
+          chart.colours.push(history[0].colour);
+          chart.xValues.push('' + i);
+          chart.yValues.push(0);
+          chart.text.push('(' + 0 + 's)');
+
+
+          elapsed.colours.push('red');
+          elapsed.xValues.push('' + i);
+          elapsed.yValues.push(0);
+          elapsed.text.push('(' + 0 + 's)');
+
+        }
+        var sum = 0;
+        var max = 0;
+        for (var i = 0; i < history.length; i++) {
+          sum += history[i].time;
+          if (history[i].time > max) max = history[i].time;
+        }
+        var average = sum / history.length;
+        for (var i = 0; i < history.length; i++) {
+          var element = history[i];
+          chart.colours.push(element.colour);
+          chart.xValues.push('' + (i + padding));
+          chart.yValues.push(Math.abs(element.time));
+          chart.text.push('(' + element.time + 's)');
+
+          elapsed.colours.push('red');
+          elapsed.xValues.push('' + (i + padding));
+          elapsed.yValues.push(Math.abs(element.elapsed));
+          elapsed.text.push('(' + element.elapsed + 's)');
+        }
+        var timesChart =
+        {
+          x: chart.xValues,
+          y: chart.yValues,
+          name: 'Compute',
+          marker: { color: chart.colours },
+          type: 'scatter'
+        };
+        var elapsedChart =
+        {
+          x: elapsed.xValues,
+          y: elapsed.yValues,
+          name: 'Elapsed',
+          marker: { color: elapsed.colours },
+          type: 'scatter'
+        };
+        var layout = {};
+        Plotly.newPlot('barChart', [timesChart, elapsedChart], { });
+
+        Plotly.newPlot('barChart2',
+          [{
+            x: chart.xValues,
+            y: chart.yValues,
+            name: 'Compute',
+            marker: { color: chart.colours },
+            type: 'bar'
+          }, {
+            x: elapsed.xValues,
+            y: elapsed.yValues,
+            name: 'Elapsed',
+            marker: { color: elapsed.colours },
+            type: 'bar'
+          }],
+          { 
+          title: 'Compute vs Elapsed', barmode: 'stack' });
+
+      }
+
+      function showBarChart3(configuration) {
+        var history = configuration.history;
+        var chart = new BarChartData(); 
+        var versions = new Object();
+        for (var i = 0; i < history.length; i++) {
+          var element = versions[history[i].colour];
+          if (!element) {
+            element = { "count": 0, "version": history[i].version };
+            versions[history[i].colour] = element;
+          }
+          element.count++;
+        }
+
+        var colours = Object.keys(versions);
+        colours.sort(function (a, b) { return versions[a].version - versions[b].version; });
+        var totalRequests = 0;
+        for (var i = 0; i < colours.length; i++) {
+          totalRequests += versions[colours[i]].count;
+        }
+        var showCounts = colours.length == 1; 
+        var newData = [];
+        var xValue = ['Microservice endpoint = /test ']; 
+        for (var i = 0; i < colours.length; i++) {
+          var dataforcolour = versions[colours[i]];
           var percent = (dataforcolour.count / totalRequests) * 100;
-          if (dataforcolour.count == 0) {
-            percent = -2;
-          }
-          var yValue = [percent];
-          var text = percent == -2 ? "" : Math.round(yValue.map(String));
+          var yValue = showCounts ? [dataforcolour.count]: [percent];
+          var text =  Math.round(yValue.map(String));
           var legend = 'V:' + dataforcolour.version;
-          if (percent == -2) {
-            legend = legend + ' (unused)';
-          } else {
-            legend = legend + ' ' + ab[abi++];
-            if (abi > ab.length) abi = 0;
-          }
+            
           var bar = {
             x: xValue,
             y: yValue,
@@ -174,7 +232,6 @@
             text: text,
             textposition: 'auto',
             hoverinfo: 'none',
-            opacity: 0.5,
             marker: {
               color: colours[i],
               line: {
@@ -184,38 +241,37 @@
             }
           };
           newData.push(bar);
+
+        }
+        var layout = {
+          title: 'Ratio',
+          yaxis: { range: [0, showCounts ? configuration.max_history: 100] }
+        };
+
+        Plotly.newPlot('barChart3', newData, layout);
+      }
+
+
+      function hookpoll() {
+        setTimeout("poll()", configuration.period);
+      }
+      // reset poll only after response to prevent overruning target server.
+      function poll() {
+        getJSONAndUpdate(configuration.url, countResponses_then_resetPoll, hookpoll);
+      }
+      function showResposeText(countData) {
+        if (configuration.debug) {
+          setInnerHtml("json", ' <br><b>DEBUG:</b> ' + JSON.stringify(countData));
         }
       }
-      var layout = {
-        title: 'Ratio',
-        yaxis: { range: [0, 100] }
-      };
-
-      Plotly.newPlot('barChart', newData, layout);
-    }
-
-    function hookpoll() {
-      setTimeout("poll()", configuration.period);
-    }
-    // reset poll only after response to prevent overruning target server.
-    function poll() {
-      getJSONAndUpdate(configuration.url, countResponses_then_resetPoll, hookpoll);
-    }
-
-    function showResposeText(countData) {
-      if (configuration.debug) {
-        document.getElementById("json").innerHTML = 
-        ' <br><b>DEBUG:</b> ' + countData.total + " " + JSON.stringify(countData.versions) ;
+      if (window.location.href.includes("debug")) {
+        configuration.debug = true;
       }
-    }
-    if (window.location.href.includes("debug")) {
-      configuration.debug = true;
-    }
-    // kick it off
-    poll(); 
-    trimmer.onchange()
-    poller.onchange()
-  </script>
+      // kick it off
+      poll();
+      trimmer.onchange()
+      poller.onchange()
+    </script>
 </body>
 
 </html>

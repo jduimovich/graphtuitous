@@ -3,7 +3,7 @@ const app = express();
 
 var APP_VERSION = '1.0';
 var APP_COLOUR = 'blue';
-var APP_LOOP = 1000;
+var APP_LOOP = 10000;
 var APP_COMPUTE = 12;
 var HOSTNAME = require('os').hostname();
 
@@ -22,18 +22,18 @@ app.get("/test", function (req, res) {
 	var response = {
 		"hostname": HOSTNAME,
 		"version": APP_VERSION,
-		"colour": APP_COLOUR,
-		"route": req.url,
-		"time": new Date(),
+		"colour": APP_COLOUR, 
 		"count": ++count,
+		"stack": 'node.js', 
+		"param": APP_COMPUTE,
+		"loop": APP_LOOP,
 		"compute": 'fib(' + APP_COMPUTE + ')'
 	};
-	var start = new Date();
-	response.compute_result = fib(APP_COMPUTE);
+	var start = new Date(); 
 	var c = APP_LOOP;
 	while (c--) fib(APP_COMPUTE);
 	var end = new Date();
-	response.compute_ms = end - start;
+	response.time = end - start;
 
 	res.setHeader('Content-Type', 'application/json');
 	res.setHeader('Access-Control-Allow-Origin', '*');
