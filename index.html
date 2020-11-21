@@ -13,9 +13,23 @@
     See <a href="usage.html"> Usage</a> for more details.
 
   </p>
-  <div id='barChart2'></div>
-  <div id='barChart'></div>
-  <div id='barChart3'></div>
+  <div id='Bar_Times'></div>
+
+<table style="width:100%">
+  <tr>
+    <td> 
+      <div id='Bar_Percents'></div>
+    </td>
+    <td>
+      <input type="radio" id="percent_button" name="Bar_Percents_Select" value="true" checked>
+      <label for="percent_button">%</label>
+      <input type="radio" id="absolute_button" name="Bar_Percents_Select" value="false">
+      <label for="absolute_button">absolute</label>
+    </td>
+  </tr>
+</table>
+
+  <div id='Bar_RequestsByColour'></div>
   <table style="width:100%">
     <tr>
       <td>
@@ -111,95 +125,127 @@
         }
         showResposeText(countData)
         hookpoll();
-        showBarChart(configuration);
-        showBarChart3(configuration);
+        showBar_Times(configuration);
+        showBar_Percents(configuration);
+        showBar_RequestsByColour(configuration);
       }
       function BarChartData() {
         this.text = [];
         this.colours = [];
         this.xValues = [];
-        this.yValues = [];
+        this.yValues = []; 
+        this.addData = function (text,colour,x,y) { 
+          this.text.push (text);
+          this.colours.push (colour);
+          this.xValues.push (x);
+          this.yValues.push (y);
+        }
       }
 
-      function showBarChart(configuration) {
-        var history = configuration.history;
-        var chart = new BarChartData();
-        var elapsed = new BarChartData();
-
-        var padding = configuration.max_history - history.length;
-        if (padding < 0) padding = 0;
-
-        for (var i = 0; i < padding; i++) {
-          chart.colours.push(history[0].colour);
-          chart.xValues.push('' + i);
-          chart.yValues.push(0);
-          chart.text.push('(' + 0 + 's)');
-
-
-          elapsed.colours.push('red');
-          elapsed.xValues.push('' + i);
-          elapsed.yValues.push(0);
-          elapsed.text.push('(' + 0 + 's)');
-
+      function padElements(chartData, padding, colour) {
+          for (var i = 0; i < padding; i++) {
+            chartData.addData('(' + 0 + 's)', colour, '' + i, 0);
+          }
         }
-        var sum = 0;
-        var max = 0;
-        for (var i = 0; i < history.length; i++) {
-          sum += history[i].time;
-          if (history[i].time > max) max = history[i].time;
-        }
-        var average = sum / history.length;
-        for (var i = 0; i < history.length; i++) {
-          var element = history[i];
-          chart.colours.push(element.colour);
-          chart.xValues.push('' + (i + padding));
-          chart.yValues.push(Math.abs(element.time));
-          chart.text.push('(' + element.time + 's)');
 
-          elapsed.colours.push('red');
-          elapsed.xValues.push('' + (i + padding));
-          elapsed.yValues.push(Math.abs(element.elapsed));
-          elapsed.text.push('(' + element.elapsed + 's)');
-        }
-        var timesChart =
-        {
-          x: chart.xValues,
-          y: chart.yValues,
-          name: 'Compute',
-          marker: { color: chart.colours },
-          type: 'scatter'
-        };
-        var elapsedChart =
-        {
-          x: elapsed.xValues,
-          y: elapsed.yValues,
-          name: 'Elapsed',
-          marker: { color: elapsed.colours },
-          type: 'scatter'
-        };
-        var layout = {};
-        Plotly.newPlot('barChart', [timesChart, elapsedChart], { });
-
-        Plotly.newPlot('barChart2',
-          [{
-            x: chart.xValues,
-            y: chart.yValues,
-            name: 'Compute',
-            marker: { color: chart.colours },
-            type: 'bar'
-          }, {
+      function showBar_Times(configuration) {
+          var history = configuration.history;
+          var compute = new BarChartData();
+          var elapsed = new BarChartData();
+          padElements(compute, configuration.max_history - history.length, history[0].colour);
+          padElements(elapsed, configuration.max_history - history.length, 'red');
+          for (var i = 0; i < history.length; i++) {
+            var element = history[i];
+            compute.addData('(' + element.time + 's)', element.colour, compute.xValues.length, element.time);
+            elapsed.addData('(' + element.time + 's)', 'red', elapsed.xValues.length, element.elapsed);
+          }
+          var computeTimeData =
+          {
+            x: compute.xValues,
+            y: compute.yValues,
+            name: 'Server Compute Time',
+            marker: { color: compute.colours },
+            type: 'scatter'
+          };
+          var elapsedTimeData =
+          {
             x: elapsed.xValues,
             y: elapsed.yValues,
-            name: 'Elapsed',
+            name: 'End to End Elapsed Time',
             marker: { color: elapsed.colours },
-            type: 'bar'
-          }],
-          { 
-          title: 'Compute vs Elapsed', barmode: 'stack' });
+            type: 'scatter'
+          };
+          Plotly.newPlot('Bar_Times', [computeTimeData, elapsedTimeData], { title: 'Request Times', });
+        }
 
+      function showBar_Percents(configuration) {
+        var history = configuration.history;
+        var computePercent = new BarChartData();
+        var overheadPercent = new BarChartData();
+        var showPercent = document.getElementById('percent_button');
+ 
+        if (showPercent.checked) { 
+          padElements(computePercent, configuration.max_history - history.length, history[0].colour);
+          padElements(overheadPercent, configuration.max_history - history.length, 'red');
+          for (var i = 0; i < history.length; i++) {
+            var element = history[i];
+            var total = element.elapsed;
+            var compute_percent = Math.round(100 * (element.time / total));
+            var overhead_percent = Math.round(100 * (element.elapsed / total));
+            computePercent.addData('(' + compute_percent + '%)', element.colour, computePercent.xValues.length, compute_percent);
+            overheadPercent.addData('(' + overhead_percent + '%)', 'red', overheadPercent.xValues.length, overhead_percent);
+          }
+        } else {
+          padElements(computePercent, configuration.max_history - history.length, history[0].colour);
+          padElements(overheadPercent, configuration.max_history - history.length, 'red');
+          for (var i = 0; i < history.length; i++) {
+            var element = history[i];
+            var total = element.elapsed;
+            var compute_percent =  element.time ;
+            var overhead_percent =  element.elapsed ;
+            computePercent.addData('(' + compute_percent + 'ms)', element.colour, computePercent.xValues.length, compute_percent);
+            overheadPercent.addData('(' + overhead_percent + 'ms)', 'red', overheadPercent.xValues.length, overhead_percent);
+          }
+
+        }
+
+        var nameCompute = 'Compute';
+        var nameElapsed = 'Elapsed';
+        var title = 'Compute vs Elapsed';
+        if (showPercent.checked) { 
+          nameCompute = nameCompute + ' %';
+          nameElapsed = nameElapsed + ' %';
+          title = title + ' by %';
+        } else { 
+          title = title + ' (absolute times)';
+        }
+        var computePercentData =
+        {
+            x: computePercent.xValues,
+            y: computePercent.yValues,
+            name: nameCompute,
+            marker: { color: computePercent.colours },
+            type: 'bar'
+          }; 
+        var overheadPercentData = {
+            x: overheadPercent.xValues,
+            y: overheadPercent.yValues,
+            name: nameElapsed,
+            marker: { color: overheadPercent.colours },
+            type: 'bar'
+          }
+        var layout = {
+          title: title,
+          barmode: 'stack'  
+        };
+        if (showPercent.checked) {  
+           layout.yaxis =  { range: [0, 100]}
+        } 
+        Plotly.newPlot('Bar_Percents', [computePercentData, overheadPercentData],  layout);
       }
 
-      function showBarChart3(configuration) {
+
+      function showBar_RequestsByColour(configuration) {
         var history = configuration.history;
         var chart = new BarChartData(); 
         var versions = new Object();
@@ -252,7 +298,7 @@
           yaxis: { range: [0, showCounts ? configuration.max_history: 100] }
         };
 
-        Plotly.newPlot('barChart3', newData, layout);
+        Plotly.newPlot('Bar_RequestsByColour', newData, layout);
       }
 
 
