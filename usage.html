@@ -12,20 +12,36 @@
   It has one  <href="test">endpoint</href> which will return a JSON object 
   
   <pre>
- 
       { 
-        "version": 1.0, 
-        "colour": "green",
-        "compute": "function_run()"
+        "hostname":"johnpc"
+        "version": 1.1, 
+        "colour": "blue",
+        "count": 1,
+        "stack": "runtime used in demo", 
+        "param": 1,
+        "loop": 1,
+        "compute": "fib(n)",
+        "time": 1
       }
-
   </pre>
+
+  <p> The fields returned are generally for demo purposes, described here. 
+  </p>
+
+  
+  <p>  <pre>hostname</pre> Track which pod executed the service on kubernetes.</p>
+  <p>  <pre>version</pre> Used to track which version was executed.</p>
+  <p>  <pre>colour</pre> Used to implement graphing for demos to show live edit, and outerloop changes.</p>
+  <p>  <pre>count</pre> Returns the number of times this server has returned a response. 
+    Can be reset to zero as services scale.
+.</p>
+
+<p>  <pre>stack</pre> Name of the runtime used to implement the service. Quarkus, node.js, java</p>
+<p>  <pre>param</pre> Parameter to function. Currently hardcoded, to be changed to pass as argument. </p>
+<p>  <pre>loop</pre>  Loop count on how many times function is run. Currently hardcoded, to be changed to pass as argument. </p>
    
-  <p>  Version and colour are for demo apps to use to show change in 
-    outer and innerloop.</p>
-  <p>Compute is a performance helper for observability.
-     A computation will be be performed 
-    on the server to simulate heavy loads or slow. The function will be shown here.
+<p>  <pre>time</pre>  Time to run loop number of functions on the server.   
+  Can be changed to simulate heavy loads or slow.  
    </p>
 </body>
 </html>
