@@ -3,7 +3,7 @@ const app = express();
 
 var APP_VERSION = '1.0';
 var APP_COLOUR = 'blue';
-var APP_LOOP = 10000;
+ var APP_LOOP = 20000;
 var APP_COMPUTE = 12;
 var HOSTNAME = require('os').hostname();
 
