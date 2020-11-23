@@ -250,40 +250,44 @@
         var chart = new BarChartData(); 
         var versions = new Object();
         for (var i = 0; i < history.length; i++) {
-          var element = versions[history[i].colour];
+          var element = versions[history[i].hostname];
           if (!element) {
-            element = { "count": 0, "version": history[i].version };
-            versions[history[i].colour] = element;
+            element = { "count": 0, 
+            "colour": history[i].colour ,
+            "hostname": history[i].hostname ,
+            "version": history[i].version 
+            };
+            versions[history[i].hostname] = element;
           }
           element.count++;
         }
 
-        var colours = Object.keys(versions);
-        colours.sort(function (a, b) { return versions[a].version - versions[b].version; });
+        var byHostname = Object.keys(versions);
+        byHostname.sort(function (a, b) { return versions[a].version - versions[b].version; });
         var totalRequests = 0;
-        for (var i = 0; i < colours.length; i++) {
-          totalRequests += versions[colours[i]].count;
+        for (var i = 0; i < byHostname.length; i++) {
+          totalRequests += versions[byHostname[i]].count;
         }
-        var showCounts = colours.length == 1; 
+        var showCounts = byHostname.length == 1; 
         var newData = [];
         var xValue = ['Microservice endpoint = /test ']; 
-        for (var i = 0; i < colours.length; i++) {
-          var dataforcolour = versions[colours[i]];
+        for (var i = 0; i < byHostname.length; i++) {
+          var dataforcolour = versions[byHostname[i]];
           var percent = (dataforcolour.count / totalRequests) * 100;
           var yValue = showCounts ? [dataforcolour.count]: [percent];
-          var text =  Math.round(yValue.map(String));
+          var text =  dataforcolour.hostname;
           var legend = 'V:' + dataforcolour.version;
             
           var bar = {
             x: xValue,
             y: yValue,
-            name: legend,
+            name: text + ':' + legend,
             type: 'bar',
             text: text,
             textposition: 'auto',
             hoverinfo: 'none',
             marker: {
-              color: colours[i],
+              color: dataforcolour.colour,
               line: {
                 color: 'black',
                 width: 1
