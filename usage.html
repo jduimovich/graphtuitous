@@ -3,45 +3,114 @@
 
 <head>
   <meta charset="utf-8">
-  <title>Usage</title> 
+  <title>Usage</title>
+  <style>
+    table,
+    th,
+    td {
+      border: 1px solid black;
+      ;
+      border-collapse: collapse;
+    }
+    th,
+    td {
+      padding: 10px;
+    }
+  </style>
 </head>
 
 <body>
-  <h1>This is a demo app</h1> 
- 
-  It has one endpoint at <a href="test">/test</a> which will return a JSON object with the following fields.
+  <h1>Graphtuitous</h1>
   
+  <p>
+    
+  Graphtuitous is demo application that uses graphs, a simple service with compute to demonstrate e2e development, innerloop and outerloop.
+</p>
+<p>
+  It  has one endpoint at <a href="test">/test</a> which will return a JSON object with the following fields.
+</p>
+
   <pre>
       { 
         "hostname":"johnpc"
         "version": 1.1, 
         "colour": "blue",
         "count": 1,
-        "stack": "runtime used in demo", 
-        "param": 1,
+        "stack": "runtime used in demo",  
         "loop": 1,
         "compute": "fib(n)",
         "time": 1
       }
   </pre>
 
-  <p> The fields returned are generally for demo purposes, described here. 
+  <p> The fields returned are generally for demo purposes, described here.
   </p>
 
-  
-  <p>  <pre>hostname</pre> Track which pod executed the service on kubernetes.</p>
-  <p>  <pre>version</pre> Used to track which version was executed.</p>
-  <p>  <pre>colour</pre> Used to implement graphing for demos to show live edit, and outerloop changes.</p>
-  <p>  <pre>count</pre> Returns the number of times this server has returned a response. 
-    Can be reset to zero as services scale.
-.</p>
+  <table>
+    <tr>
+      <td>
+        <pre>hostname</pre>
+      </td>
+      <td>
+        Hostname of the pod that executed the service on kubernetes.This can be used to demonstrate replicas, failures
+        and scaling.
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <pre>version</pre>
+      </td>
+      <td>
+        Version of the app that executed the service on kubernetes.  
+      </td>
+    </tr>
 
-<p>  <pre>stack</pre> Name of the runtime used to implement the service. Quarkus, node.js, java</p>
-<p>  <pre>param</pre> Parameter to function. Currently hardcoded, to be changed to pass as argument. </p>
-<p>  <pre>loop</pre>  Loop count on how many times function is run. Currently hardcoded, to be changed to pass as argument. </p>
-   
-<p>  <pre>time</pre>  Time to run loop number of functions on the server.   
-  Can be changed to simulate heavy loads or slow.  
-   </p>
+    <tr>
+      <td>
+        <pre>colour</pre>
+      </td>
+      <td> Recommended graphing colour for demo purposes. Used to show live edit, and outerloop changes.
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <pre>count</pre>
+      </td>
+      <td> Returns the number of times this server instance has returned a response.
+        When a pod dies and is restarted, the counts restart at zero. 
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <pre>stack</pre>
+      </td>
+      <td> Name of the runtime used to implement the service. Quarkus, node.js, java. 
+        Can be used to demonstrate replacing a service in one language with another one using gitops or adding deployments.
+      </td>
+    </tr> 
+    <tr>
+      <td>
+        <pre>loop</pre>
+      </td>
+      <td> Loop count on how many times function is run. Currently hardcoded, to be changed to pass as argument.
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <pre>compute</pre>
+      </td>
+      <td> Server side function name and parameter as a string. 
+      </td>
+    </tr>
+
+    <tr>
+      <td>
+        <pre>time</pre>
+      </td>
+      <td> Execution time on the server for the specific demo function and loop count.
+      </td>
+    </tr>
+
 </body>
+
 </html>

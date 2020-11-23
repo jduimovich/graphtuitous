@@ -29,8 +29,7 @@ app.get("/test", function (req, res) {
 		"version": APP_VERSION,
 		"colour": APP_COLOUR, 
 		"count": ++count,
-		"stack": 'node.js', 
-		"param": APP_COMPUTE,
+		"stack": 'node.js',  
 		"loop": APP_LOOP,
 		"compute": 'fib(' + APP_COMPUTE + ')'
 	};
