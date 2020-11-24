@@ -107,8 +107,10 @@ jobs:
     - name: Create and expose app
       run: |
         set -x
+        export IMAGE="{{ steps.push-to-registry.outputs.registry-path }}"
+        IMAGE=${IMAGE/docker.io\/}
         oc new-app --name $APP_NAME \
-          --docker-image="${{ steps.push-to-registry.outputs.registry-path }}"
+          --docker-image="$IMAGE"
         # Make sure the app port is exposed
         export PORT=${{ env.APP_PORT }}
         oc patch svc $APP_NAME -p "{ \"spec\": { \"ports\": [{ \"name\": \"$PORT-tcp\", \"port\": $PORT }] } }"
@@ -116,4 +118,3 @@ jobs:
         oc get all --selector="app=$APP_NAME"
         set +x
         echo "$APP_NAME is exposed at $(oc get route $APP_NAME -o jsonpath='{.spec.host}')"
-        echo "Your app can be taken down with: oc delete all --selector='app=$APP_NAME'"
