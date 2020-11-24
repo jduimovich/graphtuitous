@@ -14,9 +14,4 @@ spec:
   to:
     kind: Service
     name: rgb-service-v1
-    weight: 80
-  wildcardPolicy: None 
-  alternateBackends:
-  - kind: Service
-    name: rgb-service-v2
-    weight: 20
+    weight: 100

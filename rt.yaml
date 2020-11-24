@@ -1,0 +1,22 @@
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: all
+  annotations:
+    openshift.io/host.generated: "true" 
+    haproxy.router.openshift.io/balance: roundrobin
+  labels:
+    app: rgb-service
+spec:
+  host: all-jduimovich-code.apps.member.crt-stage.com
+  port:
+    targetPort: 8080
+  to:
+    kind: Service
+    name: rgb-service
+    weight: 25
+  to:
+    kind: Service
+    name: rgb-service
+    weight: 75
+  wildcardPolicy: None 

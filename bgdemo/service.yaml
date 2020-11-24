@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: rgb-service-v2
+  name: rgb-service
   labels:
     app: rgb-service
 spec:

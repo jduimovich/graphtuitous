@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: rgb-service
-        image: jduimovich/rgb:d0ce147
+        image: jduimovich/rgb:78d13d3
         resources:
           limits:
             cpu: "200m"
