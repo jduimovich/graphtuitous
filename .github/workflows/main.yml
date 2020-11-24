@@ -109,8 +109,7 @@ jobs:
         set -x
         export IMAGE="${{ steps.push-to-registry.outputs.registry-path }}" 
         IMAGE=${IMAGE/docker.io\/}
-        oc new-app --name $APP_NAME \
-          --docker-image="$IMAGE"
+        oc new-app --name $APP_NAME  --docker-image="$IMAGE"  --allow-missing-images
         # Make sure the app port is exposed
         export PORT=${{ env.APP_PORT }}
         oc patch svc $APP_NAME -p "{ \"spec\": { \"ports\": [{ \"name\": \"$PORT-tcp\", \"port\": $PORT }] } }"
