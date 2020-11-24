@@ -27,7 +27,7 @@ name: Build and Deploy to OpenShift
 # ⬇️ ⬇️ ⬇️  Modify these to fit your project, and create any secrets that are referenced. ⬇️ ⬇️ ⬇️
 # https://docs.github.com/en/free-pro-team@latest/actions/reference/encrypted-secrets
 env:
-  REGISTRY: docker.io/jduimovich
+  REGISTRY: quay.io/jduimovich
   REGISTRY_USER: jduimovich
   REGISTRY_PASSWORD: ${{ secrets.REGISTRY_PASSWORD }}
 
@@ -107,9 +107,8 @@ jobs:
     - name: Create and expose app
       run: |
         set -x
-        export IMAGE="${{ steps.push-to-registry.outputs.registry-path }}" 
-        IMAGE=${IMAGE/docker.io\/}
-        oc new-app --name $APP_NAME  --docker-image="$IMAGE"  --allow-missing-images
+        export IMAGE="${{ steps.push-to-registry.outputs.registry-path }}"  
+        oc new-app --name $APP_NAME  --docker-image="$IMAGE"  
         # Make sure the app port is exposed
         export PORT=${{ env.APP_PORT }}
         oc patch svc $APP_NAME -p "{ \"spec\": { \"ports\": [{ \"name\": \"$PORT-tcp\", \"port\": $PORT }] } }"
