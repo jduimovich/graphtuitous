@@ -107,7 +107,7 @@ jobs:
     - name: Create and expose app
       run: |
         set -x
-        export IMAGE="{{ steps.push-to-registry.outputs.registry-path }}"
+        export IMAGE="${{ steps.push-to-registry.outputs.registry-path }}" 
         IMAGE=${IMAGE/docker.io\/}
         oc new-app --name $APP_NAME \
           --docker-image="$IMAGE"
