@@ -27,8 +27,8 @@ name: Build and Deploy to OpenShift
 # ⬇️ ⬇️ ⬇️  Modify these to fit your project, and create any secrets that are referenced. ⬇️ ⬇️ ⬇️
 # https://docs.github.com/en/free-pro-team@latest/actions/reference/encrypted-secrets
 env:
-  REGISTRY: docker.io/${{ secrets.REGISTRY_USER }}
-  REGISTRY_USER: ${{ secrets.REGISTRY_USER }}
+  REGISTRY: docker.io/jduimovich
+  REGISTRY_USER: jduimovich
   REGISTRY_PASSWORD: ${{ secrets.REGISTRY_PASSWORD }}
 
   # These are required to log into your OpenShift cluster and set up the context.
