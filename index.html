@@ -168,6 +168,7 @@
             y: compute.yValues,
             name: 'Server Compute Time',
             marker: { color: compute.colours },
+            line: { color: compute.colours[compute.colours.length-1]},
             type: 'scatter'
           };
           var elapsedTimeData =
@@ -175,7 +176,8 @@
             x: elapsed.xValues,
             y: elapsed.yValues,
             name: 'End to End Elapsed Time',
-            marker: { color: elapsed.colours },
+            marker: { color: elapsed.colours }, 
+            line: { color: 'red'},
             type: 'scatter'
           };
           Plotly.newPlot('Bar_Times', [computeTimeData, elapsedTimeData], { title: 'Request Times', });
