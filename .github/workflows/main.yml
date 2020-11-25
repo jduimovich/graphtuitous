@@ -17,53 +17,56 @@
 # 1. Add this workflow to your repository.
 # 2. Edit the top-level 'env' section, which contains a list of environment variables that must be configured.
 # 3. Create the secrets referenced in the 'env' section under your repository Settings.
-# 4. Commit and push your changes.
-# 5. If you did not modify the 'on' section, create a GitHub Release to trigger the workflow.
+# 4. Edit the 'branches' in the 'on' section to trigger the workflow on a push to your branch.
+# 5. Commit and push your changes.
 
-# For a more sophisticated example, see https://github.com/redhat-actions/spring-petclinic
+# For a more sophisticated example, see https://github.com/redhat-actions/spring-petclinic/blob/main/.github/workflows/petclinic-sample.yaml
 
-name: Build and Deploy to OpenShift
+name: OpenShift
 
-# ⬇️ ⬇️ ⬇️  Modify these to fit your project, and create any secrets that are referenced. ⬇️ ⬇️ ⬇️
+# ⬇️  Modify these to fit your project, and create any secrets that are referenced. ⬇️
 # https://docs.github.com/en/free-pro-team@latest/actions/reference/encrypted-secrets
 env:
+  # ⬇️ EDIT with your registry and registry path.
   REGISTRY: quay.io/jduimovich
+  # ⬇️ EDIT with your registry username.
   REGISTRY_USER: jduimovich
   REGISTRY_PASSWORD: ${{ secrets.REGISTRY_PASSWORD }}
 
-  # These are required to log into your OpenShift cluster and set up the context.
+  # ⬇️ EDIT to log into your OpenShift cluster and set up the context.
   # See https://github.com/redhat-actions/oc-login#readme for how to retrieve these values.
   OPENSHIFT_SERVER: ${{ secrets.OPENSHIFT_SERVER }}
   OPENSHIFT_TOKEN: ${{ secrets.OPENSHIFT_TOKEN }}
 
-  # Fill this in with the port your application should be accessible on.
+  # ⬇️ EDIT with the port your application should be accessible on.
   APP_PORT: 8080
 
-  # If you wish to set the kube context's namespace after login, fill it in here.
+  # ⬇️ EDIT if you wish to set the kube context's namespace after login.
   OPENSHIFT_NAMESPACE: "jduimovich-dev"
 
   # If you wish to manually provide the APP_NAME and TAG, set them here, otherwise they will be auto-detected.
   APP_NAME: ""
-  TAG: "latest"
+  TAG: ""
 
 on:
   # https://docs.github.com/en/free-pro-team@latest/actions/reference/events-that-trigger-workflows
   push:
-    branches: [ main, master ]
+    # ⬇️ EDIT to the branch(es) you want to build and deploy on each push.
+    branches: [ main ]
 
 jobs:
   openshift-ci-cd:
-    name: Build and Deploy to OpenShift
+    name: Build and deploy to OpenShift
     runs-on: ubuntu-20.04
 
     steps:
     - uses: actions/checkout@v2
 
-    - name: Determine App Name
+    - name: Determine app name
       if: env.APP_NAME == ''
-      run: echo "APP_NAME=$(basename $PWD)" | tee -a $GITHUB_ENV
-
-    - name: Determine Tag
+      run: |
+        echo "APP_NAME=$(basename $PWD)" | tee -a $GITHUB_ENV
+    - name: Determine tag
       if: env.TAG == ''
       run: |
         echo "TAG=${GITHUB_SHA::7}" | tee -a $GITHUB_ENV
@@ -79,7 +82,7 @@ jobs:
         dockerfiles: |
           ./Dockerfile
     # https://github.com/redhat-actions/push-to-registry#readme
-    - name: Push to Registry
+    - name: Push to registry
       id: push-to-registry
       uses: redhat-actions/push-to-registry@v1
       with:
@@ -104,15 +107,31 @@ jobs:
         insecure_skip_tls_verify: true
         namespace: ${{ env.OPENSHIFT_NAMESPACE }}
 
+    # This step should create a deployment, service, and route to run your app and expose it to the internet.
+    # Feel free to replace this with 'oc apply', 'helm install', or however you like to deploy your app.
     - name: Create and expose app
       run: |
-        set -x
-        export IMAGE="${{ steps.push-to-registry.outputs.registry-path }}"  
-        oc new-app --name $APP_NAME  --docker-image="$IMAGE"  
-        # Make sure the app port is exposed
+        export IMAGE="${{ steps.push-to-registry.outputs.registry-path }}"
         export PORT=${{ env.APP_PORT }}
+        set -x
+        # Take down any old deployment
+        oc delete all --selector="app=$APP_NAME"
+        oc new-app --name $APP_NAME --docker-image="$IMAGE"
+        # Make sure the app port is exposed
         oc patch svc $APP_NAME -p "{ \"spec\": { \"ports\": [{ \"name\": \"$PORT-tcp\", \"port\": $PORT }] } }"
         oc expose service $APP_NAME --port=$PORT
         oc get all --selector="app=$APP_NAME"
         set +x
-        echo "$APP_NAME is exposed at $(oc get route $APP_NAME -o jsonpath='{.spec.host}')"
+        export ROUTE="$(oc get route $APP_NAME -o jsonpath='{.spec.host}')"
+        echo "$APP_NAME is exposed at $ROUTE"
+        # Write the route to a file with the same name to upload as an artifact, to easily access the app
+        export ROUTE_FILE=${ROUTE}.html
+        echo "ROUTE_FILE=$ROUTE_FILE" >> $GITHUB_ENV
+        echo "<a href=http://$ROUTE>$ROUTE</a>" > $ROUTE_FILE
+        echo "Your app can be taken down with: \"oc delete all --selector='app=$APP_NAME'\""
+    - name: Upload route artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: ${{ env.ROUTE_FILE }}
+        path: ${{ env.ROUTE_FILE }}
+        if-no-files-found: error
