@@ -27,7 +27,7 @@ name: OpenShift
 # ⬇️  Modify these to fit your project, and create any secrets that are referenced. ⬇️
 # https://docs.github.com/en/free-pro-team@latest/actions/reference/encrypted-secrets
 env:
-  # ⬇️ EDIT with your registry and registry path.
+  # ⬇ EDIT with your registry and registry path.
   REGISTRY: quay.io/jduimovich
   # ⬇️ EDIT with your registry username.
   REGISTRY_USER: jduimovich
