@@ -1,6 +1,9 @@
 # Graphtuitous
 
 Graphtuitous is demo application that uses graphs, a simple service with compute to demonstrate e2e development, innerloop and outerloop.
+
+![title](graphtuitous.png)
+
   
 This app has one endpoint /test and is used to demonstrate simple applications on kubernetes. 
 
