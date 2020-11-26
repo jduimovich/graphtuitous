@@ -18,8 +18,7 @@
   <p> 
     See <a href="usage.html"> Usage</a> for more details.
 
-  </p>
-  <div ></div>
+  </p> 
 
   <div id='Bar_Times'></div>
 
@@ -192,14 +191,14 @@
           var avg = total/history.length;
           if (max > (avg*4)) { 
             max=avg*4;
-          }
-          var round = avg < 20 ? 10 : 50;
-          //  nearest 50
+          } 
+          var round = avg < 10 ? 20 : 50;
           max = Math.floor (max/round) * round + round;
           var layout = {
-          title: 'Server Compute vs Elapsed times',
-          yaxis: { range: [0, max] },
-          yaxis: { title: 'ms' }
+            title: 'Server Compute vs Elapsed times',
+            yaxis: { 
+              range: [0, max],
+              title: 'ms' }
           };
  
 
@@ -271,7 +270,8 @@
              range: [0, 100],
              title: '%'
             } 
-        } else { layout.yaxis =  {  
+        } else { 
+          layout.yaxis =  {  
              title: 'ms'
             } 
         }
@@ -353,7 +353,7 @@
       function showResposeText(countData) {
         if (configuration.debug) {
           setInnerHtml("json",  
-          '<b>Last Response</b><pre>'+ 
+          '<b>Response</b><pre>'+ 
           JSON.stringify(countData,null, 4)
           + '</pre>');
         }
