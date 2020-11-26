@@ -2,7 +2,7 @@ const express = require("express");
 const app = express();
 
 var APP_VERSION = '1.1';
-var APP_COLOUR = 'green';
+var APP_COLOUR = 'blue';
  var APP_LOOP = 20000;
 var APP_COMPUTE = 12;
 var HOSTNAME = require('os').hostname();
