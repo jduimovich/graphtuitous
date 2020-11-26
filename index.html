@@ -9,28 +9,29 @@
 
 <body>
   <h1> Graphtuitous </h1>
-  <h2>A demo application that uses graphs, a simple service with compute to demonstrate e2e development, innerloop and outerloop.
+  <p>
+    Graphtuitous is demo application that uses gratuitious graphs to demonstrate end to end development scenarios.
+    Graphtuitous includes a simple test service which can be modified to demonstrate  innerloop and outerloop development with 
+     visual confirmation of changes in real time.
 
-  </h2>
+  </p>
   <p> 
     See <a href="usage.html"> Usage</a> for more details.
 
   </p>
+  <div ></div>
+
   <div id='Bar_Times'></div>
 
-<table style="width:100%">
-  <tr>
-    <td> 
-      <div id='Bar_Percents'></div>
-    </td>
-    <td>
-      <input type="radio" id="percent_button" name="Bar_Percents_Select" value="true" checked>
-      <label for="percent_button">%</label> <br>
-      <input type="radio" id="absolute_button" name="Bar_Percents_Select" value="false">
-      <label for="absolute_button">absolute</label>
-    </td>
-  </tr>
-</table>
+  <hr> 
+<div id='Bar_Percents'></div>
+<center>
+  <input type="radio" id="percent_button" name="Bar_Percents_Select" value="true" checked>
+  <label for="percent_button">%</label> 
+  <input type="radio" id="absolute_button" name="Bar_Percents_Select" value="false">
+  <label for="absolute_button">absolute</label>
+</center>
+<hr> 
 
   <div id='Bar_RequestsByColour'></div>
   <table style="width:100%">
@@ -49,9 +50,9 @@
       </td>
     </tr>
   </table>
-  <div id="json">
-
-
+  <div id="json"
+    style="height:200;width:800px;border:2px solid #ccc;overflow:auto;">
+    </div>
 
     <script>
       function getJSONAndUpdate(url, updateCB, errorCB) {
@@ -157,8 +158,13 @@
           var elapsed = new BarChartData();
           padElements(compute, configuration.max_history - history.length, history[0].colour);
           padElements(elapsed, configuration.max_history - history.length, 'red');
+
+          var max = 0;
+          var total = 0;
           for (var i = 0; i < history.length; i++) {
             var element = history[i];
+            if (max < element.elapsed) max = element.elapsed;
+            total +=  element.elapsed; 
             compute.addData('(' + element.time + 's)', element.colour, compute.xValues.length, element.time);
             elapsed.addData('(' + element.time + 's)', 'red', elapsed.xValues.length, element.elapsed);
           }
@@ -180,7 +186,24 @@
             line: { color: 'red'},
             type: 'scatter'
           };
-          Plotly.newPlot('Bar_Times', [computeTimeData, elapsedTimeData], { title: 'Request Times', });
+
+        var title = '';
+          // filter large spikes when hot code replace kicks in
+          var avg = total/history.length;
+          if (max > (avg*4)) { 
+            max=avg*4;
+          }
+          var round = avg < 20 ? 10 : 50;
+          //  nearest 50
+          max = Math.floor (max/round) * round + round;
+          var layout = {
+          title: 'Server Compute vs Elapsed times',
+          yaxis: { range: [0, max] },
+          yaxis: { title: 'ms' }
+          };
+ 
+
+          Plotly.newPlot('Bar_Times', [computeTimeData, elapsedTimeData], layout);
         }
 
       function showBar_Percents(configuration) {
@@ -244,8 +267,14 @@
           barmode: 'stack'  
         };
         if (showPercent.checked) {  
-           layout.yaxis =  { range: [0, 100]}
-        } 
+           layout.yaxis =  { 
+             range: [0, 100],
+             title: '%'
+            } 
+        } else { layout.yaxis =  {  
+             title: 'ms'
+            } 
+        }
         Plotly.newPlot('Bar_Percents', [computePercentData, overheadPercentData],  layout);
       }
 
@@ -304,7 +333,10 @@
         }
         var layout = {
           title: 'Response by pod/version',
-          yaxis: { range: [0, showCounts ? configuration.max_history: 100] }
+          yaxis: { 
+            range: [0, showCounts ? configuration.max_history: 100],
+             title: '# requests' 
+           }
         };
 
         Plotly.newPlot('Bar_RequestsByColour', newData, layout);
@@ -320,7 +352,10 @@
       }
       function showResposeText(countData) {
         if (configuration.debug) {
-          setInnerHtml("json", ' <br><b>DEBUG:</b> ' + JSON.stringify(countData));
+          setInnerHtml("json",  
+          '<b>Last Response</b><pre>'+ 
+          JSON.stringify(countData,null, 4)
+          + '</pre>');
         }
       }
       if (window.location.href.includes("debug")) {
