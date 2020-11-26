@@ -129,7 +129,7 @@ jobs:
         echo "ROUTE=$ROUTE" >> $GITHUB_ENV
     - name: View Application Route
       run: |
-        [[ -n ${{ env.ROUTE }} ]] || echo "Determining application route failed in previous step"; exit 1
+        [[ -n ${{ env.ROUTE }} ]] || (echo "Determining application route failed in previous step"; exit 1)
         echo "======================== Your application is available at: ========================"
         echo ${{ env.ROUTE }}
         echo "==================================================================================="
