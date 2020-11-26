@@ -24,10 +24,10 @@
 
 name: OpenShift
 
-# ⬇️  Modify these to fit your project, and create any secrets that are referenced. ⬇️
+# ⬇️  Modify the fields marked with ⬇️ to fit your project, and create any secrets that are referenced.
 # https://docs.github.com/en/free-pro-team@latest/actions/reference/encrypted-secrets
 env:
-  # ⬇ EDIT with your registry and registry path.
+  # ⬇️ EDIT with your registry and registry path.
   REGISTRY: docker.io/jduimovich
   # ⬇️ EDIT with your registry username.
   REGISTRY_USER: jduimovich
@@ -41,7 +41,7 @@ env:
   # ⬇️ EDIT with the port your application should be accessible on.
   APP_PORT: 8080
 
-  # ⬇️ EDIT if you wish to set the kube context's namespace after login.
+  # ⬇️ EDIT if you wish to set the kube context's namespace after login. Leave blank to use the default namespace.
   OPENSHIFT_NAMESPACE: "jduimovich-dev"
 
   # If you wish to manually provide the APP_NAME and TAG, set them here, otherwise they will be auto-detected.
@@ -51,7 +51,7 @@ env:
 on:
   # https://docs.github.com/en/free-pro-team@latest/actions/reference/events-that-trigger-workflows
   push:
-    # ⬇️ EDIT to the branch(es) you want to build and deploy on each push.
+    # Edit to the branch(es) you want to build and deploy on each push.
     branches: [ main ]
 
 jobs:
@@ -72,7 +72,7 @@ jobs:
         echo "TAG=${GITHUB_SHA::7}" | tee -a $GITHUB_ENV
     # https://github.com/redhat-actions/buildah-build#readme
     - name: Build from Dockerfile
-      uses: jduimovich/buildah-build@main
+      uses: redhat-actions/buildah-build@v1
       with:
         image: ${{ env.APP_NAME }}
         tag: ${{ env.TAG }}
@@ -113,25 +113,25 @@ jobs:
       run: |
         export IMAGE="${{ steps.push-to-registry.outputs.registry-path }}"
         export PORT=${{ env.APP_PORT }}
+        export SELECTOR="app=${{ env.APP_NAME }}"
+        echo "SELECTOR=$SELECTOR" >> $GITHUB_ENV
         set -x
         # Take down any old deployment
-        oc delete all --selector="app=$APP_NAME"
+        oc delete all --selector="$SELECTOR"
         oc new-app --name $APP_NAME --docker-image="$IMAGE"
         # Make sure the app port is exposed
         oc patch svc $APP_NAME -p "{ \"spec\": { \"ports\": [{ \"name\": \"$PORT-tcp\", \"port\": $PORT }] } }"
         oc expose service $APP_NAME --port=$PORT
-        oc get all --selector="app=$APP_NAME"
+        oc get all --selector="$SELECTOR"
         set +x
         export ROUTE="$(oc get route $APP_NAME -o jsonpath='{.spec.host}')"
         echo "$APP_NAME is exposed at $ROUTE"
-        # Write the route to a file with the same name to upload as an artifact, to easily access the app
-        export ROUTE_FILE=${ROUTE}.html
-        echo "ROUTE_FILE=$ROUTE_FILE" >> $GITHUB_ENV
-        echo "<a href=http://$ROUTE>$ROUTE</a>" > $ROUTE_FILE
-        echo "Your app can be taken down with: \"oc delete all --selector='app=$APP_NAME'\""
-    - name: Upload route artifact
-      uses: actions/upload-artifact@v2
-      with:
-        name: ${{ env.ROUTE_FILE }}
-        path: ${{ env.ROUTE_FILE }}
-        if-no-files-found: error
+        echo "ROUTE=$ROUTE" >> $GITHUB_ENV
+    - name: View Application Route
+      run: |
+        [[ -n ${{ env.ROUTE }} ]] || echo "Determining application route failed in previous step"; exit 1
+        echo "======================== Your application is available at: ========================"
+        echo ${{ env.ROUTE }}
+        echo "==================================================================================="
+        echo
+        echo "Your app can be taken down with: \"oc delete all --selector='${{ env.SELECTOR }}'\""
