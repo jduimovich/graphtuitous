@@ -1,6 +1,6 @@
 # Graphtuitous
 
-Graphtuitous is demo application that uses graphs, a simple service with compute to demonstrate e2e development, innerloop and outerloop.
+Graphtuitous is demo application that uses gratuitious graphs to demonstrate a simple service to demonstrate e2e development, innerloop and outerloop. The service can be scaled, compute altered to demonstrate performance issues, and graph colours will allow visual confirmation of changes.
 
 ![Gratuitous Graphs](graphtuitous.png)
 
