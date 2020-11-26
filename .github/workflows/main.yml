@@ -69,7 +69,7 @@ jobs:
     - name: Determine tag
       if: env.TAG == ''
       run: |
-        echo "TAG=t${GITHUB_SHA::7}" | tee -a $GITHUB_ENV
+        echo "TAG=${GITHUB_SHA::7}" | tee -a $GITHUB_ENV
     # https://github.com/redhat-actions/buildah-build#readme
     - name: Build from Dockerfile
       uses: redhat-actions/buildah-build@v1
