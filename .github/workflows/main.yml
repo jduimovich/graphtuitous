@@ -72,7 +72,7 @@ jobs:
         echo "TAG=${GITHUB_SHA::7}" | tee -a $GITHUB_ENV
     # https://github.com/redhat-actions/buildah-build#readme
     - name: Build from Dockerfile
-      uses: redhat-actions/buildah-build@v1
+      uses: redhat-actions/buildah-build@v0.1
       with:
         image: ${{ env.APP_NAME }}
         tag: ${{ env.TAG }}
@@ -84,7 +84,7 @@ jobs:
     # https://github.com/redhat-actions/push-to-registry#readme
     - name: Push to registry
       id: push-to-registry
-      uses: redhat-actions/push-to-registry@v1
+      uses: redhat-actions/push-to-registry@v0.1
       with:
         image: ${{ env.APP_NAME }}
         tag: ${{ env.TAG }}
@@ -100,7 +100,7 @@ jobs:
 
     # https://github.com/redhat-actions/oc-login#readme
     - name: Log in to OpenShift
-      uses: redhat-actions/oc-login@v1
+      uses: redhat-actions/oc-login@v0.1
       with:
         openshift_server_url: ${{ env.OPENSHIFT_SERVER }}
         openshift_token: ${{ env.OPENSHIFT_TOKEN }}
