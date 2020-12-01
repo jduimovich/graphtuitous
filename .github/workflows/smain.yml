@@ -32,11 +32,15 @@ jobs:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with: 
           command:  test  
-          json: snyk.json  
-    
+          json: snyk.json   
+      - name: Run Snyk to check Kubernetes manifest file for issues
+        uses: snyk/actions/iac@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          file: deploy/deployment.yaml    
       - name: Upload Scan Results  
         uses: actions/upload-artifact@v2
         with: 
-          name:  snyk.json   
-          path: snyk.json     
-          if-no-files-found: error        
+          name:  snyk.sarif   
+          path: snyk.sarif        
