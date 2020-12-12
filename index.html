@@ -168,22 +168,23 @@
       }
     }
     function countResponses_then_resetPoll(response) {
-      _C_.totalRequests++;
-      _C_.history.push(response);
-      _C_.justAdded = response;
-      _C_.justRemoved = [];
-      while (_C_.history.length > _C_.max_history) {
-        _C_.justRemoved.push(_C_.history.shift());
+      var cfg=_C_;
+      cfg.totalRequests++;
+      cfg.history.push(response);
+      cfg.justAdded = response;
+      cfg.justRemoved = [];
+      while (cfg.history.length > cfg.max_history) {
+        cfg.justRemoved.push(cfg.history.shift());
       }
-      if (_C_.xAxisKeys.length != _C_.history.length) {
-        _C_.xAxisKeys = Object.keys(_C_.graphCompute.dataValues);
+      if (cfg.xAxisKeys.length != cfg.history.length) {
+        cfg.xAxisKeys = Object.keys(cfg.graphCompute.dataValues);
       }
       // begin gratuitous graphs.
-      show_compute_vs_elapsed(_C_);
-      show_compute_vs_elapsed_by_percent(_C_);
-      show_FPS( _C_);
-      show_response_by_host( _C_);
-      show_response_text(response)
+      show_compute_vs_elapsed(cfg);
+      show_compute_vs_elapsed_by_percent(cfg);
+      show_FPS( cfg);
+      show_response_by_host( cfg);
+      show_response_text(cfg)
       hookpoll();
     }
 
@@ -330,11 +331,6 @@
       var title = hostnames.length == 1 ? '' + versions.hosts[hostnames[0]].count : "Pods";
       var counts =   hostnames.map(name =>  versions.hosts[name].count)
       var colours = hostnames.map(name =>  versions.hosts[name].colour)
-      
-      cfg.justAdded.hostnames = hostnames;
-      cfg.justAdded.counts = counts;
-      cfg.justAdded.colours = colours;
-      cfg.justAdded.versions = versions;
 
       var data = [{
         values: counts,
