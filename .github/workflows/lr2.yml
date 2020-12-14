@@ -62,7 +62,7 @@ on:
 
 jobs:
   openshift-ci-cd:
-    name: Build and deploy to OpenShift 
+    name: TEST SHELL
     runs-on: self-hosted
 
     steps:
