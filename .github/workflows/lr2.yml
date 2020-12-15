@@ -81,7 +81,7 @@ jobs:
     
     - name: shell command  
       run: |
-        du -a
+        du -a 
  
  
  
