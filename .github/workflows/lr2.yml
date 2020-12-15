@@ -61,7 +61,7 @@ on:
     branches: [ main ]
 
 jobs:
-  openshift-ci-cd:
+  test-shell:
     name: TEST SHELL
     runs-on: self-hosted
 
