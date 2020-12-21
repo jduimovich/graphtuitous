@@ -7,11 +7,10 @@
   <style>
     .grid-container {
       display: inline-grid; 
-      grid-template-columns: 33% 33%  33%    ;
+      grid-template-columns: auto auto  ;
       grid-auto-flow: row dense;
       padding: 1px;
-      width: 100%;
-      height: 100vh;
+      width: 100%; 
     }
     
     .grid-item {
@@ -21,7 +20,7 @@
       text-align: center;
     }
     .wide {
-      grid-column: auto / span 3;
+      grid-column: auto / span 2;
       grid-row: auto / span;
     }
   </style>
@@ -40,9 +39,9 @@
 
 <div class="grid-container">
   <div class="grid-item wide" id='Bar_Times'></div>
-  <div class="grid-item" id='fps_div'></div>
-  <div class="grid-item" id='hosts_div'></div>
-  <div class="grid-item" id='Bar_Percents'></div>
+  <div class="grid-item wide" id='Bar_Percents'></div>
+  <div class="grid-item " id='fps_div'></div>
+  <div class="grid-item " id='hosts_div'></div>
 </div>
  
   <div style="float: right;" >
