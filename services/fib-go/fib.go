@@ -37,10 +37,9 @@ func fib(n int) int {
 }
 
 func fibHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Printf("fibHandler\n")
+	fmt.Printf("fibHandler: called %d times\n", response.Count)
 	switch r.Method {
 	case "GET":
-		fmt.Printf("GET\n")
 		start := time.Now()
 		for i := 1; i < response.Loop; i++ {
 			fib(12)
