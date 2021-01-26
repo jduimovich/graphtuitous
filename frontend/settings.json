@@ -1,0 +1,12 @@
+[
+	{
+		"localUrl": "/fib",
+		"service": "localhost",
+		"port": [
+			"8081",
+			"8082",
+			"8083"
+		],
+		"remoteUrl": "/fib"
+	}
+]

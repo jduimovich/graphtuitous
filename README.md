@@ -5,7 +5,7 @@ Graphtuitous is demo application that uses gratuitious graphs to demonstrate a s
 ![Gratuitous Graphs](graphtuitous.png)
 
   
-This app has one endpoint /test and is used to demonstrate simple applications on kubernetes. 
+This app has one endpoint /fib and is used to demonstrate simple applications on kubernetes. 
 
 It will return a JSON object. 
 ```

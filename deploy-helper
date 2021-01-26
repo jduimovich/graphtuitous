@@ -1,0 +1,15 @@
+
+cd services
+for dir in *
+do
+   echo doing $dir 
+   if [ -d $dir ]; then
+      echo $dir/deploy 
+      kubectl $1 -f $dir/deploy  
+   fi
+done 
+kubectl $1 -f service.yaml 
+cd ..
+cd frontend 
+kubectl $1 -f deploy
+
