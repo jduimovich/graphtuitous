@@ -1,0 +1,2 @@
+mvnw quarkus:dev
+
