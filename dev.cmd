@@ -1,17 +1,7 @@
-cd frontend
-start dev.cmd
-cd ..
-cd services\fib-node
-start dev.cmd
-cd ..
 
-cd services\fib-quarkus
-start dev.cmd
-cd ..
-
-cd services\fib-go
-start dev.cmd
-
-cd ..
-cd ..
-
+ 
+start services\fib-node\dev.cmd
+start services\fib-quarkus\dev.cmd
+start services\fib-go\dev.cmd
+ 
+frontend\dev.cmd 
