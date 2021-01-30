@@ -1,27 +1,13 @@
 const express = require("express");
 const app = express();
+
+const router = express.Router(); 
 var fs = require('fs');
 
-app.get("/health", function (req, res) {
-	var response = {
-		"status": 'OK'
-	};
-	res.setHeader('Content-Type', 'application/json');
-	res.send(JSON.stringify(response, undefined, 4));
-});
-
-function returnIndex(req, res) {
-	res.sendFile(__dirname + "/index.html");
-}
-app.get("/", returnIndex);
-app.get("/index.html", returnIndex);
-app.get("/usage.html", function (req, res) {
-	res.sendFile(__dirname + "/usage.html");
-});
 
 function install_redirects(settings) { 
 	settings.forEach(function(r) { 
-		app.get(r.localUrl, 
+		router.get(r.localUrl, 
 				redirect(r.service, r.port, r.remoteUrl));
 	}); 
 }
@@ -66,7 +52,9 @@ function redirect(service, port, optionalurl) {
 	return f;
 }
 
-fs.readFile('./settings.json',
+const settings_file = process.env.SETTINGS || "./settings-server.json";
+
+fs.readFile(settings_file,
 	function (err, data) {
 		var settings = {};
 		if (err) {
@@ -79,7 +67,17 @@ fs.readFile('./settings.json',
 				process.exit(1);
 			}
 		} 
+		router.get("/health", function (req, res) {
+			var response = {
+				"status": 'OK'
+			};
+			res.setHeader('Content-Type', 'application/json');
+			res.send(JSON.stringify(response, undefined, 4));
+		});
+
 		install_redirects(settings);
+		app.use(express.static('.')); 
+		app.use("/", router);  
 		const port = process.env.PORT || 8080;
 		app.listen(port, function () {
 			console.log("FrontEnd listening on port", port);
