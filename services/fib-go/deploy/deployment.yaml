@@ -26,10 +26,10 @@ spec:
             memory: "64Mi"
         imagePullPolicy: Always
         ports:
-        - containerPort: 8080
+        - containerPort: 8083
         readinessProbe:
           tcpSocket:
-            port: 8080
+            port: 8083
           initialDelaySeconds: 5
           periodSeconds: 10
         livenessProbe:
@@ -37,4 +37,4 @@ spec:
           periodSeconds: 5
           httpGet:
             path: /health
-            port: 8080
+            port: 8083
