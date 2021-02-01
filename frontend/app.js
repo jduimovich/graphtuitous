@@ -20,20 +20,44 @@ function redirect(service, port, optionalurl) {
 	var cyclePorts = [];
 	if (Array.isArray(port)) {
 		cyclePorts = cyclePorts.concat(port);
+		cyclePorts = cyclePorts.concat(port);
+		cyclePorts = cyclePorts.concat(port);
+		cyclePorts = cyclePorts.concat(port);
 	} else { 
 		cyclePorts.push (port);
+		cyclePorts.push (port);
+		cyclePorts.push (port);
+		cyclePorts.push (port);
+		cyclePorts.push (port);
+		cyclePorts.push (port);
+		cyclePorts.push (port);
+		cyclePorts.push (port);
+		cyclePorts.push (port);
+		cyclePorts.push (port);
+		cyclePorts.push (port);
+		cyclePorts.push (port);
+		cyclePorts.push (port);
+		cyclePorts.push (port);
+		cyclePorts.push (port);
+		cyclePorts.push (port);
+		cyclePorts.push (port);
 	}
+
+
+	var active = 0;
+
 	console.log("Cycle ports" + JSON.stringify(cyclePorts));
 	const f = function (req, res) {
+		active++;
+		
+		console.log("activerequests " + active);
 		var endpoint = optionalurl ? optionalurl : req.url;
 		var p = cyclePorts.shift();
-		cyclePorts.push(p);
 		console.log("Cycle ports:" + p);
 		var url = 'http://' + service + ':' + p + endpoint;
 		console.log("Redirect to " + url);
 		request(url, { json: true }, (err, response, body) => {
-			if (err) {
-				// cyclePorts.pop();
+			if (err) { 
 				console.log(err); 
 				var body = { 
 					"hostname": "Error:" + url, 
@@ -46,6 +70,8 @@ function redirect(service, port, optionalurl) {
 					"time": 0
 				};
 			}
+			cyclePorts.push(p);
+			active--;
 			res.send(body);
 		});
 	};
