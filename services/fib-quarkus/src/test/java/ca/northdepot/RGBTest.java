@@ -13,7 +13,7 @@ public class RGBTest {
     @Test
     public void testTestEndpoint() {
         given()
-          .when().get("/test")
+          .when().get("/fib")
           .then()
              .statusCode(200);
     }

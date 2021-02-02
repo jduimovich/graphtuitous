@@ -5,7 +5,7 @@ metadata:
   labels:
     app: fib
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: fib
@@ -20,16 +20,16 @@ spec:
         resources:
           limits:
             cpu: "200m"
-            memory: "64Mi"
+            memory: "128Mi"
           requests:
             cpu: "100m"
             memory: "64Mi"
         imagePullPolicy: Always
         ports:
-        - containerPort: 8083
+        - containerPort: 8080
         readinessProbe:
           tcpSocket:
-            port: 8083
+            port: 8080
           initialDelaySeconds: 5
           periodSeconds: 10
         livenessProbe:
@@ -37,4 +37,4 @@ spec:
           periodSeconds: 5
           httpGet:
             path: /health
-            port: 8083
+            port: 8080

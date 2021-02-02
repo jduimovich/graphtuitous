@@ -3,7 +3,7 @@ kind: Route
 metadata:
   name: all 
   labels:
-    app: rgb-service
+    app: frontend-service
 spec: 
   port:
     targetPort: 8080
@@ -12,5 +12,5 @@ spec:
     termination: edge
   to:
     kind: Service
-    name: rgb-service-v1
+    name: frontend-service
     weight: 100

@@ -32,6 +32,7 @@ var response = {
 
 app.get("/fib", function (req, res) {
 	response.count++;
+	if (response.count % 100 == 0) {console.log("/fib, called: " + response.count);}
 	var start = new Date(); 
 	var c = APP_LOOP;
 	while (c--) fib(APP_COMPUTE);

@@ -1,7 +1,10 @@
+@echo off
+oc project  rgb
 
- 
-start services\fib-node\dev.cmd
-start services\fib-quarkus\dev.cmd
-start services\fib-go\dev.cmd
- 
-frontend\dev.cmd 
+oc apply -f services\fib-quarkus\deploy
+oc apply -f services\fib-go\deploy
+oc apply -f services\fib-node\deploy
+oc apply -f services\service.yaml
+
+oc apply -f frontend\deploy
+oc apply -f frontend\deploy-openshift

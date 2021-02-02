@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"os"
 	"time"
 )
 
@@ -16,6 +17,7 @@ type Response struct {
 	Loop     int    `json:"loop"`
 	Compute  string `json:"compute"`
 	Time     int64  `json:"time"`
+	Health     int64  `json:"health"`
 }
 
 var response *Response = &Response{
@@ -36,10 +38,26 @@ func fib(n int) int {
 	return fib(n-1) + fib(n-2)
 }
 
+func healthHandler(w http.ResponseWriter, r *http.Request) {
+	fmt.Printf("healthHandler: called %d times\n", response.Health)
+	switch r.Method {
+	case "GET": 
+		response.Time = 0
+		response.Hostname, _ = os.Hostname()
+		response.Health++
+		j, _ := json.Marshal(response)
+		w.Write(j)
+	default:
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		fmt.Fprintf(w, "StatusMethodNotAllowed")
+	}
+}
+
 func fibHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Printf("fibHandler: called %d times\n", response.Count)
 	switch r.Method {
 	case "GET":
+		response.Hostname, _ = os.Hostname()
 		start := time.Now()
 		for i := 1; i < response.Loop; i++ {
 			fib(12)
@@ -55,7 +73,10 @@ func fibHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	fmt.Printf("WebServer running on 8083\n")
+	port := os.Getenv("PORT")
+	if (port=="") {port = "8080"}; 
+	fmt.Printf("WebServer running on %s\n",port)
 	http.HandleFunc("/fib", fibHandler)
-	http.ListenAndServe(":8083", nil)
+	http.HandleFunc("/health", healthHandler)
+	http.ListenAndServe(":" + port, nil)
 }
