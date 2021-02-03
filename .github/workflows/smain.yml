@@ -25,6 +25,7 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2 
+
       - name: Run Snyk to check frontend deployment
         continue-on-error: true
         uses: snyk/actions/iac@master
@@ -34,12 +35,8 @@ jobs:
           file: frontend/deploy/deployment.yaml    
       - name: Rename for merging 
         run: | 
-          mv snyk.sarif frontend-deployment-snyk.sarif  
-      - name: Upload Scan Results  
-        uses: actions/upload-artifact@v2
-        with: 
-          name: frontend-deployment-snyk.sarif  
-          path: frontend-deployment-snyk.sarif   
+          mv snyk.sarif frontend-deployment-snyk.sarif   
+
       - name: Run Snyk to check frontend service 
         continue-on-error: true
         uses: snyk/actions/iac@master
@@ -49,12 +46,7 @@ jobs:
           file: frontend/deploy/service.yaml    
       - name: Rename for merging 
         run: | 
-          mv snyk.sarif frontend-service-snyk.sarif  
-      - name: Upload Scan Results  
-        uses: actions/upload-artifact@v2
-        with: 
-          name: frontend-service-snyk.sarif  
-          path: frontend-service-snyk.sarif     
+          mv snyk.sarif frontend-service-snyk.sarif   
       - name: Bootstrap and Merge
         run: |  
           cp frontend-service-snyk.sarif  merged.sarif      
@@ -87,7 +79,7 @@ jobs:
           mv snyk.sarif fib-node-deployment-snyk.sarif    
       - name: Bootstrap and Merge
         run: |    
-          node merge.js merged.sarif  fib-node-deployment-snyk.sarif 
+          node merge.js merged.sarif fib-node-deployment-snyk.sarif 
 
         - name: Run Snyk to check fib-quarkus deployment
         continue-on-error: true
