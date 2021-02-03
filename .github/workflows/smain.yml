@@ -25,7 +25,7 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2 
-      - name: Run Snyk to check Kubernetes manifest file for issues
+      - name: Run Snyk to check frontend  
         continue-on-error: true
         uses: snyk/actions/iac@master
         env:
@@ -44,3 +44,22 @@ jobs:
         uses: github/codeql-action/upload-sarif@v1
         with:
           sarif_file: frontend-snyk.sarif 
+      - name: Run Snyk to check fib-go
+        continue-on-error: true
+        uses: snyk/actions/iac@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          file: services/fib-go/deploy/deployment.yaml    
+      - name: rename for upload
+        run: |
+          mv snyk.sarif fib-go-snyk.sarif 
+      - name: Upload Scan Results  
+        uses: actions/upload-artifact@v2
+        with: 
+          name:  fib-go-snyk.sarif    
+          path: fib-go-snyk.sarif    
+      - name: Upload result to GitHub Code Scanning
+        uses: github/codeql-action/upload-sarif@v1
+        with:
+          sarif_file: fib-go-snyk.sarif 
