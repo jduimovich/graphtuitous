@@ -17,7 +17,7 @@ on:
 jobs:
   # This workflow contains a single job called "build"
   scan:
-    name: Scan Repo with Snyk
+    name: Scan YAML Artifacts with Snyk
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
 
@@ -25,7 +25,7 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2 
-      - name: Run Snyk to check frontend  
+      - name: Run Snyk to check frontend deployment
         continue-on-error: true
         uses: snyk/actions/iac@master
         env:
@@ -34,34 +34,105 @@ jobs:
           file: frontend/deploy/deployment.yaml    
       - name: Rename for merging 
         run: | 
-          mv snyk.sarif frontend-snyk.sarif 
-          cp frontend-snyk.sarif   merged.sarif
+          mv snyk.sarif frontend-deployment-snyk.sarif  
       - name: Upload Scan Results  
         uses: actions/upload-artifact@v2
         with: 
-          name:  frontend-snyk.sarif   
-          path: frontend-snyk.sarif 
-      - name: Test Merge Sarif Steps
+          name: frontend-deployment-snyk.sarif  
+          path: frontend-deployment-snyk.sarif   
+      - name: Run Snyk to check frontend service 
+        continue-on-error: true
+        uses: snyk/actions/iac@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          file: frontend/deploy/service.yaml    
+      - name: Rename for merging 
         run: | 
-          node merge.js merged.sarif  frontend-snyk.sarif
-      - name: Run Snyk to check fib-go  
+          mv snyk.sarif frontend-service-snyk.sarif  
+      - name: Upload Scan Results  
+        uses: actions/upload-artifact@v2
+        with: 
+          name: frontend-service-snyk.sarif  
+          path: frontend-service-snyk.sarif     
+      - name: Bootstrap and Merge
+        run: |  
+          cp frontend-service-snyk.sarif  merged.sarif      
+          node merge.js merged.sarif  frontend-service-snyk.sarif   
+          node merge.js merged.sarif  frontend-deployment-snyk.sarif  
+
+      - name: Run Snyk to check fib-go deployment
         continue-on-error: true
         uses: snyk/actions/iac@master
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
           file: services/fib-go/deploy/deployment.yaml    
-      - name: Rename for merging fib-go
+      - name: Rename for merging 
         run: | 
-          mv snyk.sarif fib-go-snyk.sarif  
+          mv snyk.sarif fib-go-deployment-snyk.sarif  
       - name: Upload Scan Results  
         uses: actions/upload-artifact@v2
         with: 
-          name:  fib-go-snyk.sarif   
-          path: fib-go-snyk.sarif  
-      - name: Test Merge Sarif Steps
+          name: fib-go-deployment-snyk.sarif  
+          path: fib-go-deployment-snyk.sarif   
+      - name: Run Snyk to check frontend service 
+        continue-on-error: true
+        uses: snyk/actions/iac@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          file: services/fib-go/deploy/service.yaml    
+      - name: Rename for merging 
         run: | 
-          node merge.js merged.sarif  fib-go-snyk.sarif  
+          mv snyk.sarif fib-go-service-snyk.sarif  
+      - name: Upload Scan Results  
+        uses: actions/upload-artifact@v2
+        with: 
+          name: fib-go-service-snyk.sarif  
+          path: fib-go-service-snyk.sarif    
+          
+      - name: Bootstrap and Merge
+        run: |   
+          node merge.js merged.sarif  fib-go-service-snyk.sarif 
+          node merge.js merged.sarif  fib-go-deployment-snyk.sarif 
+
+      - name: Run Snyk to check fib-node deployment
+        continue-on-error: true
+        uses: snyk/actions/iac@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          file: services/fib-node/deploy/deployment.yaml    
+      - name: Rename for merging 
+        run: | 
+          mv snyk.sarif fib-node-deployment-snyk.sarif  
+      - name: Upload Scan Results  
+        uses: actions/upload-artifact@v2
+        with: 
+          name: fib-node-deployment-snyk.sarif  
+          path: fib-node-deployment-snyk.sarif   
+      - name: Run Snyk to check frontend service 
+        continue-on-error: true
+        uses: snyk/actions/iac@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          file: services/fib-node/deploy/service.yaml    
+      - name: Rename for merging 
+        run: | 
+          mv snyk.sarif fib-node-service-snyk.sarif  
+      - name: Upload Scan Results  
+        uses: actions/upload-artifact@v2
+        with: 
+          name: fib-node-service-snyk.sarif  
+          path: fib-node-service-snyk.sarif    
+      - name: Bootstrap and Merge
+        run: |   
+          node merge.js merged.sarif  fib-node-service-snyk.sarif 
+          node merge.js merged.sarif  fib-node-deployment-snyk.sarif 
+ 
+
       - name: Upload merged Results  
         uses: actions/upload-artifact@v2
         with: 
