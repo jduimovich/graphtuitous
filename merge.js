@@ -31,8 +31,8 @@ function mergeSarif(d1, d2) {
     console.log ("Number of rules combined is: ",  newRules.length  )    
     j1.runs[0].tool.driver.rules = newRules;  
     var c=0;
-    j1.runs[0].results.forEach (function (e) {
-        console.log (c++, ':',  e.ruleId)    
+    newRules.forEach (function (e) {
+        console.log (c++, ':',  e.id)    
     })
     j1.runs[0].results = j1.runs[0].results.concat(j1.runs[0].results) 
     console.log ("Number of source locations combined is: ",  j1.runs[0].results.length  )  
