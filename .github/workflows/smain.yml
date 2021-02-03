@@ -32,18 +32,16 @@ jobs:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
           file: frontend/deploy/deployment.yaml    
-      - name: rename for upload
-        run: |
+      - name: Rename for merging 
+        run: | 
           mv snyk.sarif frontend-snyk.sarif 
+          cp frontend-snyk.sarif   merged.sarif
       - name: Upload Scan Results  
         uses: actions/upload-artifact@v2
         with: 
           name:  frontend-snyk.sarif    
           path: frontend-snyk.sarif    
-      - name: Upload result to GitHub Code Scanning
-        uses: github/codeql-action/upload-sarif@v1
-        with:
-          sarif_file: frontend-snyk.sarif 
+
       - name: Run Snyk to check fib-go
         continue-on-error: true
         uses: snyk/actions/iac@master
@@ -51,9 +49,10 @@ jobs:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
           file: services/fib-go/deploy/deployment.yaml    
-      - name: rename for upload
-        run: |
+      - name: Rename for merging 
+        run: | 
           mv snyk.sarif fib-go-snyk.sarif 
+          node merge.js merged.sarif fib-go-snyk.sarif 
       - name: Upload Scan Results  
         uses: actions/upload-artifact@v2
         with: 
@@ -62,4 +61,4 @@ jobs:
       - name: Upload result to GitHub Code Scanning
         uses: github/codeql-action/upload-sarif@v1
         with:
-          sarif_file: fib-go-snyk.sarif 
+          sarif_file: merged.sarif 
