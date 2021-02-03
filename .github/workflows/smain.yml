@@ -26,13 +26,6 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2 
         
-      - name: Snyk Authorize and Test
-        uses: snyk/actions@0.3.0
-        env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-        with: 
-          command:  test  
-          json: snyk.json   
       - name: Run Snyk to check Kubernetes manifest file for issues
         continue-on-error: true
         uses: snyk/actions/iac@master
