@@ -43,15 +43,10 @@ jobs:
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
-          file: frontend/deploy/service.yaml    
-      - name: Rename for merging 
+          file: frontend/deploy/service.yaml  
+      - name: Combine Snyk Sarif Output
         run: | 
-          mv snyk.sarif frontend-service-snyk.sarif   
-      - name: Bootstrap and Merge
-        run: |  
-          cp frontend-service-snyk.sarif  merged.sarif      
-          node merge.js merged.sarif  frontend-service-snyk.sarif   
-          node merge.js merged.sarif  frontend-deployment-snyk.sarif  
+          bash snyk-rename   
 
       - name: Run Snyk to check fib-go deployment
         continue-on-error: true
@@ -60,12 +55,9 @@ jobs:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
           file: services/fib-go/deploy/deployment.yaml    
-      - name: Rename for merging 
+      - name: Combine Snyk Sarif Output
         run: | 
-          mv snyk.sarif fib-go-deployment-snyk.sarif       
-      - name: Bootstrap and Merge
-        run: |    
-          node merge.js merged.sarif  fib-go-deployment-snyk.sarif 
+          bash snyk-rename   
 
       - name: Run Snyk to check fib-node deployment
         continue-on-error: true
@@ -74,12 +66,9 @@ jobs:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
           file: services/fib-node/deploy/deployment.yaml    
-      - name: Rename for merging 
+      - name: Combine Snyk Sarif Output
         run: | 
-          mv snyk.sarif fib-node-deployment-snyk.sarif    
-      - name: Bootstrap and Merge
-        run: |    
-          node merge.js merged.sarif fib-node-deployment-snyk.sarif 
+          bash snyk-rename   
 
       - name: Run Snyk to check fib-quarkus deployment
         continue-on-error: true
@@ -88,12 +77,9 @@ jobs:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
           file: services/fib-quarkus/deploy/deployment.yaml    
-      - name: Rename for merging 
+      - name: Combine Snyk Sarif Output
         run: | 
-          mv snyk.sarif fib-quarkus-deployment-snyk.sarif    
-      - name: Bootstrap and Merge
-        run: |    
-          node merge.js merged.sarif  fib-quarkus-deployment-snyk.sarif 
+          bash snyk-rename   
 
       - name: Save all sarif files
         run: |  
