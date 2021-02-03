@@ -25,7 +25,7 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2 
-      - name: Run Snyk scan frontend
+      - name: Run Snyk to check Kubernetes manifest file for issues
         continue-on-error: true
         uses: snyk/actions/iac@master
         env:
@@ -35,7 +35,7 @@ jobs:
       - name: Upload Scan Results  
         uses: actions/upload-artifact@v2
         with: 
-          name:  frontend-snyk.sarif   
+          name:  snyk.sarif   
           path: snyk.sarif   
       - name: Upload result to GitHub Code Scanning
         uses: github/codeql-action/upload-sarif@v1
