@@ -5,7 +5,7 @@ metadata:
   labels:
     app: frontend
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: frontend
@@ -20,10 +20,10 @@ spec:
         resources:
           limits:
             cpu: "200m"
-            memory: "128Mi"
+            memory: "48Mi"
           requests:
             cpu: "100m"
-            memory: "64Mi"
+            memory: "48Mi"
         imagePullPolicy: Always
         ports:
         - containerPort: 8080
