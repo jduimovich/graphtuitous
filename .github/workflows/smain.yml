@@ -36,6 +36,9 @@ jobs:
         run: | 
           mv snyk.sarif frontend-snyk.sarif 
           cp frontend-snyk.sarif   merged.sarif 
+      - name: Test Merge Sarif Steps
+        run: | 
+          node merge.js merged.sarif  frontend-snyk.sarif  
       - name: Upload result to GitHub Code Scanning
         uses: github/codeql-action/upload-sarif@v1
         with:
