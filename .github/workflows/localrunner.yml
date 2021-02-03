@@ -63,7 +63,7 @@ on:
 jobs:
   openshift-ci-cd:
     name: Self Hosted Build and Deploy
-    runs-on: self-hosted
+    runs-on: rhel
 
     steps:
     - uses: actions/checkout@v2

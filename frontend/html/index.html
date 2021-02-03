@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>RGB</title>
+  <script src='https://cdn.plot.ly/plotly-latest.min.js'></script>
+  <style>
+    .grid-container {
+      display: inline-grid; 
+      grid-template-columns: auto auto  ;
+      grid-auto-flow: row dense;
+      padding: 1px;
+      width: 100%; 
+    }
+    
+    .grid-item {
+      background-color: rgba(255, 255, 255, 0.8);
+      border: 1px solid rgba(0, 0, 0, 0.8);
+      padding: 10px; 
+      text-align: center;
+    }
+    .wide {
+      grid-column: auto / span 2;
+      grid-row: auto / span;
+    }
+  </style>
+</head>
+
+<body>
+  <h1> Graphtuitous </h1>
+  <p>
+    Graphtuitous is demo application that uses gratuitious graphs to demonstrate end to end development scenarios.
+    Graphtuitous includes a simple json end point <em> /fib </em>  which can be modified to demonstrate innerloop and outerloop development
+    with visual confirmation of changes in real time.
+  </p>
+  <p>
+    See <a href="usage.html"> Usage</a> for more details.
+  </p>
+
+<div class="grid-container">
+  <div class="grid-item wide" id='Bar_Times'></div>
+  <div class="grid-item wide" id='Bar_Percents'></div>
+  <div class="grid-item " id='fps_div'></div>
+  <div class="grid-item " id='hosts_div'></div>
+</div>
+
+  <table style="width:100%">
+    <tr>
+      <td>
+        <p>
+        <div id="trim"> History </div>
+        <input type="range" min="10" max="500" value="100" step="10" class="slider" id="trimmer">
+        </p>
+      </td>
+      <td>
+        <p>
+        <div id="pollrate"> Poll Rate </div>
+        <input type="range" min="10" max="1000" value="50" step="10" class="slider" id="poller">
+        </p>
+      </td>
+      <td>
+        <p>
+        <div id="concurrentthreads"> Poll Threads  </div>
+        <input type="range" min="1" max="10" value="4" step="1" class="slider" id="concurrentpolls">
+        </p>
+      </td>
+
+    </tr>
+  </table>
+  <div id="json" style="height:300;width:800px;border:2px solid #ccc;">
+  </div>
+
+  <script>
+    function getJSONAndUpdate(url, id, updateCB, errorCB) {
+      var start = new Date();
+      var xhttp = new XMLHttpRequest();
+      xhttp.onreadystatechange = function () {
+        if (this.readyState == 4) {
+          if (this.status == 200) {
+            try {
+              const response = JSON.parse(this.responseText);
+              response.url = url;
+              response.elapsed = new Date() - start;
+              updateCB(response, id);
+            } catch (err) {
+              if (errorCB) errorCB(id);
+            }
+          } else {
+            if (errorCB) errorCB(id);
+          }
+        }
+      };
+      xhttp.open("GET", url, true);
+      xhttp.setRequestHeader('Content-type', 'application/json');
+      xhttp.setRequestHeader('Accept', 'application/json');
+      xhttp.send();
+
+    }
+    function setInnerHtml(id, html) {
+      document.getElementById(id).innerHTML = html;
+    }
+
+    var trimmer = document.getElementById("trimmer");
+    trimmer.oninput = function () {
+      setInnerHtml("trim", 'History: ' + this.value);
+      _C_.max_history = this.value;
+    }
+    trimmer.onchange = trimmer.oninput;
+    function setPeriod(p) {
+      setInnerHtml("pollrate", 'Poll Rate: ' + p + ' ms');
+      _C_.period = p;
+      poller.value = p;
+    }
+    var poller = document.getElementById("poller");
+    poller.oninput = function () {
+      setPeriod(this.value)
+    }
+    poller.onchange = poller.oninput;
+
+    // globl config, easy to find and pass around.
+    var _C_ = {
+      "url": 'fib',        // url you fetch
+      "totalRequests": 0,   // number of requests sent/received
+      "history": [],        // last N responses
+      "elapsedTotal": 0,    // total of elapsed times in history
+      "max_history": 100,   // max history of responses
+      "period": 50,         // poll period in ms
+      "debug": true,        // show requests in status window
+
+      "historyByHostName": {
+        'totals': 0,
+        'hosts': new Object()
+      }, // History of requests by hostname
+
+      // cached data for graph
+      "graphCompute": new GraphData(200), // compute history
+      "graphElapsed": new GraphData(200), // elapsed history
+      "graphComputePercent": new GraphData(200), // compute as percent
+      "graphElapsedPercent": new GraphData(200), // elapsed as percent
+      "xAxisKeys": [],    // cached xAxis (performance hack)
+
+      // keep track of absolute time and counts 
+      // from that time, show RequestsPerSecondGraphed
+      "countsForFPS": 0,
+      "maxFPS": 0,
+      "timeForFPS": new Date()
+    };
+    function GraphData(pad) {// y values, colours, text
+      this.text = [];
+      this.colours = [];
+      this.dataValues = [];
+      if (pad == undefined) pad = 0;
+      this.length = function () { return this.dataValues.length; }
+      this.addData = function (text, colour, data) {
+        this.text.push(text);
+        this.colours.push(colour);
+        this.dataValues.push(data);
+      } 
+      this.trim = function (len) {
+        while (this.length() > len) {
+          this.text.shift();
+          this.colours.shift();
+          this.dataValues.shift();
+        }
+      }
+      for (var i = 0; i < pad; i++) {
+        this.addData('0', 'black', 0);
+      }
+    }
+    function countResponses_then_resetPoll(response, n) {
+      var cfg=_C_;
+      cfg.totalRequests++;
+      cfg.history.push(response);
+      cfg.justAdded = response;
+      cfg.justRemoved = [];
+      while (cfg.history.length > cfg.max_history) {
+        cfg.justRemoved.push(cfg.history.shift());
+      }
+      if (cfg.xAxisKeys.length != cfg.history.length) {
+        cfg.xAxisKeys = Object.keys(cfg.graphCompute.dataValues);
+      }
+      // begin gratuitous graphs.
+      show_compute_vs_elapsed(cfg);
+      show_compute_vs_elapsed_by_percent(cfg);
+      show_FPS( cfg);
+      show_response_by_host( cfg);
+      show_response_text(cfg)
+       hookpoll(n);
+    }
+
+     
+        var concurrentpolls = document.getElementById("concurrentpolls");
+        var maxPoll = 4;
+        concurrentpolls.oninput = function () {
+          var newPoll = parseInt (this.value);
+          setInnerHtml("concurrentthreads", 'Async Requests: ' + newPoll);
+          // console.log("concurrentpolls oninput", newPoll, maxPoll); 
+          for (var i =  maxPoll+1 ; i <= newPoll; i++) {
+            poll(i)
+          }
+          maxPoll = newPoll;
+          // console.log("maxPoll changed to ", maxPoll);
+        }
+        concurrentpolls.onchange = concurrentpolls.oninput;
+
+      function hookpoll(n) {
+        //  console.log("hookpoll request:", n, " of ", maxPoll); 
+        if (n > maxPoll) {
+          // console.log("skipping reset of: ", n);
+          return;
+        } 
+        //  console.log("hookpoll:", n);
+        setTimeout(function () { poll(n); }, _C_.period);
+      }
+    function poll(n) {
+      getJSONAndUpdate(_C_.url, n, countResponses_then_resetPoll, hookpoll);
+    }
+
+    function show_compute_vs_elapsed(cfg) {
+      var history = cfg.history;
+      cfg.justRemoved.forEach(removed => cfg.elapsedTotal -= removed.elapsed)
+      cfg.elapsedTotal += cfg.justAdded.elapsed;
+      var element = cfg.justAdded;
+      cfg.graphCompute.addData('(' + element.time + 's)', element.colour, element.time);
+      cfg.graphElapsed.addData('(' + element.time + 's)', 'red', element.elapsed);
+      cfg.graphCompute.trim(cfg.max_history);
+      cfg.graphElapsed.trim(cfg.max_history);
+      cfg.justAdded.incremental = true;
+      var computeTimeData =
+      {
+        x: cfg.xAxisKeys,
+        y: cfg.graphCompute.dataValues,
+        name: 'Server Compute Time',
+  mode: 'lines+markers',
+        marker: { color: cfg.graphCompute.colours,
+           size: 4 },
+        line: { color: 'black' },
+        type: 'scatter'
+      };
+      var elapsedTimeData =
+      {
+        x: cfg.xAxisKeys,
+        y: cfg.graphElapsed.dataValues,
+        name: 'End to End Elapsed Time',
+        mode: 'lines',
+        marker: { color: cfg.graphElapsed.colours ,
+           size: 1},
+        line: { color: 'red' },
+        type: 'scatter'
+      };
+
+      
+      var max = cfg.graphElapsed.dataValues.reduce(function(a, b) {
+          return Math.max(a, b);
+      });
+      var round = max < 10 ? 10 : 50;
+      max = Math.floor(max / round) * round + round;
+      var layout = {
+        title: 'Server Compute vs Elapsed times',
+        yaxis: {
+          range: [0, max],
+          title: 'ms'
+        }
+      };
+      Plotly.newPlot('Bar_Times', [computeTimeData, elapsedTimeData], layout);
+    }
+
+    function show_compute_vs_elapsed_by_percent(cfg) {
+      var history = cfg.history;
+      if (cfg.graphComputePercent && cfg.graphElapsedPercent) {
+        var element = cfg.justAdded;
+        cfg.graphComputePercent.addData('(' + element.time + 'ms)', element.colour, element.time);
+        cfg.graphElapsedPercent.addData('(' + element.elapsed + 'ms)', 'red', element.elapsed);
+        cfg.graphComputePercent.trim(cfg.max_history);
+        cfg.graphElapsedPercent.trim(cfg.max_history);
+      }
+
+      var nameCompute = 'Compute';
+      var nameElapsed = 'Elapsed';
+      var title = 'Compute vs Elapsed times'; 
+      
+      var computePercentData =
+      {
+        x: cfg.xAxisKeys,
+        y: cfg.graphComputePercent.dataValues,
+        name: nameCompute,
+        marker: { color: cfg.graphComputePercent.colours },
+        type: 'bar'
+      };
+      var overheadPercentData = {
+        x: cfg.xAxisKeys,
+        y: cfg.graphElapsedPercent.dataValues,
+        name: nameElapsed,
+        marker: { color: cfg.graphElapsedPercent.colours },
+        type: 'bar'
+      }
+      var layout = {
+        title: title,
+        barmode: 'stack'
+      };
+      layout.yaxis = { title: 'ms' }
+      Plotly.newPlot('Bar_Percents', [computePercentData, overheadPercentData], layout);
+    }
+
+    function show_response_by_host(cfg) {
+      var versions = cfg.historyByHostName;
+      var element = versions.hosts[cfg.justAdded.hostname];
+      if (!element) {
+        element = {
+          "count": 0,
+          "colour": cfg.justAdded.colour,
+          "hostname": cfg.justAdded.hostname,
+          "version": cfg.justAdded.version
+        }
+        versions.hosts[cfg.justAdded.hostname] = element;
+      }
+      element.count++;
+      element.colour = cfg.justAdded.colour;
+      versions.totals++;
+
+      cfg.justRemoved.forEach(
+        function (removed) {
+          if (removed.hostname) {
+            versions.totals--;
+            if (--versions.hosts[removed.hostname].count <= 0) delete versions.hosts[removed.hostname];
+          }
+        });
+
+      var hostnames = Object.keys(versions.hosts);
+      hostnames.sort(function (a, b) { return a.localeCompare(b)});
+      var title = hostnames.length == 1 ? '' + versions.hosts[hostnames[0]].count : "Pods";
+      var counts =   hostnames.map(name =>  versions.hosts[name].count)
+      var colours = hostnames.map(name =>  versions.hosts[name].colour)
+
+      var data = [{
+        values: counts,
+        labels: hostnames,
+        type: 'pie',
+        hole: .4,
+        title: { text: title },
+        marker: { 
+        colors: colours ,
+        line: { color: 'black' , 'width': 2 } } ,
+        sort:false,
+
+      }];
+
+      var layout = {
+        showlegend: true,
+        legend: { 
+          xanchor: 'left',
+          x:0,
+          y: -15
+        },
+        // width: 444, height: 300
+      }; 
+      Plotly.newPlot('hosts_div', data, layout);
+    }
+
+
+    function show_FPS( cfg) {
+      var prev_fps = fps;
+
+      cfg.countsForFPS++;
+      var elapsed = new Date() - cfg.timeForFPS;
+      var fps = (1000 / (elapsed / cfg.countsForFPS));
+      if (elapsed > 100 && fps > cfg.maxFPS)
+        cfg.maxFPS = fps;
+      if (cfg.countsForFPS > 100) {
+        cfg.timeForFPS = new Date();
+        cfg.countsForFPS = 0;
+      }
+      // no redraw if same value
+      if (cfg.prevFPS == fps.toFixed(2)) return;
+      cfg.prevFPS = fps.toFixed(2)
+
+      var max = Math.ceil((1000 / cfg.period) / 10) * 10 + 10;
+      var data = [
+        {
+          domain: { x: [0, 1], y: [0, 1] },
+          value: cfg.prevFPS,
+          title: { text: "FPS" },
+          type: "indicator",
+          mode: "gauge+number",
+          gauge: {
+            axis: { range: [null, max] },
+            threshold: {
+              line: { color: "red", width: 4 },
+              thickness: 1.75,
+              value: cfg.maxFPS.toFixed(2)
+            }
+          }
+        }
+      ]; 
+      var layout = { width: 300, height: 200, margin: { t: 0, b: 0 } };
+      Plotly.newPlot('fps_div', data, {});
+    }
+
+
+
+    function show_response_text(cfg) {
+      var allKeys = Object.keys (cfg.justAdded);  
+      allKeys.sort();  
+      setInnerHtml("json", 
+        ' Max (' + cfg.maxFPS.toFixed(2) + ') frame/s <pre>' +
+        JSON.stringify(cfg.justAdded, allKeys, 4)
+        + '</pre>');
+    } 
+    // prefill data to have the graph drawn from right to left 
+    for (i = 0; i < _C_.max_history; i++) _C_.history.push(
+      {
+        'colour': 'black',
+        'time': 0,
+        'elapsed': 0
+      }
+    );
+      poll(1);
+      poll(2);
+      poll(3);
+      poll(4);  
+    trimmer.onchange()
+    poller.onchange()
+    concurrentpolls.onchange()
+  </script>
+</body>
+
+</html>

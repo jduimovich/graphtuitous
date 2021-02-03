@@ -1,11 +1,13 @@
 # Graphtuitous
 
-Graphtuitous is demo application that uses gratuitious graphs to demonstrate a simple service to demonstrate e2e development, innerloop and outerloop. The service can be scaled, compute altered to demonstrate performance issues, and graph colours will allow visual confirmation of changes.
+
+Graphtuitous is demo application that uses graphs, a simple service with compute to demonstrate e2e development, innerloop and outerloop.
+  
+This app was ported from https://github.com/jduimovich/rgb into Quarkus.
 
 ![Gratuitous Graphs](graphtuitous.png)
 
-  
-This app has one endpoint /fib and is used to demonstrate simple applications on kubernetes. 
+This app has one endpoint /test and is used to demonstrate simple applications on kubernetes. 
 
 It will return a JSON object. 
 ```
@@ -40,4 +42,3 @@ It will return a JSON object.
    `compute` Server side function name and parameter as a string. 
   
    `time` Execution time on the server for the specific demo function and loop count.
-   
