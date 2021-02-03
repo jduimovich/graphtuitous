@@ -33,9 +33,9 @@ jobs:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
           file: frontend/deploy/deployment.yaml    
-      - name: Rename for merging 
+      - name: Combine Snyk Sarif Output
         run: | 
-          mv snyk.sarif frontend-deployment-snyk.sarif   
+          bash snyk-rename   
 
       - name: Run Snyk to check frontend service 
         continue-on-error: true

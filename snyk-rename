@@ -1,0 +1,19 @@
+export N=$(jq  ".runs[0].results[0].locations[0].physicalLocation.artifactLocation.uri" snyk.sarif)
+N="${N%\"}"
+N="${N#\"}"
+N=$(echo $N | tr  "/" "-")
+
+N=$(echo $N | sed "s/yaml/sarif/g")
+
+FILE=merged.sarif
+if [ -f "$FILE" ]; then
+    echo "$FILE exists."
+else
+    echo "$FILE does not exist, setting bootstrap."
+    cp snyk.sarif $FILE
+fi
+echo Merging snyk.sarif into $FILE
+echo Copy snyk.sarif into $N
+cp snyk.sarif $N
+node merge.js $FILE $N  
+ 
