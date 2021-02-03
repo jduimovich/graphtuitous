@@ -17,7 +17,15 @@ type Response struct {
 	Loop     int    `json:"loop"`
 	Compute  string `json:"compute"`
 	Time     int64  `json:"time"`
-	Health   int64  `json:"health"`
+}
+type Health struct {
+	Health string `json:"health"`
+	Count  int    `json:"count"`
+}
+
+var health *Health = &Health{
+	Health: "Ok",
+	Count:  0,
 }
 
 var response *Response = &Response{
@@ -39,13 +47,11 @@ func fib(n int) int {
 }
 
 func healthHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Printf("healthHandler: called %d times\n", response.Health)
+	health.Count++
+	fmt.Printf("healthHandler: called %d times\n", health.Count)
 	switch r.Method {
 	case "GET":
-		response.Time = 0
-		response.Hostname, _ = os.Hostname()
-		response.Health++
-		j, _ := json.Marshal(response)
+		j, _ := json.Marshal(health)
 		w.Write(j)
 	default:
 		w.WriteHeader(http.StatusMethodNotAllowed)

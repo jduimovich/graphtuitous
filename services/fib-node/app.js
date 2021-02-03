@@ -14,8 +14,8 @@ function fib(n) {
 app.get("/health", function (req, res) {
 	var response = {
 		"status": 'OK'
-	};  
-	res.setHeader('Content-Type', 'application/json'); 
+	};   
+	res.setHeader('Content-Type', 'application/json; charset=utf-8');
 	res.send(JSON.stringify(response, undefined, 4));
 });
 
@@ -37,9 +37,8 @@ app.get("/fib", function (req, res) {
 	var c = APP_LOOP;
 	while (c--) fib(APP_COMPUTE);
 	var end = new Date();
-	response.time = end - start;
-
-	res.setHeader('Content-Type', 'application/json'); 
+	response.time = end - start; 
+	res.setHeader('Content-Type', 'application/json; charset=utf-8');
 	res.send(JSON.stringify(response));
 });
 
