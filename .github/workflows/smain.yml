@@ -81,7 +81,7 @@ jobs:
         run: |    
           node merge.js merged.sarif fib-node-deployment-snyk.sarif 
 
-        - name: Run Snyk to check fib-quarkus deployment
+      - name: Run Snyk to check fib-quarkus deployment
         continue-on-error: true
         uses: snyk/actions/iac@master
         env:
@@ -95,7 +95,7 @@ jobs:
         run: |    
           node merge.js merged.sarif  fib-quarkus-deployment-snyk.sarif 
 
-       - name: Save all sarif files
+      - name: Save all sarif files
         run: |  
           mkdir -p uploads
           mv *.sarif  uploads 
