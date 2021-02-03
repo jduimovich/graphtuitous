@@ -39,12 +39,12 @@ jobs:
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
-          file: deploy/deployment.yaml    
+          file: frontend/deploy/deployment.yaml    
       - name: Upload Scan Results  
         uses: actions/upload-artifact@v2
         with: 
           name:  snyk.sarif   
-          path: snyk.sarif   
+          path: frontend-snyk.sarif   
       - name: Upload result to GitHub Code Scanning
         uses: github/codeql-action/upload-sarif@v1
         with:
