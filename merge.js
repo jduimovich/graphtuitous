@@ -33,42 +33,12 @@ function mergeSarif(d1, d2) {
     }) 
     console.log ("Number of rules combined is: ",  newRules.length  )   
     j1.runs[0].tool.driver.rules = newRules;
-
-    var j1byid = new Object()
-    j1.runs[0].results.forEach (function (e) { 
-        j1byid[e.ruleId] = e;
-    })
-    var j2byid = new Object()
-    j2.runs[0].results.forEach (function (e) { 
-        j2byid[e.ruleId] = e;
-    })  
-
-      
+ 
     console.log ("Rules and locations pre-merge: ",  j1.runs[0].tool.driver.rules.length  )    
     j1.runs[0].results.forEach (function (e) {
         console.log ("Id:",  e.ruleId, " ", e.locations.length )    
     })
-    // merge all into j1
-    j1.runs[0].results.forEach (function (e) { 
-        j2Has = j2byid[e.ruleId];
-        if (j2Has) {   
-            var combined = j1byid[e.ruleId].locations.concat(j2byid[e.ruleId].locations)
-            var included = new Set()
-            var uniq = []
-            combined.forEach(function (e) {
-                if (!included.has(e.physicalLocation.artifactLocation.uri)) {
-                    included.add(e.physicalLocation.artifactLocation.uri);
-                    uniq.push(e)
-                }
-            }) 
-            j1byid[e.ruleId].locations = uniq 
-        }  
-    } )
-    //  add j2 exclusive into j1
-    j2.runs[0].results.forEach (function (e) { 
-        j1Has = j1byid[e.ruleId];
-        if (!j1Has) j1.runs[0].results.push (e)
-    }  )
+    j1.runs[0].results = j1.runs[0].results.concat(j1.runs[0].results)
     
     console.log ("Rules and locations post-merge: ",  j1.runs[0].tool.driver.rules.length  )    
     j1.runs[0].results.forEach (function (e) {
