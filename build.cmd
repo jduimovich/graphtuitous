@@ -6,7 +6,7 @@ cd ..\fib-node
 docker build -t jduimovich/fib-node .
 
 cd ..\fib-quarkus
-docker build -t jduimovich/fib-quarkus .
+call build-image.bat
 
 cd ..\..\frontend
 docker build -t jduimovich/frontend .
