@@ -88,7 +88,7 @@ jobs:
       - name: Bootstrap and Merge
         run: |    
           node merge.js merged.sarif  fib-node-deployment-snyk.sarif 
- 
+
         - name: Run Snyk to check fib-quarkus deployment
         continue-on-error: true
         uses: snyk/actions/iac@master
