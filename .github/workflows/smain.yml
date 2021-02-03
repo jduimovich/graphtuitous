@@ -36,8 +36,8 @@ jobs:
       - name: Upload Scan Results  
         uses: actions/upload-artifact@v2
         with: 
-          name:  snyk.sarif   
-          path: frontend-snyk.sarif   
+          name:  frontend-snyk.sarif   
+          path: snyk.sarif   
       - name: Upload result to GitHub Code Scanning
         uses: github/codeql-action/upload-sarif@v1
         with:
