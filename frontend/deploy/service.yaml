@@ -10,6 +10,4 @@ spec:
   ports:
   - port: 8080
     targetPort: 8080
-  type: LoadBalancer  
-  loadBalancerSourceRanges:
-  - 10.0.0.0/8
+  type: LoadBalancer
