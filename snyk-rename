@@ -7,13 +7,13 @@ N=$(echo $N | sed "s/yaml/sarif/g")
 
 FILE=merged.sarif
 if [ -f "$FILE" ]; then
-    echo "$FILE exists."
+    echo "$FILE exists, merging $N into it."
+    cp snyk.sarif $N
+    node merge.js $FILE $N  
 else
     echo "$FILE does not exist, setting bootstrap."
     cp snyk.sarif $FILE
-fi
-echo Merging snyk.sarif into $FILE
-echo Copy snyk.sarif into $N
-cp snyk.sarif $N
-node merge.js $FILE $N  
+    cp snyk.sarif $N
+fi 
+
  
