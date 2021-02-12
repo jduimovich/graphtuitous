@@ -17,7 +17,7 @@ on:
 jobs:
   # This workflow contains a single job called "build"
   scan:
-    name: Scan Repo with Snyk
+    name: Scan YAML Artifacts with Snyk
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
 
@@ -25,27 +25,73 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2 
-        
-      - name: Snyk Authorize and Test
-        uses: snyk/actions@0.3.0
-        env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-        with: 
-          command:  test  
-          json: snyk.json   
-      - name: Run Snyk to check Kubernetes manifest file for issues
+
+      - name: Run Snyk to check frontend deployment
         continue-on-error: true
         uses: snyk/actions/iac@master
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
-          file: deploy/deployment.yaml    
-      - name: Upload Scan Results  
+          file: frontend/deploy/deployment.yaml    
+      - name: Combine Snyk Sarif Output
+        run: | 
+          bash snyk-rename   
+
+      - name: Run Snyk to check frontend service 
+        continue-on-error: true
+        uses: snyk/actions/iac@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          file: frontend/deploy/service.yaml  
+      - name: Combine Snyk Sarif Output
+        run: | 
+          bash snyk-rename   
+
+      - name: Run Snyk to check fib-go deployment
+        continue-on-error: true
+        uses: snyk/actions/iac@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          file: services/fib-go/deploy/deployment.yaml    
+      - name: Combine Snyk Sarif Output
+        run: | 
+          bash snyk-rename   
+
+      - name: Run Snyk to check fib-node deployment
+        continue-on-error: true
+        uses: snyk/actions/iac@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          file: services/fib-node/deploy/deployment.yaml    
+      - name: Combine Snyk Sarif Output
+        run: | 
+          bash snyk-rename   
+
+      - name: Run Snyk to check fib-quarkus deployment
+        continue-on-error: true
+        uses: snyk/actions/iac@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          file: services/fib-quarkus/deploy/deployment.yaml    
+      - name: Combine Snyk Sarif Output
+        run: | 
+          bash snyk-rename   
+
+      - name: Save all sarif files
+        run: |  
+          mkdir -p uploads
+          mv *.sarif  uploads 
+
+      - name: Upload merged Results  
         uses: actions/upload-artifact@v2
         with: 
-          name:  snyk.sarif   
-          path: snyk.sarif   
+          name: uploads
+          path: uploads
       - name: Upload result to GitHub Code Scanning
         uses: github/codeql-action/upload-sarif@v1
         with:
-          sarif_file: snyk.sarif
+          sarif_file: uploads/merged.sarif 

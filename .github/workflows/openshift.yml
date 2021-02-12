@@ -28,7 +28,7 @@
 # For a more sophisticated example, see https://github.com/redhat-actions/spring-petclinic/blob/main/.github/workflows/petclinic-sample.yaml
 # Also see our GitHub organization, https://github.com/redhat-actions/
 
-name: OpenShift
+name: OpenShift build and Deploy
 
 # ⬇️  Modify the fields marked with ⬇️ to fit your project, and create any secrets that are referenced.
 # https://docs.github.com/en/free-pro-team@latest/actions/reference/encrypted-secrets

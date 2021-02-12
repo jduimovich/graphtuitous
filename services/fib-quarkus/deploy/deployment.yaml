@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fib-quarkus-deploy
+  labels:
+    app: fib
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: fib
+  template:
+    metadata:
+      labels:
+        app: fib
+    spec:
+      containers:
+      - name: fib-quarkus-deploy
+        image: jduimovich/fib-quarkus:latest
+        resources:
+          limits:
+            cpu: "200m"
+            memory: "256Mi"
+          requests:
+            cpu: "100m"
+            memory: "256Mi"
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
+        readinessProbe:
+          tcpSocket:
+            port: 8080
+          initialDelaySeconds: 60
+          periodSeconds: 10
+        livenessProbe:
+          initialDelaySeconds: 60
+          periodSeconds: 5
+          httpGet:
+            path: /fib
+            port: 8080
