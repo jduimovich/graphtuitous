@@ -60,7 +60,9 @@ func healthHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func fibHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Printf("fibHandler: called %d times\n", response.Count)
+	if response.Count%20 == 0 {
+		fmt.Printf("fibHandler: called %d times\n", response.Count)
+	}
 	switch r.Method {
 	case "GET":
 		response.Hostname, _ = os.Hostname()
