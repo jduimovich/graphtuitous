@@ -4,6 +4,8 @@ metadata:
   name: fib-node-deploy
   labels:
     app: fib
+    app.kubernetes.io/name: fib-node-deploy
+    app.kubernetes.io/part-of: fib-service
 spec:
   replicas: 2
   selector:

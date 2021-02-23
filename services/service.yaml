@@ -4,6 +4,7 @@ metadata:
   name: fibs-service
   labels:
     app: fibs-service
+    app.kubernetes.io/part-of: fib-service
 spec:
   selector:
     app: fib

@@ -3,7 +3,9 @@ kind: Deployment
 metadata:
   name: frontend-deploy
   labels:
-    app: frontend
+    app: frontend 
+    app.kubernetes.io/name:  frontend-deploy
+    app.kubernetes.io/part-of: frontend-service
 spec:
   replicas: 1
   selector:

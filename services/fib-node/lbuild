@@ -1,8 +1,0 @@
-source env-vars
-echo Building  $FULL_CONTAINER_SPEC "\n"
-docker build  -t $FULL_CONTAINER_SPEC .
-if [ "$1". == "push." ]; then
-   docker push $FULL_CONTAINER_SPEC
-else
-   echo no push
-fi
