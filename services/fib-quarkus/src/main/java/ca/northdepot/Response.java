@@ -34,10 +34,8 @@ public class Response {
         while (i-- > 0)
             fib(param);
         long end = System.currentTimeMillis();
-        this.time = end - start;
-        if (allTimeCount % 20 == 0) { 
-            System.out.printf("fibHandler: called  %d times\n", allTimeCount);
-        }
+        this.time = end - start; 
+        System.out.printf("fibHandler: called  %d times\n", allTimeCount);
     }
 
     private int fib(int n) {
