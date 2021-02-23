@@ -170,6 +170,10 @@
         this.addData('0', 'black', 0);
       }
     }
+
+    var lastDisplay = new Date();
+     
+
     function countResponses_then_resetPoll(response, n) {
       var cfg = _C_;
       cfg.totalRequests++;
@@ -187,15 +191,20 @@
       process_compute_vs_elapsed_by_percent(cfg);
       process_FPS(cfg);
       process_response_by_host(cfg);
-
+      show_response_text(cfg)
+ 
       hookpoll(n);
       // begin gratuitous graphs.
-      show_compute_vs_elapsed(cfg);
-      show_compute_vs_elapsed_by_percent(cfg);
-      show_FPS(cfg);
-      show_response_by_host(cfg);
+      var now = new Date() ;
+      elapsed = now - lastDisplay; 
+      if (elapsed > 30) {
+        lastDisplay = now;
+        show_compute_vs_elapsed(cfg);
+        show_compute_vs_elapsed_by_percent(cfg);
+        show_FPS(cfg);
+        show_response_by_host(cfg);
+      }
 
-      show_response_text(cfg)
     }
 
 
@@ -392,13 +401,14 @@
         cfg.timeForFPS = new Date();
         cfg.countsForFPS = 0;
       }
-      // no redraw if same value
-      if (cfg.prevFPS == fps.toFixed(2)) return;
-      cfg.prevFPS = fps.toFixed(2)
+      cfg.currentFPS = fps; 
     }
 
 
     function show_FPS(cfg) {  
+      // no redraw if same value
+      if (cfg.prevFPS == cfg.currentFPS.toFixed(2)) return;
+      cfg.prevFPS = cfg.currentFPS.toFixed(2)
       var max = Math.ceil((1000 / cfg.period) / 10) * 10 + 10;
       var data = [
         {
