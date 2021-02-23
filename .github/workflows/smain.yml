@@ -33,9 +33,10 @@ jobs:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
           file: frontend/deploy/deployment.yaml    
-      - name: Combine Snyk Sarif Output
-        run: | 
-          bash snyk-rename   
+      - uses: jduimovich/collect-sarif-files@main 
+        with:
+          input-file-name: snyk.sarif
+          merged-file-name: merged.sarif
 
       - name: Run Snyk to check frontend service 
         continue-on-error: true
@@ -44,9 +45,10 @@ jobs:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
           file: frontend/deploy/service.yaml  
-      - name: Combine Snyk Sarif Output
-        run: | 
-          bash snyk-rename   
+      - uses: jduimovich/collect-sarif-files@main 
+        with:
+          input-file-name: snyk.sarif
+          merged-file-name: merged.sarif
 
       - name: Run Snyk to check fib-go deployment
         continue-on-error: true
@@ -55,9 +57,10 @@ jobs:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
           file: services/fib-go/deploy/deployment.yaml    
-      - name: Combine Snyk Sarif Output
-        run: | 
-          bash snyk-rename   
+      - uses: jduimovich/collect-sarif-files@main 
+        with:
+          input-file-name: snyk.sarif
+          merged-file-name: merged.sarif
 
       - name: Run Snyk to check fib-node deployment
         continue-on-error: true
@@ -66,9 +69,10 @@ jobs:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
           file: services/fib-node/deploy/deployment.yaml    
-      - name: Combine Snyk Sarif Output
-        run: | 
-          bash snyk-rename   
+      - uses: jduimovich/collect-sarif-files@main 
+        with:
+          input-file-name: snyk.sarif
+          merged-file-name: merged.sarif
 
       - name: Run Snyk to check fib-quarkus deployment
         continue-on-error: true
@@ -77,15 +81,15 @@ jobs:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
           file: services/fib-quarkus/deploy/deployment.yaml    
-      - name: Combine Snyk Sarif Output
-        run: | 
-          bash snyk-rename   
+      - uses: jduimovich/collect-sarif-files@main 
+        with:
+          input-file-name: snyk.sarif
+          merged-file-name: merged.sarif
 
       - name: Save all sarif files
         run: |  
           mkdir -p uploads
-          mv *.sarif  uploads 
-
+          mv *.sarif  uploads  
       - name: Upload merged Results  
         uses: actions/upload-artifact@v2
         with: 
