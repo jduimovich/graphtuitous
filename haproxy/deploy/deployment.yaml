@@ -3,7 +3,10 @@ kind: Deployment
 metadata:
   name: haproxy-deploy
   labels:
-    app: haproxy
+    app: haproxy 
+    app.openshift.io/runtime : haproxy 
+  annotations: 
+    app.openshift.io/connects-to: '["nginx-html-server",  "fib-service-in-go",  "fib-service-in-quarkus",  "fib-service-in-node"]'  
 spec:
   replicas: 1
   selector:

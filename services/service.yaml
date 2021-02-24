@@ -3,8 +3,7 @@ kind: Service
 metadata:
   name: fibs-service
   labels:
-    app: fibs-service
-    app.kubernetes.io/part-of: fib-service
+    app: fibs-service 
 spec:
   selector:
     app: fib
