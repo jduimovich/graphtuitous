@@ -1,4 +1,8 @@
 
+set CURRENT_DIR=%cd%
+set SCRIPT_DIR=%~dp0
+cd %SCRIPT_DIR%\..
+
 cd services\fib-go
 docker build -t jduimovich/fib-go .
 
@@ -22,3 +26,5 @@ docker push jduimovich/fib-quarkus
 docker push jduimovich/frontend
 docker push jduimovich/frontend-haproxy
   
+
+cd %CURRENT_DIR%

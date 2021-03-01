@@ -1,4 +1,7 @@
- 
+
+script_dir=$(dirname "$0")
+cd $script_dir/..
+
 kubectl delete -f services/fib-quarkus/deploy
 kubectl delete -f services/fib-go/deploy
 kubectl delete -f services/fib-node/deploy
