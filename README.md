@@ -4,8 +4,27 @@ Graphtuitous is demo application that uses gratuitious graphs to demonstrate a s
 
 ![Gratuitous Graphs](graphtuitous.png)
 
-  
-This app has one endpoint /fib and is used to demonstrate simple applications on kubernetes. 
+The app provides a frontend which has a GUI to graph response times to reading a service. The front end is the entrypoint to the service. The service has  one endpoint /fib and is used to demonstrate a simple application on kubernetes. The service has implementatins in node.js, quarkus and golang and has three deployments which are combined into a services via label selector. The frontend is an nginx server which is used to provide access to html resources. An HAProxy instance load balances between the services but is also used to provide local development via a dockerized runtime.
+
+## Local Dev 
+
+This application supports local dev (innerloop) a shell script `hack/dev.sh` (`hack/dev.cmd` on windows) will launch each services at a port and uses HAProxy to load balance across them transparently to the application. No code changes in the services is required in local dev mode.
+
+Hot code replace is supported the node and quarkus examples. The Golang service requires restart. 
+
+
+## Openshift Deploy
+
+This application can be deploy via local deployment manifests on OpenShift. See `hack/deploy.sh` for the resources on kubernetes clusters. A route is included for openshift.
+Once deployed the application can be found in the topology viewer.
+
+![Gratuitous Graphs](openshift.png)
+
+
+## Internals 
+
+The service is at endpoint `/fib` and returns a JSON result. The colour is provided to enable visual cues in this demo. 
+You can modify the loop times for performance differences and watch load balancing and latency changes in realtime.
 
 It will return a JSON object. 
 ```
