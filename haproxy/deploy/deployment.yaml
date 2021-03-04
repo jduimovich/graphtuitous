@@ -6,7 +6,8 @@ metadata:
     app: haproxy 
     app.openshift.io/runtime : haproxy 
   annotations: 
-    app.openshift.io/connects-to: '["nginx-html-server",  "fib-service-in-go",  "fib-service-in-quarkus",  "fib-service-in-node"]'  
+    app.openshift.io/connects-to: '["nginx-html-server",  "fib-service-in-go",  "fib-service-in-quarkus",  "fib-service-in-node"]'   
+    container.apparmor.security.beta.kubernetes.io/haproxy-deploy: runtime/default 
 spec:
   replicas: 1
   selector:
@@ -17,6 +18,8 @@ spec:
       labels:
         app: haproxy
     spec:
+      securityContext:
+        runAsNonRoot: true
       containers:
       - name: haproxy-deploy
         image: jduimovich/frontend-haproxy:latest
@@ -41,3 +44,7 @@ spec:
           httpGet:
             path: /health
             port: 8080
+        securityContext:
+          capabilities:
+            drop:
+              - all
