@@ -1,40 +1,38 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: fib-node-deploy
+  name: haproxy-deploy
   labels:
-    app: fib
-    app.kubernetes.io/name: fib-node-deploy
-    app.kubernetes.io/part-of: fib-service  
-    app.kubernetes.io/instance : fib-service-in-node
-    app.kubernetes.io/component : backend 
-    app.openshift.io/runtime : nodejs 
+    app: haproxy 
+    app.openshift.io/runtime : haproxy 
+  annotations: 
+    app.openshift.io/connects-to: '["nginx-html-server",  "fib-service-in-go",  "fib-service-in-quarkus",  "fib-service-in-node"]'  
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
-      app: fib
+      app: haproxy
   template:
     metadata:
       labels:
-        app: fib
+        app: haproxy
     spec:
       containers:
-      - name: fib-node-deploy
-        image: jduimovich/fib-node:latest
+      - name: haproxy-deploy
+        image: jduimovich/frontend-haproxy:latest
         resources:
           limits:
             cpu: "200m"
-            memory: "64Mi"
+            memory: "128Mi"
           requests:
             cpu: "100m"
-            memory: "32Mi"
+            memory: "128Mi"
         imagePullPolicy: Always
         ports:
         - containerPort: 8080
         readinessProbe:
           tcpSocket:
-            port: 8080
+             port: 8080
           initialDelaySeconds: 5
           periodSeconds: 10
         livenessProbe:

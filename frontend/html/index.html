@@ -63,6 +63,12 @@
       </td>
       <td>
         <p>
+        <div id="displayratetext"> Display Refresh </div>
+        <input type="range" min="0" max="200" value="75" step="25" class="slider" id="displayrate">
+        </p>
+      </td>
+      <td>
+        <p>
         <div id="concurrentthreads"> Poll Threads </div>
         <input type="range" min="1" max="10" value="4" step="1" class="slider" id="concurrentpolls">
         </p>
@@ -120,6 +126,13 @@
     }
     poller.onchange = poller.oninput;
 
+    var displayrate = document.getElementById("displayrate");
+    displayrate.oninput = function () { 
+      _C_.displayrate = this.value;  
+      setInnerHtml("displayratetext", 'Display Refresh: ' +  _C_.displayrate + ' ms');
+    }
+    displayrate.onchange = displayrate.oninput;
+
     // globl config, easy to find and pass around.
     var _C_ = {
       "url": 'fib',        // url you fetch
@@ -128,6 +141,8 @@
       "elapsedTotal": 0,    // total of elapsed times in history
       "max_history": 100,   // max history of responses
       "period": 50,         // poll period in ms
+      "displayrate": 75,    // display refresh window
+      
       "debug": true,        // show requests in status window
 
       "historyByHostName": {
@@ -196,8 +211,8 @@
       hookpoll(n);
       // begin gratuitous graphs.
       var now = new Date() ;
-      elapsed = now - lastDisplay; 
-      if (elapsed > 30) {
+      elapsed = now - lastDisplay;  
+      if (elapsed > cfg.displayrate) {
         lastDisplay = now;
         show_compute_vs_elapsed(cfg);
         show_compute_vs_elapsed_by_percent(cfg);
@@ -209,7 +224,7 @@
 
 
     var concurrentpolls = document.getElementById("concurrentpolls");
-    var maxPoll = 4;
+    var maxPoll = 0;
     concurrentpolls.oninput = function () {
       var newPoll = parseInt(this.value);
       setInnerHtml("concurrentthreads", 'Async Requests: ' + newPoll);
@@ -449,11 +464,8 @@
         'elapsed': 0
       }
     );
-    poll(1);
-    poll(2);
-    poll(3);
-    poll(4);
     trimmer.onchange()
+    displayrate.onchange()
     poller.onchange()
     concurrentpolls.onchange()
   </script>

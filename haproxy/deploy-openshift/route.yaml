@@ -3,7 +3,7 @@ kind: Route
 metadata:
   name: all 
   labels:
-    app: frontend-service
+    app: haproxy-service
 spec: 
   port:
     targetPort: 8080
@@ -12,5 +12,5 @@ spec:
     termination: edge
   to:
     kind: Service
-    name: frontend-service
+    name: haproxy-service
     weight: 100

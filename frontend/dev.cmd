@@ -5,7 +5,6 @@ SET CONFIG=-v %CD%\local:/etc/nginx/conf.d:ro
 
 docker stop nginx
 docker rm nginx
-docker run --rm --name nginx -p 8888:8080 %HTML% %CONFIG% -d docker.io/nginx
+docker run --rm --name nginx -p 8089:8080 %HTML% %CONFIG% -d docker.io/nginx
 
-start http://localhost:8888
 

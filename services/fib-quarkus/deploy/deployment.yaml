@@ -4,6 +4,11 @@ metadata:
   name: fib-quarkus-deploy
   labels:
     app: fib
+    app.kubernetes.io/name: fib-quarkus-deploy
+    app.kubernetes.io/part-of: fib-service  
+    app.kubernetes.io/instance : fib-service-in-quarkus
+    app.kubernetes.io/component : backend 
+    app.openshift.io/runtime : quarkus 
 spec:
   replicas: 2
   selector:
@@ -20,10 +25,10 @@ spec:
         resources:
           limits:
             cpu: "200m"
-            memory: "256Mi"
+            memory: "384Mi"
           requests:
             cpu: "100m"
-            memory: "256Mi"
+            memory: "384Mi"
         imagePullPolicy: Always
         ports:
         - containerPort: 8080
