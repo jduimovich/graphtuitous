@@ -9,3 +9,6 @@ oc apply -f services/service.yaml
 
 oc apply -f frontend/deploy
 oc apply -f frontend/deploy-openshift
+
+open http://localhost:8080
+
