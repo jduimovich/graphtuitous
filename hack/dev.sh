@@ -14,4 +14,5 @@ open -a Terminal   services/fib-go/dev.sh
 open -a Terminal   frontend/dev.sh 
 open -a Terminal  haproxy/dev.sh 
  
+sleep 2
 open http://localhost:8888
