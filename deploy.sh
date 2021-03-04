@@ -1,14 +1,5 @@
 
 
-oc project  rgb
+sh hack/deploy.sh
 
-oc apply -f services/fib-quarkus/deploy
-oc apply -f services/fib-node/deploy
-oc apply -f services/fib-go/deploy
-oc apply -f services/service.yaml
-
-oc apply -f frontend/deploy
-oc apply -f frontend/deploy-openshift
-
-open http://localhost:8080
 
