@@ -12,6 +12,8 @@ This application supports local dev (innerloop) a shell script `hack/dev.sh` (`h
 
 Hot code replace is supported the node and quarkus examples. The Golang service requires restart. 
 
+Note, on macos and linux, there is a handy shell script `sh verify-dependencies` which validates the local tools needed to be installed for local dev.
+
 
 ## Openshift Deploy
 
