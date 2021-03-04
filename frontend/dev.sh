@@ -1,6 +1,6 @@
 
 script_dir=$(dirname "$0") 
-echo $script_dir 
+cd $script_dir 
 CD=$(pwd) 
 HTML="-v $CD/html:/usr/share/nginx/html:ro"
 CONFIG="-v $CD/local:/etc/nginx/conf.d:ro"
