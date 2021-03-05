@@ -1,8 +1,8 @@
 set CURRENT_DIR=%cd%
 set SCRIPT_DIR=%~dp0
 cd %SCRIPT_DIR%\..
-
-oc project  rgb
+ 
+oc project   
 
 kubectl delete -f services\fib-quarkus\deploy
 kubectl delete -f services\fib-go\deploy

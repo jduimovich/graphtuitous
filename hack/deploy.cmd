@@ -5,7 +5,7 @@ set SCRIPT_DIR=%~dp0
 cd %SCRIPT_DIR%\..
 
 
-oc project  rgb
+oc project   
 
 oc apply -f services\fib-quarkus\deploy
 oc apply -f services\fib-node\deploy
