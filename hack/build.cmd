@@ -12,13 +12,11 @@ docker build -t jduimovich/fib-node .
 cd ..\fib-quarkus
 call build-image.bat
 
-cd ..\..\frontend
+cd ..\frontend
 docker build -t jduimovich/frontend .
-cd ..
 
-cd haproxy
+cd ..\haproxy
 docker build -t jduimovich/frontend-haproxy .
-cd ..
 
 docker push jduimovich/fib-go
 docker push jduimovich/fib-node
