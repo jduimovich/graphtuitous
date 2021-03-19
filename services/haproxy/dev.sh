@@ -4,7 +4,7 @@ script_dir=$(dirname "$0")
 cd $script_dir 
 CD=$(pwd)  
 
-DOCKER_USER=$(sh $CD/../hack/dockerusername.sh)
+DOCKER_USER=$(sh $CD/../../hack/dockerusername.sh)
 
 docker build -f Dockerfile.local -t $DOCKER_USER/frontend-haproxy-local .
 
