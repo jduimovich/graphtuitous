@@ -9,5 +9,4 @@ spec:
     app: haproxy
   ports:
   - port: 8080
-    targetPort: 8080
-  type: LoadBalancer
+    targetPort: 8080 
