@@ -20,6 +20,8 @@ Note, on macos and linux, there is a handy shell script `sh verify-dependencies`
 This application can be deploy via local deployment manifests on OpenShift. See `hack/deploy.sh` for the resources on kubernetes clusters. A route is included for openshift.
 Once deployed the application can be found in the topology viewer.
 
+If you are using argocd, you point to the `deploy` directory recursive and directly deploy this repository to your openshift cluster. 
+
 ![Gratuitous Graphs](openshift.png)
 
 
