@@ -24,7 +24,7 @@ jobs:
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
-          file: haproxy/deploy/deployment.yaml     
+          file: deploy/haproxy/deployment.yaml     
       - uses: jduimovich/collect-sarif-files@main 
         with:
           input-file-name: snyk.sarif
@@ -36,7 +36,7 @@ jobs:
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
-          file: haproxy/deploy/service.yaml  
+          file: deploy/haproxy/service.yaml  
       - uses: jduimovich/collect-sarif-files@main 
         with:
           input-file-name: snyk.sarif
@@ -48,7 +48,7 @@ jobs:
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
-          file: frontend/deploy/deployment.yaml     
+          file: deploy/frontend/deployment.yaml     
       - uses: jduimovich/collect-sarif-files@main 
         with:
           input-file-name: snyk.sarif
@@ -60,7 +60,7 @@ jobs:
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
-          file: frontend/deploy/service.yaml  
+          file: deploy/frontend/service.yaml  
       - uses: jduimovich/collect-sarif-files@main 
         with:
           input-file-name: snyk.sarif
@@ -72,7 +72,7 @@ jobs:
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
-          file: services/fib-go/deploy/deployment.yaml  
+          file: deploy/services/fib-go/deployment.yaml  
       - uses: jduimovich/collect-sarif-files@main 
         with:
           input-file-name: snyk.sarif
@@ -84,7 +84,7 @@ jobs:
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
-          file: services/fib-node/deploy/deployment.yaml 
+          file: deploy/services/fib-node/deployment.yaml 
       - uses: jduimovich/collect-sarif-files@main 
         with:
           input-file-name: snyk.sarif
@@ -96,7 +96,7 @@ jobs:
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
-          file: services/fib-quarkus/deploy/deployment.yaml    
+          file: deploy/services/fib-quarkus/deployment.yaml    
       - uses: jduimovich/collect-sarif-files@main 
         with:
           input-file-name: snyk.sarif
