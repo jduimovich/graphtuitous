@@ -20,12 +20,12 @@ cd ../frontend
 docker build -t $DOCKER_USER/frontend .
 
 cd ../haproxy
-docker build -t $DOCKER_USER/frontend-haproxy .
+docker build -t $DOCKER_USER/haproxy .
 
 docker push $DOCKER_USER/fib-go
 docker push $DOCKER_USER/fib-node
 docker push $DOCKER_USER/fib-quarkus
 docker push $DOCKER_USER/frontend
-docker push $DOCKER_USER/frontend-haproxy
+docker push $DOCKER_USER/haproxy
   
 cd $CURRENT_DIR

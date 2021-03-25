@@ -16,13 +16,13 @@ cd ..\frontend
 docker build -t jduimovich/frontend .
 
 cd ..\haproxy
-docker build -t jduimovich/frontend-haproxy .
+docker build -t jduimovich/haproxy .
 
 docker push jduimovich/fib-go
 docker push jduimovich/fib-node
 docker push jduimovich/fib-quarkus
 docker push jduimovich/frontend
-docker push jduimovich/frontend-haproxy
+docker push jduimovich/haproxy
   
 
 cd %CURRENT_DIR%

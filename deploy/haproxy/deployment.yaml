@@ -22,7 +22,7 @@ spec:
         runAsNonRoot: true
       containers:
       - name: haproxy-deploy
-        image: jduimovich/frontend-haproxy:latest
+        image: jduimovich/haproxy:latest
         resources:
           limits:
             cpu: "200m"
