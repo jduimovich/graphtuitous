@@ -1,0 +1,9 @@
+HTTP/1.0 200 Found
+Cache-Control: no-cache
+Connection: close
+Content-Type: text/html
+
+{
+	"status":  "OK"
+	"server":  "haproxy"
+}
