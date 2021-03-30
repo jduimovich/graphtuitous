@@ -83,8 +83,7 @@ jobs:
         dockerfiles: |
           ./services/frontend/Dockerfile
 
-    - name: Push to registry
-      id: push-to-registry
+    - name: Push fib-go to registry 
       uses: redhat-actions/push-to-registry@v1
       with:
         image: "fib-go"
@@ -92,8 +91,7 @@ jobs:
         registry: ${{ env.REGISTRY }}
         username: ${{ env.REGISTRY_USER }}
         password: ${{ env.REGISTRY_PASSWORD }}
-    - name: Push to registry
-      id: push-to-registry
+    - name: Push fib-node to registry 
       uses: redhat-actions/push-to-registry@v1
       with:
         image: "fib-node"
@@ -101,8 +99,7 @@ jobs:
         registry: ${{ env.REGISTRY }}
         username: ${{ env.REGISTRY_USER }}
         password: ${{ env.REGISTRY_PASSWORD }}
-    - name: Push to registry
-      id: push-to-registry
+    - name: Push fib-quarkus to registry 
       uses: redhat-actions/push-to-registry@v1
       with:
         image: "fib-quarkus"
@@ -110,8 +107,7 @@ jobs:
         registry: ${{ env.REGISTRY }}
         username: ${{ env.REGISTRY_USER }}
         password: ${{ env.REGISTRY_PASSWORD }}
-    - name: Push to registry
-      id: push-to-registry
+    - name: Push haproxy to registry 
       uses: redhat-actions/push-to-registry@v1
       with:
         image: "haproxy"
@@ -119,8 +115,7 @@ jobs:
         registry: ${{ env.REGISTRY }}
         username: ${{ env.REGISTRY_USER }}
         password: ${{ env.REGISTRY_PASSWORD }}
-    - name: Push to registry
-      id: push-to-registry
+    - name: Push frontend to registry 
       uses: redhat-actions/push-to-registry@v1
       with:
         image: "frontend"
