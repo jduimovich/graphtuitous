@@ -65,8 +65,7 @@ jobs:
         image: "fib-node"
         tag: ${{ env.TAG }} 
         context: ./services/fib-node
-        dockerfiles: |
-          ./Dockerfile
+        dockerfiles: ./services/fib-node/Dockerfile
           
     - name: Build fib-quarkus Dockerfile
       uses: redhat-actions/buildah-build@v1
@@ -74,8 +73,7 @@ jobs:
         image: "fib-quarkus"
         tag: ${{ env.TAG }} 
         context: ./services/fib-quarkus
-        dockerfiles: |
-          ./Dockerfile
+        dockerfiles: ./services/fib-quarkus/Dockerfile
 
     - name: Build haproxy Dockerfile
       uses: redhat-actions/buildah-build@v1
@@ -83,8 +81,7 @@ jobs:
         image: "haproxy"
         tag: ${{ env.TAG }} 
         context: ./services/haproxy
-        dockerfiles: |
-          ./Dockerfile
+        dockerfiles: ./services/haproxy/Dockerfile
           
     - name: Build frontend Dockerfile
       uses: redhat-actions/buildah-build@v1
@@ -92,8 +89,7 @@ jobs:
         image: "frontend"
         tag: ${{ env.TAG }} 
         context: ./services/frontend
-        dockerfiles: |
-          ./Dockerfile 
+        dockerfiles: ./services/frontend/Dockerfile 
 
     - name: Push fib-go to registry 
       uses: redhat-actions/push-to-registry@v1
