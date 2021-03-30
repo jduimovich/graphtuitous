@@ -47,41 +47,60 @@ jobs:
       run: |
         echo "TAG=${GITHUB_SHA::7}" | tee -a $GITHUB_ENV
 
+    - name: fib-go
+      run: |
+        cd services/fib-go
     - name: Build fib-go Dockerfile
       uses: redhat-actions/buildah-build@v1
       with:
         image: "fib-go"
         tag: ${{ env.TAG }} 
         dockerfiles: |
-          ./services/fib-go/Dockerfile
+          ./Dockerfile
+    - name: fib-node
+      run: |
+        cd ../fib-node
     - name: Build fib-node Dockerfile
       uses: redhat-actions/buildah-build@v1
       with:
         image: "fib-node"
         tag: ${{ env.TAG }} 
         dockerfiles: |
-          ./services/fib-node/Dockerfile
+          ./Dockerfile
+    - name: fib-quarkus
+      run: |
+        cd ../fib-node
     - name: Build fib-quarkus Dockerfile
       uses: redhat-actions/buildah-build@v1
       with:
         image: "fib-quarkus"
         tag: ${{ env.TAG }} 
         dockerfiles: |
-          ./services/fib-quarkus/Dockerfile
+          ./Dockerfile
+    - name: haproxy
+      run: |
+        cd ../haproxy
     - name: Build haproxy Dockerfile
       uses: redhat-actions/buildah-build@v1
       with:
         image: "haproxy"
         tag: ${{ env.TAG }} 
         dockerfiles: |
-          ./services/haproxy/Dockerfile
+          ./Dockerfile
+    - name: frontend
+      run: |
+        cd ../frontend
     - name: Build frontend Dockerfile
       uses: redhat-actions/buildah-build@v1
       with:
         image: "frontend"
         tag: ${{ env.TAG }} 
         dockerfiles: |
-          ./services/frontend/Dockerfile
+          ./Dockerfile
+
+    - name: back to root dir
+      run: |
+        cd ../..
 
     - name: Push fib-go to registry 
       uses: redhat-actions/push-to-registry@v1
