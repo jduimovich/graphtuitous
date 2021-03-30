@@ -85,9 +85,9 @@ jobs:
 
     - name: Build fib-quarkus 
       run: |
-        cd service/fib-quarkus 
+        cd services/fib-quarkus 
         ./mvnw clean package -Dquarkus.container-image.group=${{ env.REGISTRY_USER }} -Dquarkus.container-image.username=${{ env.REGISTRY_USER }} -Dquarkus.container-image.push=false
-        
+
 
     - name: Push fib-go to registry 
       uses: redhat-actions/push-to-registry@v1
