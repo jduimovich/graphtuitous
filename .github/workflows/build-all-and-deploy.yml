@@ -138,6 +138,6 @@ jobs:
         insecure_skip_tls_verify: true
         namespace: ${{ env.OPENSHIFT_NAMESPACE }}
 
-    - name: Deply App
-      run: | 
+    - name: Deploy App
+      run: |
         oc apply -R -f deploy
