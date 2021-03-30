@@ -1,0 +1,143 @@
+# Sample multiple service demo and deploy to openshift
+
+name: OpenShift build all services and Deploy
+env:
+  # ⬇️ EDIT with your registry and registry path.
+  REGISTRY: quay.io/jduimovich0
+  # ⬇️ EDIT with your registry username.
+  REGISTRY_USER: jduimovich0
+  REGISTRY_PASSWORD: ${{ secrets.REGISTRY_PASSWORD }}
+
+  # ⬇️ EDIT to log into your OpenShift cluster and set up the context.
+  # See https://github.com/redhat-actions/oc-login#readme for how to retrieve these values.
+  OPENSHIFT_SERVER: ${{ secrets.OPENSHIFT_SERVER }}
+  OPENSHIFT_TOKEN: ${{ secrets.OPENSHIFT_TOKEN }}
+
+  # ⬇️ EDIT with the port your application should be accessible on.
+  APP_PORT: 8080
+
+  # ⬇️ EDIT if you wish to set the kube context's namespace after login. Leave blank to use the default namespace.
+  OPENSHIFT_NAMESPACE: "jduimovich-dev"
+
+  # If you wish to manually provide the APP_NAME and TAG, set them here, otherwise they will be auto-detected.
+  APP_NAME: ""
+  TAG: ""
+
+on:
+  # https://docs.github.com/en/free-pro-team@latest/actions/reference/events-that-trigger-workflows
+  push:
+    # Edit to the branch(es) you want to build and deploy on each push.
+    branches: [ main ]
+
+jobs:
+  openshift-ci-cd:
+    name: Build and deploy to OpenShift
+    runs-on: ubuntu-20.04
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Determine app name
+      if: env.APP_NAME == ''
+      run: |
+        echo "APP_NAME=$(basename $PWD)" | tee -a $GITHUB_ENV
+
+    - name: Determine tag
+      if: env.TAG == ''
+      run: |
+        echo "TAG=${GITHUB_SHA::7}" | tee -a $GITHUB_ENV
+
+    - name: Build fib-go Dockerfile
+      uses: redhat-actions/buildah-build@v1
+      with:
+        image: "fib-go"
+        tag: ${{ env.TAG }} 
+        dockerfiles: |
+          ./services/fib-go/Dockerfile
+    - name: Build fib-node Dockerfile
+      uses: redhat-actions/buildah-build@v1
+      with:
+        image: "fib-node"
+        tag: ${{ env.TAG }} 
+        dockerfiles: |
+          ./services/fib-node/Dockerfile
+    - name: Build fib-quarkus Dockerfile
+      uses: redhat-actions/buildah-build@v1
+      with:
+        image: "fib-quarkus"
+        tag: ${{ env.TAG }} 
+        dockerfiles: |
+          ./services/fib-quarkus/Dockerfile
+    - name: Build haproxy Dockerfile
+      uses: redhat-actions/buildah-build@v1
+      with:
+        image: "haproxy"
+        tag: ${{ env.TAG }} 
+        dockerfiles: |
+          ./services/haproxy/Dockerfile
+    - name: Build frontend Dockerfile
+      uses: redhat-actions/buildah-build@v1
+      with:
+        image: "frontend"
+        tag: ${{ env.TAG }} 
+        dockerfiles: |
+          ./services/frontend/Dockerfile
+
+    - name: Push to registry
+      id: push-to-registry
+      uses: redhat-actions/push-to-registry@v1
+      with:
+        image: "fib-go"
+        tag: ${{ env.TAG }}
+        registry: ${{ env.REGISTRY }}
+        username: ${{ env.REGISTRY_USER }}
+        password: ${{ env.REGISTRY_PASSWORD }}
+    - name: Push to registry
+      id: push-to-registry
+      uses: redhat-actions/push-to-registry@v1
+      with:
+        image: "fib-node"
+        tag: ${{ env.TAG }}
+        registry: ${{ env.REGISTRY }}
+        username: ${{ env.REGISTRY_USER }}
+        password: ${{ env.REGISTRY_PASSWORD }}
+    - name: Push to registry
+      id: push-to-registry
+      uses: redhat-actions/push-to-registry@v1
+      with:
+        image: "fib-quarkus"
+        tag: ${{ env.TAG }}
+        registry: ${{ env.REGISTRY }}
+        username: ${{ env.REGISTRY_USER }}
+        password: ${{ env.REGISTRY_PASSWORD }}
+    - name: Push to registry
+      id: push-to-registry
+      uses: redhat-actions/push-to-registry@v1
+      with:
+        image: "haproxy"
+        tag: ${{ env.TAG }}
+        registry: ${{ env.REGISTRY }}
+        username: ${{ env.REGISTRY_USER }}
+        password: ${{ env.REGISTRY_PASSWORD }}
+    - name: Push to registry
+      id: push-to-registry
+      uses: redhat-actions/push-to-registry@v1
+      with:
+        image: "frontend"
+        tag: ${{ env.TAG }}
+        registry: ${{ env.REGISTRY }}
+        username: ${{ env.REGISTRY_USER }}
+        password: ${{ env.REGISTRY_PASSWORD }}
+
+    # https://github.com/redhat-actions/oc-login#readme
+    - name: Log in to OpenShift
+      uses: redhat-actions/oc-login@v1
+      with:
+        openshift_server_url: ${{ env.OPENSHIFT_SERVER }}
+        openshift_token: ${{ env.OPENSHIFT_TOKEN }}
+        insecure_skip_tls_verify: true
+        namespace: ${{ env.OPENSHIFT_NAMESPACE }}
+
+    - name: Deply App
+      run: | 
+        oc apply -R -f deploy
