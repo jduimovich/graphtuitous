@@ -105,14 +105,7 @@ jobs:
         registry: ${{ env.REGISTRY }}
         username: ${{ env.REGISTRY_USER }}
         password: ${{ env.REGISTRY_PASSWORD }}
-    - name: Push fib-quarkus to registry 
-      uses: redhat-actions/push-to-registry@v1
-      with:
-        image: "fib-quarkus"
-        tag: ${{ env.TAG }}
-        registry: ${{ env.REGISTRY }}
-        username: ${{ env.REGISTRY_USER }}
-        password: ${{ env.REGISTRY_PASSWORD }}
+ 
     - name: Push haproxy to registry 
       uses: redhat-actions/push-to-registry@v1
       with:
