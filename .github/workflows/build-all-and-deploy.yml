@@ -86,8 +86,8 @@ jobs:
     - name: Build fib-quarkus 
       run: |
         cd services/fib-quarkus 
-        ./mvnw clean package -Dquarkus.container-image.group=${{ env.REGISTRY_USER }} -Dquarkus.container-image.username=${{ env.REGISTRY_USER }} -Dquarkus.container-image.push=false
-
+        docker login quay.io -u ${{ env.REGISTRY_USER }} -p ${{ env.REGISTRY_PASSWORD }}
+        ./mvnw clean package  -Dquarkus.container-image.image=${{ env.REGISTRY }}/fib-quarkus:${{ env.TAG }} -Dquarkus.container-image.push=true
 
     - name: Push fib-go to registry 
       uses: redhat-actions/push-to-registry@v1
