@@ -53,8 +53,7 @@ jobs:
         image: "fib-go"
         tag: ${{ env.TAG }} 
         context: ./services/fib-go
-        dockerfiles: |
-          ./Dockerfile 
+        dockerfiles: Dockerfile 
 
     - name: Build fib-node Dockerfile
       uses: redhat-actions/buildah-build@v1
