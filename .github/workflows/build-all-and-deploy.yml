@@ -123,6 +123,15 @@ jobs:
         registry: ${{ env.REGISTRY }}
         username: ${{ env.REGISTRY_USER }}
         password: ${{ env.REGISTRY_PASSWORD }}
+ 
+    - name: Patch Deployment with new images
+      run: 
+        yq w -i deploy\frontend\deployment.yaml spec.template.spec.containers[0].image ${{ env.REGISTRY }}/frontend:${{ env.TAG }}
+        yq w -i deploy\haproxy\deployment.yaml spec.template.spec.containers[0].image ${{ env.REGISTRY }}/haproxy:${{ env.TAG }}
+        yq w -i deploy\fib-go\deployment.yaml spec.template.spec.containers[0].image ${{ env.REGISTRY }}/fib-go:${{ env.TAG }}
+        yq w -i deploy\fib-node\deployment.yaml spec.template.spec.containers[0].image ${{ env.REGISTRY }}/fib-node:${{ env.TAG }}
+        yq w -i deploy\fib-quarkus\deployment.yaml spec.template.spec.containers[0].image ${{ env.REGISTRY }}/fib-quarkus:${{ env.TAG }}
+                
 
     # https://github.com/redhat-actions/oc-login#readme
     - name: Log in to OpenShift
@@ -135,4 +144,9 @@ jobs:
 
     - name: Deploy App
       run: |
+        yq r deploy\frontend\deployment.yaml spec.template.spec.containers[0].image  
+        yq r deploy\haproxy\deployment.yaml spec.template.spec.containers[0].image  
+        yq r deploy\fib-go\deployment.yaml spec.template.spec.containers[0].image  
+        yq r deploy\fib-node\deployment.yaml spec.template.spec.containers[0].image  
+        yq r deploy\fib-quarkus\deployment.yaml spec.template.spec.containers[0].image  
         oc apply -R -f deploy
