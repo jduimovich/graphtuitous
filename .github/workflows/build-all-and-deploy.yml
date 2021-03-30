@@ -52,7 +52,7 @@ jobs:
       with:
         image: "fib-go"
         tag: ${{ env.TAG }} 
-        context: services/fib-go
+        context: ./services/fib-go
         dockerfiles: |
           ./Dockerfile 
 
@@ -61,7 +61,7 @@ jobs:
       with:
         image: "fib-node"
         tag: ${{ env.TAG }} 
-        context: services/fib-node
+        context: ./services/fib-node
         dockerfiles: |
           ./Dockerfile
           
@@ -70,7 +70,7 @@ jobs:
       with:
         image: "fib-quarkus"
         tag: ${{ env.TAG }} 
-        context: services/fib-quarkus
+        context: ./services/fib-quarkus
         dockerfiles: |
           ./Dockerfile
 
@@ -79,7 +79,7 @@ jobs:
       with:
         image: "haproxy"
         tag: ${{ env.TAG }} 
-        context: services/haproxy
+        context: ./services/haproxy
         dockerfiles: |
           ./Dockerfile
           
@@ -88,7 +88,7 @@ jobs:
       with:
         image: "frontend"
         tag: ${{ env.TAG }} 
-        context: services/frontend
+        context: ./services/frontend
         dockerfiles: |
           ./Dockerfile 
 
