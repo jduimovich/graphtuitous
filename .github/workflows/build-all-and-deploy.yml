@@ -66,14 +66,6 @@ jobs:
         tag: ${{ env.TAG }} 
         context: ./services/fib-node
         dockerfiles: ./services/fib-node/Dockerfile
-          
-    - name: Build fib-quarkus Dockerfile
-      uses: redhat-actions/buildah-build@v1
-      with:
-        image: "fib-quarkus"
-        tag: ${{ env.TAG }} 
-        context: ./services/fib-quarkus
-        dockerfiles: ./services/fib-quarkus/Dockerfile
 
     - name: Build haproxy Dockerfile
       uses: redhat-actions/buildah-build@v1
@@ -90,6 +82,12 @@ jobs:
         tag: ${{ env.TAG }} 
         context: ./services/frontend
         dockerfiles: ./services/frontend/Dockerfile 
+
+    - name: Build fib-quarkus 
+      run: |
+        cd service/fib-quarkus 
+        ./mvnw clean package -Dquarkus.container-image.group=${{ env.REGISTRY_USER }} -Dquarkus.container-image.username=${{ env.REGISTRY_USER }} -Dquarkus.container-image.push=false
+        
 
     - name: Push fib-go to registry 
       uses: redhat-actions/push-to-registry@v1
