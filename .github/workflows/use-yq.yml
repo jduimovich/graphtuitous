@@ -48,11 +48,6 @@ jobs:
       run: |
         echo "TAG=${GITHUB_SHA::7}" | tee -a $GITHUB_ENV 
 
-
-  patch-image-names-and-deploy:
-    name: Patches Images to new names and deploys
-    runs-on: ubuntu-20.04
-    steps:
     - name: Patch App
       run: | 
         ls -al 
