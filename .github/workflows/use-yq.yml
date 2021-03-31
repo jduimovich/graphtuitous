@@ -55,16 +55,16 @@ jobs:
         
         yq e '.spec.template.spec.containers[0].image = "${{ env.REGISTRY }}/frontend:${{ env.TAG }}"' deploy/frontend/deployment.yaml  
         yq e '.spec.template.spec.containers[0].image = "${{ env.REGISTRY }}/haproxy:${{ env.TAG }}"' deploy/haproxy/deployment.yaml  
-        yq e '.spec.template.spec.containers[0].image = "${{ env.REGISTRY }}/fib-go:${{ env.TAG }}"' deploy/fib-go/deployment.yaml  
-        yq e '.spec.template.spec.containers[0].image = "${{ env.REGISTRY }}/fib-node:${{ env.TAG }}"' deploy/fib-node/deployment.yaml  
-        yq e '.spec.template.spec.containers[0].image = "${{ env.REGISTRY }}/fib-quarkus:${{ env.TAG }}"' deploy/fib-quarkus/deployment.yaml  
+        yq e '.spec.template.spec.containers[0].image = "${{ env.REGISTRY }}/fib-go:${{ env.TAG }}"' deploy/services/fib-go/deployment.yaml  
+        yq e '.spec.template.spec.containers[0].image = "${{ env.REGISTRY }}/fib-node:${{ env.TAG }}"' deploy/services/fib-node/deployment.yaml  
+        yq e '.spec.template.spec.containers[0].image = "${{ env.REGISTRY }}/fib-quarkus:${{ env.TAG }}"' deploy/services/fib-quarkus/deployment.yaml  
 
                 
     - name: Deploy App 
       run: |
         yq e '.spec.template.spec.containers[0].image' deploy/frontend/deployment.yaml   
         yq e '.spec.template.spec.containers[0].image' deploy/haproxy/deployment.yaml  
-        yq e '.spec.template.spec.containers[0].image' deploy/fib-go/deployment.yaml 
-        yq e '.spec.template.spec.containers[0].image' deploy/fib-node/deployment.yaml    
-        yq e '.spec.template.spec.containers[0].image' deploy/fib-quarkus/deployment.yaml  
+        yq e '.spec.template.spec.containers[0].image' deploy/services/fib-go/deployment.yaml 
+        yq e '.spec.template.spec.containers[0].image' deploy/services/fib-node/deployment.yaml    
+        yq e '.spec.template.spec.containers[0].image' deploy/services/fib-quarkus/deployment.yaml  
     
