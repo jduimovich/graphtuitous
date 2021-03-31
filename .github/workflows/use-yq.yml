@@ -55,6 +55,7 @@ jobs:
     steps:
     - name: Patch App
       run: 
+        ls -al 
         echo yq w -i deploy\frontend\deployment.yaml spec.template.spec.containers[0].image ${{ env.REGISTRY }}/frontend:${{ env.TAG }}
         echo yq w -i deploy\haproxy\deployment.yaml spec.template.spec.containers[0].image ${{ env.REGISTRY }}/haproxy:${{ env.TAG }}
         echo yq w -i deploy\fib-go\deployment.yaml spec.template.spec.containers[0].image ${{ env.REGISTRY }}/fib-go:${{ env.TAG }}
