@@ -46,11 +46,7 @@ jobs:
     - name: Determine tag
       if: env.TAG == ''
       run: |
-        echo "TAG=${GITHUB_SHA::7}" | tee -a $GITHUB_ENV
-        ls -al 
-        pwd 
-        du -a 
-
+        echo "TAG=${GITHUB_SHA::7}" | tee -a $GITHUB_ENV 
 
     - name: Build fib-go Dockerfile
       uses: redhat-actions/buildah-build@v1
