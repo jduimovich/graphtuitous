@@ -51,7 +51,6 @@ jobs:
     - name: Patch App
       run: | 
         ls -al 
-        brew install yq 
         export VERSION=v4.2.0  
         export BINARY=yq_linux_amd64
         wget https://github.com/mikefarah/yq/releases/download/${VERSION}/${BINARY} -O ./yq
