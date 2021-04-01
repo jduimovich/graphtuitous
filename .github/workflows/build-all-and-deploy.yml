@@ -174,5 +174,10 @@ jobs:
         ./yq  e '.spec.template.spec.containers[0].image' deploy/services/fib-node/deployment.yaml    
         ./yq  e '.spec.template.spec.containers[0].image' deploy/services/fib-quarkus/deployment.yaml    
         oc apply -R -f deploy
+    - name: Deploy App, show list of current images
+      run: |
+        rm -rf ./yq
+        rm -rf  kubeconfig.yaml
+
     - name: Create Pull Request to update changes in repo
       uses: peter-evans/create-pull-request@v3
