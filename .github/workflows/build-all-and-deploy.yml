@@ -132,8 +132,7 @@ jobs:
         password: ${{ env.REGISTRY_PASSWORD }}
 
     # https://github.com/redhat-actions/oc-login#readme
-    - name: Log in to OpenShift
-      if: env.CHANGE_ANY == 'true'
+    - name: Log in to OpenShift 
       uses: redhat-actions/oc-login@v1
       with:
         openshift_server_url: ${{ env.OPENSHIFT_SERVER }}
