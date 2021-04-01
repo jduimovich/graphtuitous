@@ -40,7 +40,9 @@ else
 fi
 
 echo Files Changed
-cat $DELTA  
+cat $DELTA 
+rm -rf $DELTA
+
 echo "CHANGE_FIB_GO=${CHANGE_FIB_GO}" | tee -a $GITHUB_ENV 
 echo "CHANGE_FIB_NODE=${CHANGE_FIB_NODE}" | tee -a $GITHUB_ENV 
 echo "CHANGE_FIB_QUARKUS=${CHANGE_FIB_QUARKUS}" | tee -a $GITHUB_ENV 

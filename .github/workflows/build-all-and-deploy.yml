@@ -153,23 +153,23 @@ jobs:
         export VERSION=v4.2.0  
         export BINARY=yq_linux_amd64
         wget -q https://github.com/mikefarah/yq/releases/download/${VERSION}/${BINARY} -O ./yq
-        chmod +x ./yq  
-         env.CHANGE_FIB_GO == 'false'
-        if ${{ env.CHANGE_FRONTEND }} == 'true'  
-        then
-        ./yq  e '.spec.template.spec.containers[0].image = "${{ env.REGISTRY }}/frontend:${{ env.TAG }}"' deploy/frontend/deployment.yaml -i 
+        chmod +x ./yq    
+        if [ "${{ env.CHANGE_FRONTEND }}" = "true" ]; then   
+          ./yq  e '.spec.template.spec.containers[0].image = "${{ env.REGISTRY }}/frontend:${{ env.TAG }}"' deploy/frontend/deployment.yaml -i 
         fi 
-        if ${{ env.CHANGE_HAPROXY }} == 'true'  
-        then
-        ./yq  e '.spec.template.spec.containers[0].image = "${{ env.REGISTRY }}/haproxy:${{ env.TAG }}"' deploy/haproxy/deployment.yaml  -i
+        if [ "${{ env.CHANGE_HAPROXY }}" = "true" ]; then   
+          ./yq  e '.spec.template.spec.containers[0].image = "${{ env.REGISTRY }}/haproxy:${{ env.TAG }}"' deploy/haproxy/deployment.yaml  -i
         fi
-        if ${{ env.CHANGE_HAPROXY }} == 'true'  
-        then
-        ./yq  e '.spec.template.spec.containers[0].image = "${{ env.REGISTRY }}/fib-go:${{ env.TAG }}"' deploy/services/fib-go/deployment.yaml  -i
-        ./yq  e '.spec.template.spec.containers[0].image = "${{ env.REGISTRY }}/fib-node:${{ env.TAG }}"' deploy/services/fib-node/deployment.yaml  -i
-        ./yq  e '.spec.template.spec.containers[0].image = "${{ env.REGISTRY }}/fib-quarkus:${{ env.TAG }}"' deploy/services/fib-quarkus/deployment.yaml  -i
-       
-    - name: Deploy App 
+        if [ "${{ env.CHANGE_FIB_GO }}" = "true" ]; then   
+          ./yq  e '.spec.template.spec.containers[0].image = "${{ env.REGISTRY }}/fib-go:${{ env.TAG }}"' deploy/services/fib-go/deployment.yaml  -i
+        fi
+        if [ "${{ env.CHANGE_FIB_NODE }}" = "true" ]; then 
+          ./yq  e '.spec.template.spec.containers[0].image = "${{ env.REGISTRY }}/fib-node:${{ env.TAG }}"' deploy/services/fib-node/deployment.yaml  -i
+        fi
+        if [ "${{ env.CHANGE_FIB_QUARKUS }}" = "true" ]; then 
+          ./yq  e '.spec.template.spec.containers[0].image = "${{ env.REGISTRY }}/fib-quarkus:${{ env.TAG }}"' deploy/services/fib-quarkus/deployment.yaml  -i
+        fi 
+    - name: Deploy App, show list of current images
       run: |
         ./yq  e '.spec.template.spec.containers[0].image' deploy/frontend/deployment.yaml   
         ./yq  e '.spec.template.spec.containers[0].image' deploy/haproxy/deployment.yaml  
@@ -177,3 +177,5 @@ jobs:
         ./yq  e '.spec.template.spec.containers[0].image' deploy/services/fib-node/deployment.yaml    
         ./yq  e '.spec.template.spec.containers[0].image' deploy/services/fib-quarkus/deployment.yaml    
         oc apply -R -f deploy
+    - name: Create Pull Request to update changes in repo
+      uses: peter-evans/create-pull-request@v3
