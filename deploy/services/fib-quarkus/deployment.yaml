@@ -5,12 +5,12 @@ metadata:
   labels:
     app: fib
     app.kubernetes.io/name: fib-quarkus-deploy
-    app.kubernetes.io/part-of: fib-service  
-    app.kubernetes.io/instance : fib-service-in-quarkus
-    app.kubernetes.io/component : backend 
-    app.openshift.io/runtime : quarkus 
-  annotations:  
-    container.apparmor.security.beta.kubernetes.io/fib-quarkus-deploy: runtime/default 
+    app.kubernetes.io/part-of: fib-service
+    app.kubernetes.io/instance: fib-service-in-quarkus
+    app.kubernetes.io/component: backend
+    app.openshift.io/runtime: quarkus
+  annotations:
+    container.apparmor.security.beta.kubernetes.io/fib-quarkus-deploy: runtime/default
 spec:
   replicas: 2
   selector:
@@ -24,30 +24,30 @@ spec:
       securityContext:
         runAsNonRoot: true
       containers:
-      - name: fib-quarkus-deploy
-        image: jduimovich/fib-quarkus:latest
-        resources:
-          limits:
-            cpu: "200m"
-            memory: "384Mi"
-          requests:
-            cpu: "100m"
-            memory: "384Mi"
-        imagePullPolicy: Always
-        ports:
-        - containerPort: 8080
-        readinessProbe:
-          tcpSocket:
-            port: 8080
-          initialDelaySeconds: 60
-          periodSeconds: 10
-        livenessProbe:
-          initialDelaySeconds: 60
-          periodSeconds: 5
-          httpGet:
-            path: /fib
-            port: 8080
-        securityContext:
-          capabilities:
-            drop:
-              - all
+        - name: fib-quarkus-deploy
+          image: quay.io/jduimovich0/fib-quarkus:781c41a
+          resources:
+            limits:
+              cpu: "200m"
+              memory: "384Mi"
+            requests:
+              cpu: "100m"
+              memory: "384Mi"
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+          readinessProbe:
+            tcpSocket:
+              port: 8080
+            initialDelaySeconds: 60
+            periodSeconds: 10
+          livenessProbe:
+            initialDelaySeconds: 60
+            periodSeconds: 5
+            httpGet:
+              path: /fib
+              port: 8080
+          securityContext:
+            capabilities:
+              drop:
+                - all
