@@ -66,7 +66,7 @@ jobs:
       if: env.CHANGE_FIB_GO == 'false'
       run: |
         echo "NOT rebuilding fib-go"   
-        if ${{ env.CHANGE_FIB_GO }} == false
+        if '${{ env.CHANGE_FIB_GO }}' == 'false'
         then
          echo run false 
         fi     
