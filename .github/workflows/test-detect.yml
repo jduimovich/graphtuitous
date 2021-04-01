@@ -1,7 +1,7 @@
 # Sample multiple service demo and deploy to openshift
 # test via push
 
-name: OpenShift build all services and Deploy
+name: TEST WORKFLOW
 env:
   # ⬇️ EDIT with your registry and registry path.
   REGISTRY: quay.io/jduimovich0
