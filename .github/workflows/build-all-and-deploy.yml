@@ -24,7 +24,7 @@ env:
   APP_NAME: ""
   TAG: ""
  
-on: [push, workflow_dispatch]  
+on: [  workflow_dispatch]  
 jobs:
   openshift-ci-cd:
     name: Build and deploy to OpenShift
