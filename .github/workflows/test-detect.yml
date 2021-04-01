@@ -68,5 +68,17 @@ jobs:
         echo "NOT rebuilding fib-go"   
         if '${{ env.CHANGE_FIB_GO }}' == 'false'
         then
-         echo run false 
+          echo run false 
+          echo run false 
+          echo run false 
+          echo run false 
+          echo run false 
+        else 
+          echo BOGUS
+          echo BOGUS
+          echo BOGUS
+          echo BOGUS
+          echo BOGUS
         fi     
+        echo "----------------------"   
+        echo "NOT rebuilding fib-go"   
