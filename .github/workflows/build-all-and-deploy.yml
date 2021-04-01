@@ -60,28 +60,28 @@ jobs:
 
     - name: Build fib-node Dockerfile
       if: env.CHANGE_FIB_NODE == 'true'
-      uses: redhat-actions/buildah-build@v1
+      uses: redhat-actions/buildah-build@v2
       with:
         image: "fib-node"
-        tag: ${{ env.TAG }} 
+        tags: ${{ env.TAG }} 
         context: ./services/fib-node
         dockerfiles: ./services/fib-node/Dockerfile
 
     - name: Build haproxy Dockerfile
       if: env.CHANGE_HAPROXY == 'true'
-      uses: redhat-actions/buildah-build@v1
+      uses: redhat-actions/buildah-build@v2
       with:
         image: "haproxy"
-        tag: ${{ env.TAG }} 
+        tags: ${{ env.TAG }} 
         context: ./services/haproxy
         dockerfiles: ./services/haproxy/Dockerfile
           
     - name: Build frontend Dockerfile
       if: env.CHANGE_FRONTEND == 'true'
-      uses: redhat-actions/buildah-build@v1
+      uses: redhat-actions/buildah-build@v2
       with:
         image: "frontend"
-        tag: ${{ env.TAG }} 
+        tags: ${{ env.TAG }} 
         context: ./services/frontend
         dockerfiles: ./services/frontend/Dockerfile 
 
