@@ -48,9 +48,14 @@ jobs:
     - name: Determine tag
       if: env.TAG == ''
       run: |
-        echo "TAG=${GITHUB_SHA::7}" | tee -a $GITHUB_ENV 
+        echo "TAG=${GITHUB_SHA::7}" | tee -a $GITHUB_ENV
+
+    - name:  Compute Changed Files
+      run: |  
+        source compute_change.sh 
 
     - name: Build fib-go Dockerfile
+      if: env.CHANGE_FIB_GO == 'true'
       uses: redhat-actions/buildah-build@v1
       with:
         image: "fib-go"
@@ -59,6 +64,7 @@ jobs:
         dockerfiles: ./services/fib-go/Dockerfile 
 
     - name: Build fib-node Dockerfile
+      if: env.CHANGE_FIB_NODE == 'true'
       uses: redhat-actions/buildah-build@v1
       with:
         image: "fib-node"
@@ -67,6 +73,7 @@ jobs:
         dockerfiles: ./services/fib-node/Dockerfile
 
     - name: Build haproxy Dockerfile
+      if: env.CHANGE_HAPROXY == 'true'
       uses: redhat-actions/buildah-build@v1
       with:
         image: "haproxy"
@@ -75,6 +82,7 @@ jobs:
         dockerfiles: ./services/haproxy/Dockerfile
           
     - name: Build frontend Dockerfile
+      if: env.CHANGE_FRONTEND == 'true'
       uses: redhat-actions/buildah-build@v1
       with:
         image: "frontend"
@@ -83,12 +91,14 @@ jobs:
         dockerfiles: ./services/frontend/Dockerfile 
 
     - name: Build fib-quarkus 
+      if: env.CHANGE_FIB_QUARKUS == 'true'
       run: |
         cd services/fib-quarkus 
         docker login quay.io -u ${{ env.REGISTRY_USER }} -p ${{ env.REGISTRY_PASSWORD }}
         ./mvnw clean package  -Dquarkus.container-image.image=${{ env.REGISTRY }}/fib-quarkus:${{ env.TAG }} -Dquarkus.container-image.push=true
 
     - name: Push fib-go to registry 
+      if: env.CHANGE_FIB_GO == 'true'
       uses: redhat-actions/push-to-registry@v1
       with:
         image: "fib-go"
@@ -96,7 +106,9 @@ jobs:
         registry: ${{ env.REGISTRY }}
         username: ${{ env.REGISTRY_USER }}
         password: ${{ env.REGISTRY_PASSWORD }}
-    - name: Push fib-node to registry 
+
+    - name: Push fib-node to registry
+      if: env.CHANGE_FIB_NODE == 'true'
       uses: redhat-actions/push-to-registry@v1
       with:
         image: "fib-node"
@@ -106,6 +118,7 @@ jobs:
         password: ${{ env.REGISTRY_PASSWORD }}
  
     - name: Push haproxy to registry 
+      if: env.CHANGE_HAPROXY == 'true'
       uses: redhat-actions/push-to-registry@v1
       with:
         image: "haproxy"
@@ -114,6 +127,7 @@ jobs:
         username: ${{ env.REGISTRY_USER }}
         password: ${{ env.REGISTRY_PASSWORD }}
     - name: Push frontend to registry 
+      if: env.CHANGE_FRONTEND == 'true'
       uses: redhat-actions/push-to-registry@v1
       with:
         image: "frontend"
@@ -124,6 +138,7 @@ jobs:
 
     # https://github.com/redhat-actions/oc-login#readme
     - name: Log in to OpenShift
+      if: env.CHANGE_ANY == 'true'
       uses: redhat-actions/oc-login@v1
       with:
         openshift_server_url: ${{ env.OPENSHIFT_SERVER }}
@@ -132,14 +147,24 @@ jobs:
         namespace: ${{ env.OPENSHIFT_NAMESPACE }}
 
     - name:  Patch Deployment YAML with new image references
+      if: env.CHANGE_ANY == 'true'
       run: | 
         ls -al 
         export VERSION=v4.2.0  
         export BINARY=yq_linux_amd64
         wget -q https://github.com/mikefarah/yq/releases/download/${VERSION}/${BINARY} -O ./yq
         chmod +x ./yq  
+         env.CHANGE_FIB_GO == 'false'
+        if ${{ env.CHANGE_FRONTEND }} == 'true'  
+        then
         ./yq  e '.spec.template.spec.containers[0].image = "${{ env.REGISTRY }}/frontend:${{ env.TAG }}"' deploy/frontend/deployment.yaml -i 
+        fi 
+        if ${{ env.CHANGE_HAPROXY }} == 'true'  
+        then
         ./yq  e '.spec.template.spec.containers[0].image = "${{ env.REGISTRY }}/haproxy:${{ env.TAG }}"' deploy/haproxy/deployment.yaml  -i
+        fi
+        if ${{ env.CHANGE_HAPROXY }} == 'true'  
+        then
         ./yq  e '.spec.template.spec.containers[0].image = "${{ env.REGISTRY }}/fib-go:${{ env.TAG }}"' deploy/services/fib-go/deployment.yaml  -i
         ./yq  e '.spec.template.spec.containers[0].image = "${{ env.REGISTRY }}/fib-node:${{ env.TAG }}"' deploy/services/fib-node/deployment.yaml  -i
         ./yq  e '.spec.template.spec.containers[0].image = "${{ env.REGISTRY }}/fib-quarkus:${{ env.TAG }}"' deploy/services/fib-quarkus/deployment.yaml  -i
