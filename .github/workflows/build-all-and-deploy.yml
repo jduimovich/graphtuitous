@@ -23,13 +23,8 @@ env:
   # If you wish to manually provide the APP_NAME and TAG, set them here, otherwise they will be auto-detected.
   APP_NAME: ""
   TAG: ""
-
-on:
-  # https://docs.github.com/en/free-pro-team@latest/actions/reference/events-that-trigger-workflows
-  push:
-    # Edit to the branch(es) you want to build and deploy on each push.
-    branches: [ main ]
-
+ 
+on: [push, workflow_dispatch]  
 jobs:
   openshift-ci-cd:
     name: Build and deploy to OpenShift
