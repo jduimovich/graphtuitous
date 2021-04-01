@@ -54,7 +54,7 @@ jobs:
       run: |  
         source compute_change.sh 
  
-    - name: Rebuild fib-go
+    - name: TRUE CHANGE_FIB_GO
       if: env.CHANGE_FIB_GO == 'true'
       run: |
         echo "rebuilding fib-go"  
@@ -62,12 +62,11 @@ jobs:
         then
          echo run true 
         fi      
-    - name: Rebuild fib-go
+    - name: FALSE CHANGE_FIB_GO
       if: env.CHANGE_FIB_GO == 'false'
       run: |
         echo "NOT rebuilding fib-go"   
-        if '${{ env.CHANGE_FIB_GO }}' == 'false'
-        then
+        if [ "{{ env.CHANGE_FIB_GO }}" = "false" ]; then  
           echo run false 
           echo run false 
           echo run false 
