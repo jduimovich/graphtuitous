@@ -62,3 +62,12 @@ jobs:
         echo CHANGE_FRONTEND $CHANGE_FRONTEND
         echo CHANGE_HAPROXY $CHANGE_HAPROXY 
         echo CHANGE_ANY $CHANGE_ANY
+
+    - name: Rebuild fib-go
+      if: env.CHANGE_FIB_GO == 'true'
+      run: |
+        echo "rebuilding fib-go"  
+    - name: Rebuild fib-go
+      if: env.CHANGE_FIB_GO == 'false'
+      run: |
+        echo "NOT rebuilding fib-go"       
