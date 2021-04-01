@@ -37,6 +37,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+      with:
+        fetch-depth: '2'
 
     - name: Determine app name
       if: env.APP_NAME == ''
@@ -50,6 +52,7 @@ jobs:
 
     - name:  Patch Deployment YAML with new image references
       run: | 
+        git show --summary
         git diff --name-only HEAD HEAD~1 
         source compute_change.sh 
         echo vars computed 

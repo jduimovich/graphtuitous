@@ -1,3 +1,4 @@
+
 git diff --name-only HEAD HEAD~1 > changed_directories
 
 export CHANGE_ANY=false
