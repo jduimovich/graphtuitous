@@ -1,183 +1,135 @@
 # Sample multiple service demo and deploy to openshift
+
 # test via push
 
 name: OpenShift build all services and Deploy
 env:
-  # ⬇️ EDIT with your registry and registry path.
-  REGISTRY: quay.io/jduimovich0
+  REGISTRY: docker.io/jduimovich
   # ⬇️ EDIT with your registry username.
-  REGISTRY_USER: jduimovich0
-  REGISTRY_PASSWORD: ${{ secrets.REGISTRY_PASSWORD }}
 
+  # ⬇️ EDIT with your registry and registry path.
+  REGISTRY_USER: jduimovich
+  REGISTRY_PASSWORD: ${{ secrets.REGISTRY_PASSWORD }}
   # ⬇️ EDIT to log into your OpenShift cluster and set up the context.
+
   # See https://github.com/redhat-actions/oc-login#readme for how to retrieve these values.
   OPENSHIFT_SERVER: ${{ secrets.OPENSHIFT_SERVER }}
   OPENSHIFT_TOKEN: ${{ secrets.OPENSHIFT_TOKEN }}
-
   # ⬇️ EDIT with the port your application should be accessible on.
   APP_PORT: 8080
-
   # ⬇️ EDIT if you wish to set the kube context's namespace after login. Leave blank to use the default namespace.
   OPENSHIFT_NAMESPACE: "jduimovich-dev"
-
   # If you wish to manually provide the APP_NAME and TAG, set them here, otherwise they will be auto-detected.
   APP_NAME: ""
   TAG: ""
- 
-on: [ push, workflow_dispatch]  
+on: [push, workflow_dispatch]
 jobs:
   openshift-ci-cd:
     name: Build and deploy to OpenShift
     runs-on: ubuntu-20.04
-
     steps:
-    - uses: actions/checkout@v2
-      with:
-        fetch-depth: '2'
-
-    - name: Determine app name
-      if: env.APP_NAME == ''
-      run: |
-        echo "APP_NAME=$(basename $PWD)" | tee -a $GITHUB_ENV
-
-    - name: Determine tag
-      if: env.TAG == ''
-      run: |
-        echo "TAG=${GITHUB_SHA::7}" | tee -a $GITHUB_ENV
-
-    - name:  Compute Changed Files
-      run: |  
-        source compute_change.sh 
-
-    - name: Build fib-go Dockerfile
-      if: env.CHANGE_FIB_GO == 'true'
-      uses: redhat-actions/buildah-build@v2
-      with:
-        image: "fib-go"
-        tags: ${{ env.TAG }} 
-        context: ./services/fib-go
-        dockerfiles: ./services/fib-go/Dockerfile 
-
-    - name: Build fib-node Dockerfile
-      if: env.CHANGE_FIB_NODE == 'true'
-      uses: redhat-actions/buildah-build@v2
-      with:
-        image: "fib-node"
-        tags: ${{ env.TAG }} 
-        context: ./services/fib-node
-        dockerfiles: ./services/fib-node/Dockerfile
-
-    - name: Build haproxy Dockerfile
-      if: env.CHANGE_HAPROXY == 'true'
-      uses: redhat-actions/buildah-build@v2
-      with:
-        image: "haproxy"
-        tags: ${{ env.TAG }} 
-        context: ./services/haproxy
-        dockerfiles: ./services/haproxy/Dockerfile
-          
-    - name: Build frontend Dockerfile
-      if: env.CHANGE_FRONTEND == 'true'
-      uses: redhat-actions/buildah-build@v2
-      with:
-        image: "frontend"
-        tags: ${{ env.TAG }} 
-        context: ./services/frontend
-        dockerfiles: ./services/frontend/Dockerfile 
-
-    - name: Build fib-quarkus 
-      if: env.CHANGE_FIB_QUARKUS == 'true'
-      run: |
-        cd services/fib-quarkus 
-        docker login quay.io -u ${{ env.REGISTRY_USER }} -p ${{ env.REGISTRY_PASSWORD }}
-        ./mvnw clean package  -Dquarkus.container-image.image=${{ env.REGISTRY }}/fib-quarkus:${{ env.TAG }} -Dquarkus.container-image.push=true
-
-    - name: Push fib-go to registry 
-      if: env.CHANGE_FIB_GO == 'true'
-      uses: redhat-actions/push-to-registry@v1
-      with:
-        image: "fib-go"
-        tag: ${{ env.TAG }}
-        registry: ${{ env.REGISTRY }}
-        username: ${{ env.REGISTRY_USER }}
-        password: ${{ env.REGISTRY_PASSWORD }}
-
-    - name: Push fib-node to registry
-      if: env.CHANGE_FIB_NODE == 'true'
-      uses: redhat-actions/push-to-registry@v1
-      with:
-        image: "fib-node"
-        tag: ${{ env.TAG }}
-        registry: ${{ env.REGISTRY }}
-        username: ${{ env.REGISTRY_USER }}
-        password: ${{ env.REGISTRY_PASSWORD }}
- 
-    - name: Push haproxy to registry 
-      if: env.CHANGE_HAPROXY == 'true'
-      uses: redhat-actions/push-to-registry@v1
-      with:
-        image: "haproxy"
-        tag: ${{ env.TAG }}
-        registry: ${{ env.REGISTRY }}
-        username: ${{ env.REGISTRY_USER }}
-        password: ${{ env.REGISTRY_PASSWORD }}
-    - name: Push frontend to registry 
-      if: env.CHANGE_FRONTEND == 'true'
-      uses: redhat-actions/push-to-registry@v1
-      with:
-        image: "frontend"
-        tag: ${{ env.TAG }}
-        registry: ${{ env.REGISTRY }}
-        username: ${{ env.REGISTRY_USER }}
-        password: ${{ env.REGISTRY_PASSWORD }}
-
-    # https://github.com/redhat-actions/oc-login#readme
-    - name: Log in to OpenShift 
-      uses: redhat-actions/oc-login@v1
-      with:
-        openshift_server_url: ${{ env.OPENSHIFT_SERVER }}
-        openshift_token: ${{ env.OPENSHIFT_TOKEN }}
-        insecure_skip_tls_verify: true
-        namespace: ${{ env.OPENSHIFT_NAMESPACE }}
-
-    - name:  Install  yq 
-      run: | 
-        ls -al 
-        export VERSION=v4.2.0  
-        export BINARY=yq_linux_amd64
-        wget -q https://github.com/mikefarah/yq/releases/download/${VERSION}/${BINARY} -O ./yq
-        chmod +x ./yq  
-
-    - name:  Patch Deployment YAML with new image references
-      if: env.CHANGE_ANY == 'true'
-      run: |   
-        if [ "${{ env.CHANGE_FRONTEND }}" = "true" ]; then   
-          ./yq  e '.spec.template.spec.containers[0].image = "${{ env.REGISTRY }}/frontend:${{ env.TAG }}"' deploy/frontend/deployment.yaml -i 
-        fi 
-        if [ "${{ env.CHANGE_HAPROXY }}" = "true" ]; then   
-          ./yq  e '.spec.template.spec.containers[0].image = "${{ env.REGISTRY }}/haproxy:${{ env.TAG }}"' deploy/haproxy/deployment.yaml  -i
-        fi
-        if [ "${{ env.CHANGE_FIB_GO }}" = "true" ]; then   
-          ./yq  e '.spec.template.spec.containers[0].image = "${{ env.REGISTRY }}/fib-go:${{ env.TAG }}"' deploy/services/fib-go/deployment.yaml  -i
-        fi
-        if [ "${{ env.CHANGE_FIB_NODE }}" = "true" ]; then 
-          ./yq  e '.spec.template.spec.containers[0].image = "${{ env.REGISTRY }}/fib-node:${{ env.TAG }}"' deploy/services/fib-node/deployment.yaml  -i
-        fi
-        if [ "${{ env.CHANGE_FIB_QUARKUS }}" = "true" ]; then 
-          ./yq  e '.spec.template.spec.containers[0].image = "${{ env.REGISTRY }}/fib-quarkus:${{ env.TAG }}"' deploy/services/fib-quarkus/deployment.yaml  -i
-        fi 
-    - name: Deploy App, show list of current images
-      run: |
-        ./yq  e '.spec.template.spec.containers[0].image' deploy/frontend/deployment.yaml   
-        ./yq  e '.spec.template.spec.containers[0].image' deploy/haproxy/deployment.yaml  
-        ./yq  e '.spec.template.spec.containers[0].image' deploy/services/fib-go/deployment.yaml 
-        ./yq  e '.spec.template.spec.containers[0].image' deploy/services/fib-node/deployment.yaml    
-        ./yq  e '.spec.template.spec.containers[0].image' deploy/services/fib-quarkus/deployment.yaml    
-        oc apply -R -f deploy
-    - name: Deploy App, show list of current images
-      run: |
-        rm -rf ./yq
-        rm -rf  kubeconfig.yaml
-
-    - name: Create Pull Request to update changes in repo
-      uses: peter-evans/create-pull-request@v3
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: '2'
+      - name: Determine app name
+        if: env.APP_NAME == ''
+        run: |
+          echo "APP_NAME=$(basename $PWD)" | tee -a $GITHUB_ENV
+      - name: Determine tag
+        if: env.TAG == ''
+        run: |
+          echo "TAG=${GITHUB_SHA::7}" | tee -a $GITHUB_ENV
+      - name: Compute Changed Files
+        run: "source compute_change.sh \n"
+      - name: Build fib-go Dockerfile
+        if: env.CHANGE_FIB_GO == 'true'
+        uses: redhat-actions/buildah-build@v2
+        with:
+          image: "fib-go"
+          tags: ${{ env.TAG }}
+          context: ./services/fib-go
+          dockerfiles: ./services/fib-go/Dockerfile
+      - name: Build fib-node Dockerfile
+        if: env.CHANGE_FIB_NODE == 'true'
+        uses: redhat-actions/buildah-build@v2
+        with:
+          image: "fib-node"
+          tags: ${{ env.TAG }}
+          context: ./services/fib-node
+          dockerfiles: ./services/fib-node/Dockerfile
+      - name: Build haproxy Dockerfile
+        if: env.CHANGE_HAPROXY == 'true'
+        uses: redhat-actions/buildah-build@v2
+        with:
+          image: "haproxy"
+          tags: ${{ env.TAG }}
+          context: ./services/haproxy
+          dockerfiles: ./services/haproxy/Dockerfile
+      - name: Build frontend Dockerfile
+        if: env.CHANGE_FRONTEND == 'true'
+        uses: redhat-actions/buildah-build@v2
+        with:
+          image: "frontend"
+          tags: ${{ env.TAG }}
+          context: ./services/frontend
+          dockerfiles: ./services/frontend/Dockerfile
+      - name: Build fib-quarkus
+        if: env.CHANGE_FIB_QUARKUS == 'true'
+        run: "cd services/fib-quarkus \ndocker login quay.io -u ${{ env.REGISTRY_USER }} -p ${{ env.REGISTRY_PASSWORD }}\n./mvnw clean package  -Dquarkus.container-image.image=${{ env.REGISTRY }}/fib-quarkus:${{ env.TAG }} -Dquarkus.container-image.push=true\n"
+      - name: Push fib-go to registry
+        if: env.CHANGE_FIB_GO == 'true'
+        uses: redhat-actions/push-to-registry@v1
+        with:
+          image: "fib-go"
+          tag: ${{ env.TAG }}
+          registry: ${{ env.REGISTRY }}
+          username: ${{ env.REGISTRY_USER }}
+          password: ${{ env.REGISTRY_PASSWORD }}
+      - name: Push fib-node to registry
+        if: env.CHANGE_FIB_NODE == 'true'
+        uses: redhat-actions/push-to-registry@v1
+        with:
+          image: "fib-node"
+          tag: ${{ env.TAG }}
+          registry: ${{ env.REGISTRY }}
+          username: ${{ env.REGISTRY_USER }}
+          password: ${{ env.REGISTRY_PASSWORD }}
+      - name: Push haproxy to registry
+        if: env.CHANGE_HAPROXY == 'true'
+        uses: redhat-actions/push-to-registry@v1
+        with:
+          image: "haproxy"
+          tag: ${{ env.TAG }}
+          registry: ${{ env.REGISTRY }}
+          username: ${{ env.REGISTRY_USER }}
+          password: ${{ env.REGISTRY_PASSWORD }}
+      - name: Push frontend to registry
+        if: env.CHANGE_FRONTEND == 'true'
+        uses: redhat-actions/push-to-registry@v1
+        with:
+          image: "frontend"
+          tag: ${{ env.TAG }}
+          registry: ${{ env.REGISTRY }}
+          username: ${{ env.REGISTRY_USER }}
+          password: ${{ env.REGISTRY_PASSWORD }}
+      # https://github.com/redhat-actions/oc-login#readme
+      - name: Log in to OpenShift
+        uses: redhat-actions/oc-login@v1
+        with:
+          openshift_server_url: ${{ env.OPENSHIFT_SERVER }}
+          openshift_token: ${{ env.OPENSHIFT_TOKEN }}
+          insecure_skip_tls_verify: true
+          namespace: ${{ env.OPENSHIFT_NAMESPACE }}
+      - name: Install  yq
+        run: "ls -al \nexport VERSION=v4.2.0  \nexport BINARY=yq_linux_amd64\nwget -q https://github.com/mikefarah/yq/releases/download/${VERSION}/${BINARY} -O ./yq\nchmod +x ./yq  \n"
+      - name: Patch Deployment YAML with new image references
+        if: env.CHANGE_ANY == 'true'
+        run: "if [ \"${{ env.CHANGE_FRONTEND }}\" = \"true\" ]; then   \n  ./yq  e '.spec.template.spec.containers[0].image = \"${{ env.REGISTRY }}/frontend:${{ env.TAG }}\"' deploy/frontend/deployment.yaml -i \nfi \nif [ \"${{ env.CHANGE_HAPROXY }}\" = \"true\" ]; then   \n  ./yq  e '.spec.template.spec.containers[0].image = \"${{ env.REGISTRY }}/haproxy:${{ env.TAG }}\"' deploy/haproxy/deployment.yaml  -i\nfi\nif [ \"${{ env.CHANGE_FIB_GO }}\" = \"true\" ]; then   \n  ./yq  e '.spec.template.spec.containers[0].image = \"${{ env.REGISTRY }}/fib-go:${{ env.TAG }}\"' deploy/services/fib-go/deployment.yaml  -i\nfi\nif [ \"${{ env.CHANGE_FIB_NODE }}\" = \"true\" ]; then \n  ./yq  e '.spec.template.spec.containers[0].image = \"${{ env.REGISTRY }}/fib-node:${{ env.TAG }}\"' deploy/services/fib-node/deployment.yaml  -i\nfi\nif [ \"${{ env.CHANGE_FIB_QUARKUS }}\" = \"true\" ]; then \n  ./yq  e '.spec.template.spec.containers[0].image = \"${{ env.REGISTRY }}/fib-quarkus:${{ env.TAG }}\"' deploy/services/fib-quarkus/deployment.yaml  -i\nfi \n"
+      - name: Deploy App, show list of current images
+        run: "./yq  e '.spec.template.spec.containers[0].image' deploy/frontend/deployment.yaml   \n./yq  e '.spec.template.spec.containers[0].image' deploy/haproxy/deployment.yaml  \n./yq  e '.spec.template.spec.containers[0].image' deploy/services/fib-go/deployment.yaml \n./yq  e '.spec.template.spec.containers[0].image' deploy/services/fib-node/deployment.yaml    \n./yq  e '.spec.template.spec.containers[0].image' deploy/services/fib-quarkus/deployment.yaml    \noc apply -R -f deploy\n"
+      - name: Deploy App, show list of current images
+        run: |
+          rm -rf ./yq
+          rm -rf  kubeconfig.yaml
+      - name: Create Pull Request to update changes in repo
+        uses: peter-evans/create-pull-request@v3
