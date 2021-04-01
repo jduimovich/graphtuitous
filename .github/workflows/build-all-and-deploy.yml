@@ -51,10 +51,10 @@ jobs:
 
     - name: Build fib-go Dockerfile
       if: env.CHANGE_FIB_GO == 'true'
-      uses: redhat-actions/buildah-build@v1
+      uses: redhat-actions/buildah-build@v2
       with:
         image: "fib-go"
-        tag: ${{ env.TAG }} 
+        tags: ${{ env.TAG }} 
         context: ./services/fib-go
         dockerfiles: ./services/fib-go/Dockerfile 
 
