@@ -58,7 +58,15 @@ jobs:
       if: env.CHANGE_FIB_GO == 'true'
       run: |
         echo "rebuilding fib-go"  
+        if ${{ env.CHANGE_FIB_GO }} == 'true'  
+        then
+         echo run true 
+        fi      
     - name: Rebuild fib-go
       if: env.CHANGE_FIB_GO == 'false'
       run: |
-        echo "NOT rebuilding fib-go"       
+        echo "NOT rebuilding fib-go"   
+        if ${{ env.CHANGE_FIB_GO }} == 'false'  
+        then
+         echo run false 
+        fi     
