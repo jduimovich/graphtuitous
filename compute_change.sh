@@ -1,4 +1,4 @@
-git diff --name-only HEAD HEAD~40 > changed_directories
+git diff --name-only HEAD HEAD~1 > changed_directories
 
 export CHANGE_ANY=false
 if grep fib-go changed_directories

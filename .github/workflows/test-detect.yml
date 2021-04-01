@@ -50,6 +50,7 @@ jobs:
 
     - name:  Patch Deployment YAML with new image references
       run: | 
+        git diff --name-only HEAD HEAD~1 
         source compute_change.sh 
         echo vars computed 
         echo CHANGE_FIB_GO  $CHANGE_FIB_GO
