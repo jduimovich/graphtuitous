@@ -141,14 +141,17 @@ jobs:
         insecure_skip_tls_verify: true
         namespace: ${{ env.OPENSHIFT_NAMESPACE }}
 
-    - name:  Patch Deployment YAML with new image references
-      if: env.CHANGE_ANY == 'true'
+    - name:  Install  yq 
       run: | 
         ls -al 
         export VERSION=v4.2.0  
         export BINARY=yq_linux_amd64
         wget -q https://github.com/mikefarah/yq/releases/download/${VERSION}/${BINARY} -O ./yq
-        chmod +x ./yq    
+        chmod +x ./yq  
+
+    - name:  Patch Deployment YAML with new image references
+      if: env.CHANGE_ANY == 'true'
+      run: |   
         if [ "${{ env.CHANGE_FRONTEND }}" = "true" ]; then   
           ./yq  e '.spec.template.spec.containers[0].image = "${{ env.REGISTRY }}/frontend:${{ env.TAG }}"' deploy/frontend/deployment.yaml -i 
         fi 
