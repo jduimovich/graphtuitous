@@ -1,6 +1,6 @@
 # Use the official Node 8 image.
 # https://hub.docker.com/_/node 
-FROM node:8
+FROM docker.io/library/node:8
 
 # Create and change to the app directory.
 WORKDIR /usr/src/app

@@ -1,4 +1,4 @@
-FROM nginxinc/nginx-unprivileged 
+FROM docker.io/library/nginxinc/nginx-unprivileged 
  
 EXPOSE 8080
 
