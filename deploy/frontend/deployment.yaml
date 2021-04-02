@@ -25,7 +25,7 @@ spec:
         runAsNonRoot: true
       containers:
         - name: frontend-deploy
-          image: docker.io/jduimovich/frontend:9ae0e84
+          image: docker.io/jduimovich/frontend:a3b1777
           resources:
             limits:
               cpu: "200m"
