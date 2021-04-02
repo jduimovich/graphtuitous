@@ -1,6 +1,6 @@
 
 DELTA=changed_directories
-git diff --name-only HEAD HEAD~1 > $DELTA
+git diff --name-only HEAD HEAD~1 | grep -v "deploy/" > $DELTA
 
 export CHANGE_ANY=false
 if grep services/fib-go $DELTA
