@@ -145,11 +145,13 @@ jobs:
           fi
       - name: Deploy App, show list of current images
         run: 
-          ./yq  e '.spec.template.spec.containers[0].image' deploy/frontend/deployment.yaml   
-          ./yq  e '.spec.template.spec.containers[0].image' deploy/haproxy/deployment.yaml  
-          ./yq  e '.spec.template.spec.containers[0].image' deploy/services/fib-go/deployment.yaml 
-          ./yq  e '.spec.template.spec.containers[0].image' deploy/services/fib-node/deployment.yaml    
+          ./yq  e '.spec.template.spec.containers[0].image' deploy/frontend/deployment.yaml
+          ./yq  e '.spec.template.spec.containers[0].image' deploy/haproxy/deployment.yaml
+          ./yq  e '.spec.template.spec.containers[0].image' deploy/services/fib-go/deployment.yaml
+          ./yq  e '.spec.template.spec.containers[0].image' deploy/services/fib-node/deployment.yaml
+          ./yq  e '.spec.template.spec.containers[0].image' deploy/services/fib-quarkus/deployment.yaml
           oc apply -R -f deploy
+
       - name: Deploy App, show list of current images
         run: |
           rm -rf ./yq
