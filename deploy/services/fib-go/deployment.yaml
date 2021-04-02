@@ -6,11 +6,11 @@ metadata:
     app: fib
     app.kubernetes.io/name: fib-go-deploy
     app.kubernetes.io/part-of: fib-service
-    app.kubernetes.io/instance : fib-service-in-go
-    app.kubernetes.io/component : backend 
-    app.openshift.io/runtime : golang 
-  annotations:  
-    container.apparmor.security.beta.kubernetes.io/fib-go-deploy: runtime/default 
+    app.kubernetes.io/instance: fib-service-in-go
+    app.kubernetes.io/component: backend
+    app.openshift.io/runtime: golang
+  annotations:
+    container.apparmor.security.beta.kubernetes.io/fib-go-deploy: runtime/default
 spec:
   replicas: 2
   selector:
@@ -24,30 +24,30 @@ spec:
       securityContext:
         runAsNonRoot: true
       containers:
-      - name: fib-go-deploy
-        image: jduimovich/fib-go:latest
-        resources:
-          limits:
-            cpu: "200m"
-            memory: "48Mi"
-          requests:
-            cpu: "100m"
-            memory: "32Mi"
-        imagePullPolicy: Always
-        ports:
-        - containerPort: 8080
-        readinessProbe:
-          tcpSocket:
-            port: 8080
-          initialDelaySeconds: 5
-          periodSeconds: 10
-        livenessProbe:
-          initialDelaySeconds: 2
-          periodSeconds: 5
-          httpGet:
-            path: /health
-            port: 8080
-        securityContext:
-          capabilities:
-            drop:
-              - all
+        - name: fib-go-deploy
+          image: docker.io/jduimovich/fib-go:06a285f
+          resources:
+            limits:
+              cpu: "200m"
+              memory: "48Mi"
+            requests:
+              cpu: "100m"
+              memory: "32Mi"
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+          readinessProbe:
+            tcpSocket:
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            initialDelaySeconds: 2
+            periodSeconds: 5
+            httpGet:
+              path: /health
+              port: 8080
+          securityContext:
+            capabilities:
+              drop:
+                - all
