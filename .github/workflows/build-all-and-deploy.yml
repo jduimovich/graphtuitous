@@ -17,10 +17,13 @@ env:
   OPENSHIFT_SERVER: ${{ secrets.OPENSHIFT_SERVER }}
   OPENSHIFT_TOKEN: ${{ secrets.OPENSHIFT_TOKEN }}
   # ⬇️ EDIT with the port your application should be accessible on.
+
   APP_PORT: 8080
   # ⬇️ EDIT if you wish to set the kube context's namespace after login. Leave blank to use the default namespace.
+
   OPENSHIFT_NAMESPACE: "jduimovich-dev"
   # If you wish to manually provide the APP_NAME and TAG, set them here, otherwise they will be auto-detected.
+
   APP_NAME: ""
   TAG: ""
 on: [push, workflow_dispatch]
@@ -75,7 +78,6 @@ jobs:
           tags: ${{ env.TAG }}
           context: ./services/frontend
           dockerfiles: ./services/frontend/Dockerfile
-
       - name: Push fib-go to registry
         if: env.CHANGE_FIB_GO == 'true'
         uses: redhat-actions/push-to-registry@v1
@@ -112,8 +114,9 @@ jobs:
           registry: ${{ env.REGISTRY }}
           username: ${{ env.REGISTRY_USER }}
           password: ${{ env.REGISTRY_PASSWORD }}
-      # https://github.com/redhat-actions/oc-login#readme
       - name: Log in to OpenShift
+        # https://github.com/redhat-actions/oc-login#readme
+
         uses: redhat-actions/oc-login@v1
         with:
           openshift_server_url: ${{ env.OPENSHIFT_SERVER }}
@@ -121,28 +124,10 @@ jobs:
           insecure_skip_tls_verify: true
           namespace: ${{ env.OPENSHIFT_NAMESPACE }}
       - name: Install  yq
-        run: |
-          ls -al 
-          export VERSION=v4.2.0  
-          export BINARY=yq_linux_amd64
-          wget -q https://github.com/mikefarah/yq/releases/download/${VERSION}/${BINARY} -O ./yq
-          chmod +x ./yq
-
+        run: "ls -al \nexport VERSION=v4.2.0  \nexport BINARY=yq_linux_amd64\nwget -q https://github.com/mikefarah/yq/releases/download/${VERSION}/${BINARY} -O ./yq\nchmod +x ./yq\n"
       - name: Patch Deployment YAML with new image references
         if: env.CHANGE_ANY == 'true'
-        run: |
-          if [ "${{ env.CHANGE_FRONTEND }}" = "true" ]; then
-            ./yq  e '.spec.template.spec.containers[0].image = "${{ env.REGISTRY }}/frontend:${{ env.TAG }}"' deploy/frontend/deployment.yaml -i 
-          fi
-          if [ "${{ env.CHANGE_HAPROXY }}" = "true" ]; then   
-            ./yq  e '.spec.template.spec.containers[0].image = "${{ env.REGISTRY }}/haproxy:${{ env.TAG }}"' deploy/haproxy/deployment.yaml  -i
-          fi
-          if [ "${{ env.CHANGE_FIB_GO }}" = "true" ]; then   
-            ./yq  e '.spec.template.spec.containers[0].image = "${{ env.REGISTRY }}/fib-go:${{ env.TAG }}"' deploy/services/fib-go/deployment.yaml  -i
-          fi
-          if [ "${{ env.CHANGE_FIB_NODE }}" = "true" ]; then 
-            ./yq  e '.spec.template.spec.containers[0].image = "${{ env.REGISTRY }}/fib-node:${{ env.TAG }}"' deploy/services/fib-node/deployment.yaml  -i
-          fi
+        run: "if [ \"${{ env.CHANGE_FRONTEND }}\" = \"true\" ]; then\n  ./yq  e '.spec.template.spec.containers[0].image = \"${{ env.REGISTRY }}/frontend:${{ env.TAG }}\"' deploy/frontend/deployment.yaml -i \nfi\nif [ \"${{ env.CHANGE_HAPROXY }}\" = \"true\" ]; then   \n  ./yq  e '.spec.template.spec.containers[0].image = \"${{ env.REGISTRY }}/haproxy:${{ env.TAG }}\"' deploy/haproxy/deployment.yaml  -i\nfi\nif [ \"${{ env.CHANGE_FIB_GO }}\" = \"true\" ]; then   \n  ./yq  e '.spec.template.spec.containers[0].image = \"${{ env.REGISTRY }}/fib-go:${{ env.TAG }}\"' deploy/services/fib-go/deployment.yaml  -i\nfi\nif [ \"${{ env.CHANGE_FIB_NODE }}\" = \"true\" ]; then \n  ./yq  e '.spec.template.spec.containers[0].image = \"${{ env.REGISTRY }}/fib-node:${{ env.TAG }}\"' deploy/services/fib-node/deployment.yaml  -i\nfi\n"
       - name: Show list of current images
         run: |
           ./yq  e '.spec.template.spec.containers[0].image' deploy/frontend/deployment.yaml
@@ -150,14 +135,14 @@ jobs:
           ./yq  e '.spec.template.spec.containers[0].image' deploy/services/fib-go/deployment.yaml
           ./yq  e '.spec.template.spec.containers[0].image' deploy/services/fib-node/deployment.yaml
           ./yq  e '.spec.template.spec.containers[0].image' deploy/services/fib-quarkus/deployment.yaml
-
       - name: Deploy App, show list of current images
         run: |
           oc apply -R -f deploy
-
       - name: Cleanup
         run: |
           rm -rf ./yq
           rm -rf  kubeconfig.yaml
+          rm -rf  *digest.txt
+          
       - name: Create Pull Request to update changes in repo
         uses: peter-evans/create-pull-request@v3
