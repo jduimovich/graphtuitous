@@ -4,6 +4,7 @@
 
 name: OpenShift build all services and Deploy
 env:
+  REGISTRY_ROOT: docker.io
   REGISTRY: docker.io/jduimovich
   # ⬇️ EDIT with your registry username.
 
@@ -78,7 +79,7 @@ jobs:
         if: env.CHANGE_FIB_QUARKUS == 'true'
         run: |
           cd services/fib-quarkus 
-          docker login quay.io -u ${{ env.REGISTRY_USER }} -p ${{ env.REGISTRY_PASSWORD }}
+          docker login ${{ env.REGISTRY_ROOT }}  -u ${{ env.REGISTRY_USER }} -p ${{ env.REGISTRY_PASSWORD }}
           ./mvnw clean package  -Dquarkus.container-image.image=${{ env.REGISTRY }}/fib-quarkus:${{ env.TAG }} -Dquarkus.container-image.push=true
 
       - name: Push fib-go to registry
