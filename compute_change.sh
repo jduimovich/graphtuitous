@@ -43,13 +43,6 @@ echo Files Changed
 cat $DELTA 
 rm -rf $DELTA
 
-export CHANGE_FIB_GO=true
-export CHANGE_FIB_NODE=true
-export CHANGE_FIB_QUARKUS=true
-export CHANGE_FRONTEND=true
-export CHANGE_HAPROXY=true
-export CHANGE_ANY=true
-
 echo "CHANGE_FIB_GO=${CHANGE_FIB_GO}" | tee -a $GITHUB_ENV 
 echo "CHANGE_FIB_NODE=${CHANGE_FIB_NODE}" | tee -a $GITHUB_ENV 
 echo "CHANGE_FIB_QUARKUS=${CHANGE_FIB_QUARKUS}" | tee -a $GITHUB_ENV 
