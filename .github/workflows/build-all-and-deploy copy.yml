@@ -23,7 +23,7 @@ env:
   # If you wish to manually provide the APP_NAME and TAG, set them here, otherwise they will be auto-detected.
   APP_NAME: ""
   TAG: ""
-on: [push, workflow_dispatch]
+on: [workflow_dispatch]
 jobs:
   openshift-ci-cd:
     name: Build and deploy to OpenShift
@@ -75,6 +75,12 @@ jobs:
           tags: ${{ env.TAG }}
           context: ./services/frontend
           dockerfiles: ./services/frontend/Dockerfile
+      - name: Build fib-quarkus
+        if: env.CHANGE_FIB_QUARKUS == 'true'
+        run: |
+          cd services/fib-quarkus 
+          docker login ${{ env.REGISTRY_ROOT }}  -u ${{ env.REGISTRY_USER }} -p ${{ env.REGISTRY_PASSWORD }}
+          ./mvnw clean package  -Dquarkus.container-image.image=${{ env.REGISTRY }}/fib-quarkus:${{ env.TAG }} -Dquarkus.container-image.push=true
 
       - name: Push fib-go to registry
         if: env.CHANGE_FIB_GO == 'true'
@@ -143,12 +149,16 @@ jobs:
           if [ "${{ env.CHANGE_FIB_NODE }}" = "true" ]; then 
             ./yq  e '.spec.template.spec.containers[0].image = "${{ env.REGISTRY }}/fib-node:${{ env.TAG }}"' deploy/services/fib-node/deployment.yaml  -i
           fi
+          if [ "${{ env.CHANGE_FIB_QUARKUS }}" = "true" ]; then 
+            ./yq  e '.spec.template.spec.containers[0].image = "${{ env.REGISTRY }}/fib-quarkus:${{ env.TAG }}"' deploy/services/fib-quarkus/deployment.yaml  -i
+          fi
       - name: Deploy App, show list of current images
         run: 
           ./yq  e '.spec.template.spec.containers[0].image' deploy/frontend/deployment.yaml   
           ./yq  e '.spec.template.spec.containers[0].image' deploy/haproxy/deployment.yaml  
           ./yq  e '.spec.template.spec.containers[0].image' deploy/services/fib-go/deployment.yaml 
           ./yq  e '.spec.template.spec.containers[0].image' deploy/services/fib-node/deployment.yaml    
+          ./yq  e '.spec.template.spec.containers[0].image' deploy/services/fib-quarkus/deployment.yaml    
           oc apply -R -f deploy
       - name: Deploy App, show list of current images
         run: |
