@@ -143,16 +143,19 @@ jobs:
           if [ "${{ env.CHANGE_FIB_NODE }}" = "true" ]; then 
             ./yq  e '.spec.template.spec.containers[0].image = "${{ env.REGISTRY }}/fib-node:${{ env.TAG }}"' deploy/services/fib-node/deployment.yaml  -i
           fi
-      - name: Deploy App, show list of current images
-        run: 
+      - name: Show list of current images
+        run: |
           ./yq  e '.spec.template.spec.containers[0].image' deploy/frontend/deployment.yaml
           ./yq  e '.spec.template.spec.containers[0].image' deploy/haproxy/deployment.yaml
           ./yq  e '.spec.template.spec.containers[0].image' deploy/services/fib-go/deployment.yaml
           ./yq  e '.spec.template.spec.containers[0].image' deploy/services/fib-node/deployment.yaml
           ./yq  e '.spec.template.spec.containers[0].image' deploy/services/fib-quarkus/deployment.yaml
-          oc apply -R -f deploy
 
       - name: Deploy App, show list of current images
+        run: |
+          oc apply -R -f deploy
+
+      - name: Cleanup
         run: |
           rm -rf ./yq
           rm -rf  kubeconfig.yaml
