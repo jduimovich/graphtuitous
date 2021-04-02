@@ -40,7 +40,8 @@ jobs:
         run: |
           echo "TAG=${GITHUB_SHA::7}" | tee -a $GITHUB_ENV
       - name: Compute Changed Files
-        run: "source compute_change.sh \n"
+        run: |
+          source compute_change.sh
       - name: Build fib-go Dockerfile
         if: env.CHANGE_FIB_GO == 'true'
         uses: redhat-actions/buildah-build@v2
@@ -75,7 +76,11 @@ jobs:
           dockerfiles: ./services/frontend/Dockerfile
       - name: Build fib-quarkus
         if: env.CHANGE_FIB_QUARKUS == 'true'
-        run: "cd services/fib-quarkus \ndocker login quay.io -u ${{ env.REGISTRY_USER }} -p ${{ env.REGISTRY_PASSWORD }}\n./mvnw clean package  -Dquarkus.container-image.image=${{ env.REGISTRY }}/fib-quarkus:${{ env.TAG }} -Dquarkus.container-image.push=true\n"
+        run: |
+          cd services/fib-quarkus 
+          docker login quay.io -u ${{ env.REGISTRY_USER }} -p ${{ env.REGISTRY_PASSWORD }}
+          ./mvnw clean package  -Dquarkus.container-image.image=${{ env.REGISTRY }}/fib-quarkus:${{ env.TAG }} -Dquarkus.container-image.push=true
+
       - name: Push fib-go to registry
         if: env.CHANGE_FIB_GO == 'true'
         uses: redhat-actions/push-to-registry@v1
@@ -121,12 +126,39 @@ jobs:
           insecure_skip_tls_verify: true
           namespace: ${{ env.OPENSHIFT_NAMESPACE }}
       - name: Install  yq
-        run: "ls -al \nexport VERSION=v4.2.0  \nexport BINARY=yq_linux_amd64\nwget -q https://github.com/mikefarah/yq/releases/download/${VERSION}/${BINARY} -O ./yq\nchmod +x ./yq  \n"
+        run: |
+          ls -al 
+          export VERSION=v4.2.0  
+          export BINARY=yq_linux_amd64
+          wget -q https://github.com/mikefarah/yq/releases/download/${VERSION}/${BINARY} -O ./yq
+          chmod +x ./yq
+
       - name: Patch Deployment YAML with new image references
         if: env.CHANGE_ANY == 'true'
-        run: "if [ \"${{ env.CHANGE_FRONTEND }}\" = \"true\" ]; then   \n  ./yq  e '.spec.template.spec.containers[0].image = \"${{ env.REGISTRY }}/frontend:${{ env.TAG }}\"' deploy/frontend/deployment.yaml -i \nfi \nif [ \"${{ env.CHANGE_HAPROXY }}\" = \"true\" ]; then   \n  ./yq  e '.spec.template.spec.containers[0].image = \"${{ env.REGISTRY }}/haproxy:${{ env.TAG }}\"' deploy/haproxy/deployment.yaml  -i\nfi\nif [ \"${{ env.CHANGE_FIB_GO }}\" = \"true\" ]; then   \n  ./yq  e '.spec.template.spec.containers[0].image = \"${{ env.REGISTRY }}/fib-go:${{ env.TAG }}\"' deploy/services/fib-go/deployment.yaml  -i\nfi\nif [ \"${{ env.CHANGE_FIB_NODE }}\" = \"true\" ]; then \n  ./yq  e '.spec.template.spec.containers[0].image = \"${{ env.REGISTRY }}/fib-node:${{ env.TAG }}\"' deploy/services/fib-node/deployment.yaml  -i\nfi\nif [ \"${{ env.CHANGE_FIB_QUARKUS }}\" = \"true\" ]; then \n  ./yq  e '.spec.template.spec.containers[0].image = \"${{ env.REGISTRY }}/fib-quarkus:${{ env.TAG }}\"' deploy/services/fib-quarkus/deployment.yaml  -i\nfi \n"
+        run: |
+          if [ "${{ env.CHANGE_FRONTEND }}" = "true" ]; then
+            ./yq  e '.spec.template.spec.containers[0].image = "${{ env.REGISTRY }}/frontend:${{ env.TAG }}"' deploy/frontend/deployment.yaml -i 
+          fi
+          if [ "${{ env.CHANGE_HAPROXY }}" = "true" ]; then   
+            ./yq  e '.spec.template.spec.containers[0].image = "${{ env.REGISTRY }}/haproxy:${{ env.TAG }}"' deploy/haproxy/deployment.yaml  -i
+          fi
+          if [ "${{ env.CHANGE_FIB_GO }}" = "true" ]; then   
+            ./yq  e '.spec.template.spec.containers[0].image = "${{ env.REGISTRY }}/fib-go:${{ env.TAG }}"' deploy/services/fib-go/deployment.yaml  -i
+          fi
+          if [ "${{ env.CHANGE_FIB_NODE }}" = "true" ]; then 
+            ./yq  e '.spec.template.spec.containers[0].image = "${{ env.REGISTRY }}/fib-node:${{ env.TAG }}"' deploy/services/fib-node/deployment.yaml  -i
+          fi
+          if [ "${{ env.CHANGE_FIB_QUARKUS }}" = "true" ]; then 
+            ./yq  e '.spec.template.spec.containers[0].image = "${{ env.REGISTRY }}/fib-quarkus:${{ env.TAG }}"' deploy/services/fib-quarkus/deployment.yaml  -i
+          fi
       - name: Deploy App, show list of current images
-        run: "./yq  e '.spec.template.spec.containers[0].image' deploy/frontend/deployment.yaml   \n./yq  e '.spec.template.spec.containers[0].image' deploy/haproxy/deployment.yaml  \n./yq  e '.spec.template.spec.containers[0].image' deploy/services/fib-go/deployment.yaml \n./yq  e '.spec.template.spec.containers[0].image' deploy/services/fib-node/deployment.yaml    \n./yq  e '.spec.template.spec.containers[0].image' deploy/services/fib-quarkus/deployment.yaml    \noc apply -R -f deploy\n"
+        run: 
+          ./yq  e '.spec.template.spec.containers[0].image' deploy/frontend/deployment.yaml   
+          ./yq  e '.spec.template.spec.containers[0].image' deploy/haproxy/deployment.yaml  
+          ./yq  e '.spec.template.spec.containers[0].image' deploy/services/fib-go/deployment.yaml 
+          ./yq  e '.spec.template.spec.containers[0].image' deploy/services/fib-node/deployment.yaml    
+          ./yq  e '.spec.template.spec.containers[0].image' deploy/services/fib-quarkus/deployment.yaml    
+          oc apply -R -f deploy
       - name: Deploy App, show list of current images
         run: |
           rm -rf ./yq
