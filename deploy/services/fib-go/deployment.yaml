@@ -25,7 +25,7 @@ spec:
         runAsNonRoot: true
       containers:
         - name: fib-go-deploy
-          image: docker.io/jduimovich/fib-go:eca270d
+          image: docker.io/jduimovich/fib-go:d8613b0
           resources:
             limits:
               cpu: "200m"
