@@ -34,10 +34,13 @@ yq w -i .github\workflows\build-all-and-deploy.yml env.REGISTRY %REGISTRY%/%REGI
 yq w -i .github\workflows\build-all-and-deploy.yml env.REGISTRY_USER %REGISTRY_USER%
 yq w -i .github\workflows\build-all-and-deploy.yml env.REGISTRY_ROOT %REGISTRY%
 
-echo Workflow is set to the following registry, and user 
+echo This app will be running on /%SERVER%/
+echo Workflow is configured to the following registry, and user 
 yq r .github\workflows\build-all-and-deploy.yml env.REGISTRY 
 yq r .github\workflows\build-all-and-deploy.yml env.REGISTRY_USER  
 yq r .github\workflows\build-all-and-deploy.yml env.REGISTRY_ROOT   
+
+
 
 gh secret set OPENSHIFT_SERVER -b %SERVER%
 gh secret set OPENSHIFT_TOKEN -b %LOGIN%

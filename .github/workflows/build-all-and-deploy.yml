@@ -124,28 +124,10 @@ jobs:
           insecure_skip_tls_verify: true
           namespace: ${{ env.OPENSHIFT_NAMESPACE }}
       - name: Install  yq
-        run: |
-          ls -al 
-          export VERSION=v4.2.0  
-          export BINARY=yq_linux_amd64
-          wget -q https://github.com/mikefarah/yq/releases/download/${VERSION}/${BINARY} -O ./yq
-          chmod +x ./yq
-
+        run: "ls -al \nexport VERSION=v4.2.0  \nexport BINARY=yq_linux_amd64\nwget -q https://github.com/mikefarah/yq/releases/download/${VERSION}/${BINARY} -O ./yq\nchmod +x ./yq\n"
       - name: Patch Deployment YAML with new image references
         if: env.CHANGE_ANY == 'true'
-        run: |
-            if [ "${{ env.CHANGE_FRONTEND }}" = "true" ]; then
-            ./yq  e '.spec.template.spec.containers[0].image = "${{ env.REGISTRY }}/frontend:${{ env.TAG }}"' deploy/frontend/deployment.yaml -i
-            fi
-            if [ "${{ env.CHANGE_HAPROXY }}" = "true" ]; then   
-              ./yq  e '.spec.template.spec.containers[0].image = "${{ env.REGISTRY }}/haproxy:${{ env.TAG }}"' deploy/haproxy/deployment.yaml  -i
-            fi
-            if [ "${{ env.CHANGE_FIB_GO }}" = "true" ]; then   
-              ./yq  e '.spec.template.spec.containers[0].image = "${{ env.REGISTRY }}/fib-go:${{ env.TAG }}"' deploy/services/fib-go/deployment.yaml  -i
-            fi
-            if [ "${{ env.CHANGE_FIB_NODE }}" = "true" ]; then 
-              ./yq  e '.spec.template.spec.containers[0].image = "${{ env.REGISTRY }}/fib-node:${{ env.TAG }}"' deploy/services/fib-node/deployment.yaml  -i
-            fi
+        run: "if [ \"${{ env.CHANGE_FRONTEND }}\" = \"true\" ]; then\n./yq  e '.spec.template.spec.containers[0].image = \"${{ env.REGISTRY }}/frontend:${{ env.TAG }}\"' deploy/frontend/deployment.yaml -i\nfi\nif [ \"${{ env.CHANGE_HAPROXY }}\" = \"true\" ]; then   \n  ./yq  e '.spec.template.spec.containers[0].image = \"${{ env.REGISTRY }}/haproxy:${{ env.TAG }}\"' deploy/haproxy/deployment.yaml  -i\nfi\nif [ \"${{ env.CHANGE_FIB_GO }}\" = \"true\" ]; then   \n  ./yq  e '.spec.template.spec.containers[0].image = \"${{ env.REGISTRY }}/fib-go:${{ env.TAG }}\"' deploy/services/fib-go/deployment.yaml  -i\nfi\nif [ \"${{ env.CHANGE_FIB_NODE }}\" = \"true\" ]; then \n  ./yq  e '.spec.template.spec.containers[0].image = \"${{ env.REGISTRY }}/fib-node:${{ env.TAG }}\"' deploy/services/fib-node/deployment.yaml  -i\nfi\n"
       - name: Show list of current images
         run: |
           ./yq  e '.spec.template.spec.containers[0].image' deploy/frontend/deployment.yaml
@@ -161,7 +143,6 @@ jobs:
           rm -rf ./yq
           rm -rf  kubeconfig.yaml
           rm -rf  *digest.txt
-          
       - name: Create Pull Request to update changes in repo
         uses: peter-evans/create-pull-request@v3
         with:
