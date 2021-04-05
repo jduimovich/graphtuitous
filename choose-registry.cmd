@@ -35,10 +35,11 @@ yq w -i .github\workflows\build-all-and-deploy.yml env.REGISTRY_USER %REGISTRY_U
 yq w -i .github\workflows\build-all-and-deploy.yml env.REGISTRY_ROOT %REGISTRY%
 
 echo This app will be running on /%SERVER%/
-echo Workflow is configured to the following registry, and user 
+echo Workflow is configured to the following registry, user and namespace
 yq r .github\workflows\build-all-and-deploy.yml env.REGISTRY 
 yq r .github\workflows\build-all-and-deploy.yml env.REGISTRY_USER  
-yq r .github\workflows\build-all-and-deploy.yml env.REGISTRY_ROOT   
+yq r .github\workflows\build-all-and-deploy.yml env.REGISTRY_ROOT 
+yq r .github\workflows\build-all-and-deploy.yml env.OPENSHIFT_NAMESPACE  
 
 
 
