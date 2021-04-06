@@ -52,9 +52,10 @@ jobs:
       - name: Compute Changed Files
         run: |
           echo changed files
-          echo ${{ steps.get_changed_files.outputs.all }}
+          echo ${{ steps.get_changed_files.outputs.all }} | jq 
+          echo ${{ steps.get_changed_files.outputs.all }} | jq  > tmp_changed
           echo ---
-          source compute_change.sh
+          source compute_change.sh tmp_changed 
       - name: Build fib-go Dockerfile
         if: env.CHANGE_FIB_GO == 'true'
         uses: redhat-actions/buildah-build@v2
@@ -170,6 +171,7 @@ jobs:
           rm -rf ./yq
           rm -rf  kubeconfig.yaml
           rm -rf  *digest.txt
+          rm -rf  tmp_*
       - name: Create Pull Request to update changes in repo
         uses: peter-evans/create-pull-request@v3
         with:

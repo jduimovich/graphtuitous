@@ -1,14 +1,5 @@
 
-DELTA=changed_directories
-
-echo git log
-git log
-
-echo git diff --name-only HEAD HEAD~1  
-git diff --name-only HEAD HEAD~1 
-
-echo git diff --name-only HEAD HEAD~1 | grep -v deploy
-git diff --name-only HEAD HEAD~1 | grep -v deploy > $DELTA
+DELTA=$1 
 
 echo Compute change
 export CHANGE_ANY=false
