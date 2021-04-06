@@ -53,9 +53,11 @@ jobs:
         run: |
           echo changed files
           echo ${{ steps.get_changed_files.outputs.all }} > tmp_raw
+          echo -------
           cat tmp_raw
+          echo -------
           cat tmp_raw | jq  > tmp_changed
-          echo ---
+          echo ------- 
           source compute_change.sh tmp_changed 
       - name: Build fib-go Dockerfile
         if: env.CHANGE_FIB_GO == 'true'
