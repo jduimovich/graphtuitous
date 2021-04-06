@@ -43,8 +43,17 @@ jobs:
         if: env.TAG == ''
         run: |
           echo "TAG=${GITHUB_SHA::7}" | tee -a $GITHUB_ENV
+
+      - uses: lots0logs/gh-action-get-changed-files@2.1.4
+        id: get_changed_files
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Compute Changed Files
         run: |
+          echo changed files
+          echo ${{ steps.get_changed_files.outputs.all }}
+          echo ---
           source compute_change.sh
       - name: Build fib-go Dockerfile
         if: env.CHANGE_FIB_GO == 'true'
