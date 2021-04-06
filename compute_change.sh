@@ -1,5 +1,5 @@
 
-DELTA=changed_directories
+DELTA=changed_directories 
 git diff --name-only HEAD HEAD~1 | grep -v deploy > $DELTA
 
 export CHANGE_ANY=false
