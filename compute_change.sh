@@ -1,7 +1,17 @@
+DELTA=changed_directories
 
-DELTA=$1 
+echo git log
+git log
+echo ----------------------------------------------------
 
-echo Compute change
+echo git diff --name-only HEAD HEAD~1  
+git diff --name-only HEAD HEAD~1 
+echo ----------------------------------------------------
+
+echo git diff --name-only HEAD HEAD~1 | grep -v deploy
+git diff --name-only HEAD HEAD~1 | grep -v deploy > $DELTA
+echo ----------------------------------------------------
+
 export CHANGE_ANY=false
 if grep services/fib-go $DELTA
 then
