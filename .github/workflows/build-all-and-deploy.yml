@@ -56,7 +56,7 @@ jobs:
           echo -------
           cat tmp_raw
           echo -------
-          cat tmp_raw | jq  > tmp_changed
+          cat tmp_raw | jq . > tmp_changed
           echo ------- 
           source compute_change.sh tmp_changed 
       - name: Build fib-go Dockerfile
