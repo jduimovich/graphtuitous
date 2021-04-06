@@ -52,11 +52,9 @@ jobs:
       - name: Compute Changed Files
         run: |
           echo changed files
-          echo ${{ steps.get_changed_files.outputs.all }} > tmp_raw
+          echo ${{ steps.get_changed_files.outputs.all }} | jq . > tmp_changed
           echo -------
-          cat tmp_raw
-          echo -------
-          cat tmp_raw | jq . > tmp_changed
+          cat tmp_changed 
           echo ------- 
           source compute_change.sh tmp_changed 
       - name: Build fib-go Dockerfile
