@@ -51,12 +51,13 @@ jobs:
 
       - name: Compute Changed Files
         run: |
-          echo changed files
-          echo ${{ steps.get_changed_files.outputs.all }} | jq . > tmp_changed
+          source compute_change.sh   
+          echo changed files from action
+          echo ${{ steps.get_changed_files.outputs.all }} 
+          echo "${{ steps.get_changed_files.outputs.all }}" > tmp_changed
           echo -------
           cat tmp_changed 
           echo ------- 
-          source compute_change.sh tmp_changed 
       - name: Build fib-go Dockerfile
         if: env.CHANGE_FIB_GO == 'true'
         uses: redhat-actions/buildah-build@v2
