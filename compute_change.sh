@@ -1,47 +1,36 @@
 DELTA=changed_directories
-
-echo git log
-git log
-echo ----------------------------------------------------
-
-echo git diff --name-only HEAD HEAD~1  
-git diff --name-only HEAD HEAD~1 
-echo ----------------------------------------------------
-
-echo git diff --name-only HEAD HEAD~1 | grep -v deploy
-git diff --name-only HEAD HEAD~1 | grep -v deploy > $DELTA
-echo ----------------------------------------------------
+git diff --name-only HEAD HEAD~1 > $DELTA
 
 export CHANGE_ANY=false
-if grep services/fib-go $DELTA
+if grep fib-go $DELTA
 then
     export CHANGE_FIB_GO=true
     export CHANGE_ANY=true
 else
     export CHANGE_FIB_GO=false
 fi
-if grep  services/fib-node $DELTA
+if grep  fib-node $DELTA
 then
     export CHANGE_FIB_NODE=true
     export CHANGE_ANY=true
 else
     export CHANGE_FIB_NODE=false
 fi
-if grep services/fib-quarkus $DELTA
+if grep fib-quarkus $DELTA
 then
     export CHANGE_FIB_QUARKUS=true
     export CHANGE_ANY=true
 else
     export CHANGE_FIB_QUARKUS=false
 fi
-if grep services/haproxy $DELTA
+if grep haproxy $DELTA
 then
     export CHANGE_HAPROXY=true
     export CHANGE_ANY=true
 else
     export CHANGE_HAPROXY=false
 fi
-if grep services/frontend $DELTA
+if grep frontend $DELTA
 then
     export CHANGE_FRONTEND=true
     export CHANGE_ANY=true
