@@ -1,8 +1,6 @@
-# Sample multiple service demo and deploy to openshift
-
-# test via push
-
-name: Build and Update Gitops Config via PR
+# Gitops wokflow
+  
+name: Build and submit Gitops Pull Request 
 env:
   REGISTRY_ROOT: docker.io
   REGISTRY: docker.io/jduimovich
@@ -15,10 +13,10 @@ env:
 
   APP_NAME: ""
   TAG: ""
-on: [push, workflow_dispatch]
+on: [workflow_dispatch]
 jobs:
-  openshift-ci-cd:
-    name: Build and push Images
+  image-ci:
+    name: Build and Push Images
     runs-on: ubuntu-18.04
     steps:
       - uses: actions/checkout@v2
@@ -35,13 +33,7 @@ jobs:
 
       - name: Compute Changed Files
         run: |
-          source compute_change.sh   
-          echo changed files from action
-          echo ${{ steps.get_changed_files.outputs.all }} 
-          echo "${{ steps.get_changed_files.outputs.all }}" > tmp_changed
-          echo -------
-          cat tmp_changed 
-          echo ------- 
+          source compute_change.sh    
       - name: Build fib-go Dockerfile
         if: env.CHANGE_FIB_GO == 'true'
         uses: redhat-actions/buildah-build@v2
@@ -110,8 +102,6 @@ jobs:
           registry: ${{ env.REGISTRY }}
           username: ${{ env.REGISTRY_USER }}
           password: ${{ env.REGISTRY_PASSWORD }}
-      - name: Log in to OpenShift
-        # https://github.com/redhat-actions/oc-login#readme
 
       - name: Install  yq
         run: |
