@@ -17,10 +17,13 @@ env:
   OPENSHIFT_SERVER: ${{ secrets.OPENSHIFT_SERVER }}
   OPENSHIFT_TOKEN: ${{ secrets.OPENSHIFT_TOKEN }}
   # ⬇️ EDIT with the port your application should be accessible on.
+
   APP_PORT: 8080
   # ⬇️ EDIT if you wish to set the kube context's namespace after login. Leave blank to use the default namespace.
-  OPENSHIFT_NAMESPACE: "jduimovich-dev"
+
+  OPENSHIFT_NAMESPACE: "jduimovich-stage"
   # If you wish to manually provide the APP_NAME and TAG, set them here, otherwise they will be auto-detected.
+
   APP_NAME: ""
   TAG: ""
 on: [workflow_dispatch]
@@ -40,9 +43,21 @@ jobs:
         if: env.TAG == ''
         run: |
           echo "TAG=${GITHUB_SHA::7}" | tee -a $GITHUB_ENV
+
+      - uses: lots0logs/gh-action-get-changed-files@2.1.4
+        id: get_changed_files
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Compute Changed Files
         run: |
-          source compute_change.sh
+          source compute_change.sh   
+          echo changed files from action
+          echo ${{ steps.get_changed_files.outputs.all }} 
+          echo "${{ steps.get_changed_files.outputs.all }}" > tmp_changed
+          echo -------
+          cat tmp_changed 
+          echo ------- 
       - name: Build fib-go Dockerfile
         if: env.CHANGE_FIB_GO == 'true'
         uses: redhat-actions/buildah-build@v2
@@ -75,13 +90,6 @@ jobs:
           tags: ${{ env.TAG }}
           context: ./services/frontend
           dockerfiles: ./services/frontend/Dockerfile
-      - name: Build fib-quarkus
-        if: env.CHANGE_FIB_QUARKUS == 'true'
-        run: |
-          cd services/fib-quarkus 
-          docker login ${{ env.REGISTRY_ROOT }}  -u ${{ env.REGISTRY_USER }} -p ${{ env.REGISTRY_PASSWORD }}
-          ./mvnw clean package  -Dquarkus.container-image.image=${{ env.REGISTRY }}/fib-quarkus:${{ env.TAG }} -Dquarkus.container-image.push=true
-
       - name: Push fib-go to registry
         if: env.CHANGE_FIB_GO == 'true'
         uses: redhat-actions/push-to-registry@v1
@@ -118,8 +126,9 @@ jobs:
           registry: ${{ env.REGISTRY }}
           username: ${{ env.REGISTRY_USER }}
           password: ${{ env.REGISTRY_PASSWORD }}
-      # https://github.com/redhat-actions/oc-login#readme
       - name: Log in to OpenShift
+        # https://github.com/redhat-actions/oc-login#readme
+
         uses: redhat-actions/oc-login@v1
         with:
           openshift_server_url: ${{ env.OPENSHIFT_SERVER }}
@@ -137,8 +146,8 @@ jobs:
       - name: Patch Deployment YAML with new image references
         if: env.CHANGE_ANY == 'true'
         run: |
-          if [ "${{ env.CHANGE_FRONTEND }}" = "true" ]; then
-            ./yq  e '.spec.template.spec.containers[0].image = "${{ env.REGISTRY }}/frontend:${{ env.TAG }}"' deploy/frontend/deployment.yaml -i 
+          if [ "${{ env.CHANGE_FRONTEND }}" = "true"]; then
+            ./yq  e '.spec.template.spec.containers[0].image = "${{ env.REGISTRY }}/frontend:${{ env.TAG }}"' deploy/frontend/deployment.yaml -i
           fi
           if [ "${{ env.CHANGE_HAPROXY }}" = "true" ]; then   
             ./yq  e '.spec.template.spec.containers[0].image = "${{ env.REGISTRY }}/haproxy:${{ env.TAG }}"' deploy/haproxy/deployment.yaml  -i
@@ -148,21 +157,25 @@ jobs:
           fi
           if [ "${{ env.CHANGE_FIB_NODE }}" = "true" ]; then 
             ./yq  e '.spec.template.spec.containers[0].image = "${{ env.REGISTRY }}/fib-node:${{ env.TAG }}"' deploy/services/fib-node/deployment.yaml  -i
-          fi
-          if [ "${{ env.CHANGE_FIB_QUARKUS }}" = "true" ]; then 
-            ./yq  e '.spec.template.spec.containers[0].image = "${{ env.REGISTRY }}/fib-quarkus:${{ env.TAG }}"' deploy/services/fib-quarkus/deployment.yaml  -i
-          fi
+          fi 
+      - name: Show list of current images
+        run: |
+          ./yq  e '.spec.template.spec.containers[0].image' deploy/frontend/deployment.yaml
+          ./yq  e '.spec.template.spec.containers[0].image' deploy/haproxy/deployment.yaml
+          ./yq  e '.spec.template.spec.containers[0].image' deploy/services/fib-go/deployment.yaml
+          ./yq  e '.spec.template.spec.containers[0].image' deploy/services/fib-node/deployment.yaml
+          ./yq  e '.spec.template.spec.containers[0].image' deploy/services/fib-quarkus/deployment.yaml
       - name: Deploy App, show list of current images
-        run: 
-          ./yq  e '.spec.template.spec.containers[0].image' deploy/frontend/deployment.yaml   
-          ./yq  e '.spec.template.spec.containers[0].image' deploy/haproxy/deployment.yaml  
-          ./yq  e '.spec.template.spec.containers[0].image' deploy/services/fib-go/deployment.yaml 
-          ./yq  e '.spec.template.spec.containers[0].image' deploy/services/fib-node/deployment.yaml    
-          ./yq  e '.spec.template.spec.containers[0].image' deploy/services/fib-quarkus/deployment.yaml    
+        run: |
           oc apply -R -f deploy
-      - name: Deploy App, show list of current images
+      - name: Cleanup
         run: |
           rm -rf ./yq
           rm -rf  kubeconfig.yaml
+          rm -rf  *digest.txt
+          rm -rf  tmp_*
       - name: Create Pull Request to update changes in repo
         uses: peter-evans/create-pull-request@v3
+        with:
+          title: 'New deployment images with tag ${{ env.TAG }}'
+          commit-message: 'New deployment images with tag ${{ env.TAG }}'

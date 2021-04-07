@@ -2,7 +2,7 @@
 
 # test via push
 
-name: OpenShift build all services and Deploy
+name: Build and Update Gitops Config via PR
 env:
   REGISTRY_ROOT: docker.io
   REGISTRY: docker.io/jduimovich
@@ -13,23 +13,12 @@ env:
   REGISTRY_PASSWORD: ${{ secrets.REGISTRY_PASSWORD }}
   # ⬇️ EDIT to log into your OpenShift cluster and set up the context.
 
-  # See https://github.com/redhat-actions/oc-login#readme for how to retrieve these values.
-  OPENSHIFT_SERVER: ${{ secrets.OPENSHIFT_SERVER }}
-  OPENSHIFT_TOKEN: ${{ secrets.OPENSHIFT_TOKEN }}
-  # ⬇️ EDIT with the port your application should be accessible on.
-
-  APP_PORT: 8080
-  # ⬇️ EDIT if you wish to set the kube context's namespace after login. Leave blank to use the default namespace.
-
-  OPENSHIFT_NAMESPACE: "jduimovich-stage"
-  # If you wish to manually provide the APP_NAME and TAG, set them here, otherwise they will be auto-detected.
-
   APP_NAME: ""
   TAG: ""
 on: [push, workflow_dispatch]
 jobs:
   openshift-ci-cd:
-    name: Build and deploy to OpenShift
+    name: Build and push Images
     runs-on: ubuntu-18.04
     steps:
       - uses: actions/checkout@v2
@@ -43,11 +32,6 @@ jobs:
         if: env.TAG == ''
         run: |
           echo "TAG=${GITHUB_SHA::7}" | tee -a $GITHUB_ENV
-
-      - uses: lots0logs/gh-action-get-changed-files@2.1.4
-        id: get_changed_files
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Compute Changed Files
         run: |
@@ -129,12 +113,6 @@ jobs:
       - name: Log in to OpenShift
         # https://github.com/redhat-actions/oc-login#readme
 
-        uses: redhat-actions/oc-login@v1
-        with:
-          openshift_server_url: ${{ env.OPENSHIFT_SERVER }}
-          openshift_token: ${{ env.OPENSHIFT_TOKEN }}
-          insecure_skip_tls_verify: true
-          namespace: ${{ env.OPENSHIFT_NAMESPACE }}
       - name: Install  yq
         run: |
           ls -al 
@@ -165,9 +143,7 @@ jobs:
           ./yq  e '.spec.template.spec.containers[0].image' deploy/services/fib-go/deployment.yaml
           ./yq  e '.spec.template.spec.containers[0].image' deploy/services/fib-node/deployment.yaml
           ./yq  e '.spec.template.spec.containers[0].image' deploy/services/fib-quarkus/deployment.yaml
-      - name: Deploy App, show list of current images
-        run: |
-          oc apply -R -f deploy
+
       - name: Cleanup
         run: |
           rm -rf ./yq

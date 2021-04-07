@@ -3,7 +3,7 @@
 name: Snyk Action Integration
 
 # Controls when the action will run. 
-on: [push, workflow_dispatch] 
+on: [ workflow_dispatch] 
 
 #
 jobs:
