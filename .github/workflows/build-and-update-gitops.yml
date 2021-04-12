@@ -13,7 +13,7 @@ env:
 
   APP_NAME: ""
   TAG: ""
-on: [workflow_dispatch]
+on: [push, workflow_dispatch]
 jobs:
   image-ci:
     name: Build and Push Images
