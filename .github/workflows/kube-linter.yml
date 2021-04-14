@@ -12,4 +12,4 @@ jobs:
         uses: stackrox/kube-linter-action@v1
         with:
           directory: deploy   
-          config: .kube-linter.yaml 
+          config: kube-linter.yaml 
