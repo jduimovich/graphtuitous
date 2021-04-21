@@ -25,7 +25,7 @@ spec:
         runAsNonRoot: true
       containers:
         - name: fib-node-deploy
-          image: docker.io/jduimovich/fib-node:7ec976e
+          image: docker.io/jduimovich/fib-node:8e35314
           resources:
             limits:
               cpu: "200m"
