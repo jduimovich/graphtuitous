@@ -143,5 +143,5 @@ jobs:
       - name: Create Pull Request to update changes in repo
         uses: peter-evans/create-pull-request@v3
         with:
-          title: 'New deployment images with tag ${{ env.TAG }}'
+          title: 'Deploy with tag ${{ env.TAG }} for commit ${{ github.event.commits[0].message }}'
           commit-message: 'New deployment images with tag ${{ env.TAG }}'
