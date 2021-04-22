@@ -34,7 +34,7 @@ var response *Response = &Response{
 	Colour:   "yellow",
 	Count:    0,
 	Stack:    "golang",
-	Loop:     20000,
+	Loop:     10000,
 	Compute:  "fib(12)",
 	Time:     0,
 }
