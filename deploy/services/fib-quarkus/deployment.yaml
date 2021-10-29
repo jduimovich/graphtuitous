@@ -55,8 +55,7 @@ spec:
               - AUDIT_WRITE
               - BLOCK_SUSPEND
               - BPF
-              - CHECKPOINT_RESTORE
-              - CHOWN
+              - CHECKPOINT_RESTORE 
               - DAC_OVERRIDE
               - DAC_READ_SEARCH
               - FOWNER
