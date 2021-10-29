@@ -48,7 +48,4 @@ spec:
             path: /fib
             port: 8080
         securityContext:
-          capabilities:
-            drop:  
-              - DAC_OVERRIDE 
           readOnlyRootFilesystem: false
