@@ -52,10 +52,5 @@ spec:
             drop: 
               - AUDIT_CONTROL 
               - AUDIT_READ
-              - AUDIT_WRITE
-              - BLOCK_SUSPEND
-              - BPF
-              - CHECKPOINT_RESTORE 
-              - DAC_OVERRIDE
-              - DAC_READ_SEARCH 
+              - AUDIT_WRITE 
           readOnlyRootFilesystem: false
