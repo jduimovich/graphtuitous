@@ -47,8 +47,3 @@ spec:
           httpGet:
             path: /fib
             port: 8080
-        securityContext:
-          capabilities:
-            drop:
-              - all
-          readOnlyRootFilesystem: false
