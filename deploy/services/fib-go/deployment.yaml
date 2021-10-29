@@ -49,7 +49,5 @@ spec:
               port: 8080
           securityContext:
             capabilities:
-              drop:
-                - all 
-              add: ["MKNOD", "SYS_TIME"]
+              drop: ["MKNOD", "SYS_TIME"]  
             readOnlyRootFilesystem: true
