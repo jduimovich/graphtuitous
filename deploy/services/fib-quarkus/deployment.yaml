@@ -57,14 +57,5 @@ spec:
               - BPF
               - CHECKPOINT_RESTORE 
               - DAC_OVERRIDE
-              - DAC_READ_SEARCH
-              - FOWNER
-              - FSETID
-              - IPC_LOCK
-              - IPC_OWNER
-              - KILL
-              - LEASE
-              - LINUX_IMMUTABLE
-              - MAC_ADMIN
-              - MAC_OVERRIDE 
+              - DAC_READ_SEARCH 
           readOnlyRootFilesystem: false
