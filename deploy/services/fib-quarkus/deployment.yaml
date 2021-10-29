@@ -49,5 +49,24 @@ spec:
             port: 8080
         securityContext:
           capabilities:
-            drop: ["AUDIT_CONTROL", "AUDIT_READ", "AUDIT_WRITE", "BLOCK_SUSPEND", "BPF", "CHECKPOINT_RESTORE"]   
+            drop: 
+              - AUDIT_CONTROL 
+              - AUDIT_READ
+              - AUDIT_WRITE
+              - BLOCK_SUSPEND
+              - BPF
+              - CHECKPOINT_RESTORE
+              - CHOWN
+              - DAC_OVERRIDE
+              - DAC_READ_SEARCH
+              - FOWNER
+              - FSETID
+              - IPC_LOCK
+              - IPC_OWNER
+              - KILL
+              - LEASE
+              - LINUX_IMMUTABLE
+              - MAC_ADMIN
+              - MAC_OVERRIDE
+              - MKNOD
           readOnlyRootFilesystem: false
