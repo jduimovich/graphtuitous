@@ -50,5 +50,5 @@ spec:
         securityContext:
           capabilities:
             drop:  
-              - DAC_OVERRIDE 
+              - CAP_DAC_READ_SEARCH 
           readOnlyRootFilesystem: false
