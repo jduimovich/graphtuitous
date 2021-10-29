@@ -52,5 +52,8 @@ spec:
             drop: 
               - AUDIT_CONTROL 
               - AUDIT_READ
-              - AUDIT_WRITE 
+              - AUDIT_WRITE
+              - BLOCK_SUSPEND
+              - BPF
+              - CHECKPOINT_RESTORE 
           readOnlyRootFilesystem: false
