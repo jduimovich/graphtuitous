@@ -47,7 +47,8 @@ spec:
           httpGet:
             path: /fib
             port: 8080
-        securityContext:
+        securityContext: 
           capabilities:
-            drop: ["LEASE", "AUDIT_CONTROL"]   
+            drop:
+              - all   
           readOnlyRootFilesystem: false
