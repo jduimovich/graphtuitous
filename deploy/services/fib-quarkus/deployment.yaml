@@ -49,11 +49,7 @@ spec:
             port: 8080
         securityContext:
           capabilities:
-            drop: 
-              - AUDIT_CONTROL 
-              - AUDIT_READ
-              - AUDIT_WRITE
-              - BLOCK_SUSPEND
-              - BPF
-              - CHECKPOINT_RESTORE 
+            drop:  
+              - DAC_OVERRIDE
+              - DAC_READ_SEARCH 
           readOnlyRootFilesystem: false
