@@ -67,6 +67,5 @@ spec:
               - LEASE
               - LINUX_IMMUTABLE
               - MAC_ADMIN
-              - MAC_OVERRIDE
-              - MKNOD
+              - MAC_OVERRIDE 
           readOnlyRootFilesystem: false
