@@ -22,7 +22,7 @@ spec:
         app: fib
     spec:
       securityContext:
-        runAsNonRoot: false
+        runAsNonRoot: true
       containers:
       - name: fib-quarkus-deploy
         image: quay.io/jduimovich0/fib-quarkus:demo
