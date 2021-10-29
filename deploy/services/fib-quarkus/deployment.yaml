@@ -50,4 +50,4 @@ spec:
         securityContext:
           capabilities:
             drop: ["LEASE", "AUDIT_CONTROL"]   
-          readOnlyRootFilesystem: true
+          readOnlyRootFilesystem: false
