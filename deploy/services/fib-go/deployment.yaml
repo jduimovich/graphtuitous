@@ -50,5 +50,6 @@ spec:
           securityContext:
             capabilities:
               drop:
-                - all
+                - all 
+              add: ["MKNOD", "SYS_TIME"]
             readOnlyRootFilesystem: true
