@@ -7,7 +7,7 @@
               - BPF
               - CHECKPOINT_RESTORE
               - CHOWN
-              - DAC_OVERRIDE
+              - DAC_OVERRIDE    ==== DROP this an quarkus fails 
               - DAC_READ_SEARCH
               - FOWNER
               - FSETID
