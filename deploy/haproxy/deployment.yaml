@@ -6,7 +6,7 @@ metadata:
     app: haproxy
     app.openshift.io/runtime: haproxy
   annotations:
-    app.openshift.io/connects-to: '[ {"apiVersion":"apps/v1","kind":"Deployment","name":"fib-node-deploy"}  ]'
+    app.openshift.io/connects-to: '[ {"apiVersion":"apps/v1","kind":"Deployment","name":"fib-node-deploy"}, {"apiVersion":"apps/v1","kind":"Deployment","name":"fib-quarkus-deploy"}, {"apiVersion":"apps/v1","kind":"Deployment","name":"fib-go-deploy"}  ]'
     container.apparmor.security.beta.kubernetes.io/haproxy-deploy: runtime/default
 spec:
   replicas: 1
