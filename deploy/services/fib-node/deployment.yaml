@@ -29,10 +29,10 @@ spec:
           resources:
             limits:
               cpu: "200m"
-              memory: "64Mi"
+              memory: "48Mi"
             requests:
               cpu: "100m"
-              memory: "32Mi"
+              memory: "48Mi"
           imagePullPolicy: Always
           ports:
             - containerPort: 8080
