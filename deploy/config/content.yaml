@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata: 
+  name: bindable-content  
+data:
+  fish: "bass" 
+  number: "3"
