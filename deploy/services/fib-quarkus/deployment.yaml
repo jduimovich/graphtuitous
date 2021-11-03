@@ -22,7 +22,8 @@ spec:
         app: fib
     spec:
       securityContext:
-        runAsNonRoot: true
+        runAsNonRoot: true 
+      revisionHistoryLimit: 2 # Default to 10 if not specified
       containers:
       - name: fib-quarkus-deploy
         image: quay.io/jduimovich0/fib-quarkus:demo
