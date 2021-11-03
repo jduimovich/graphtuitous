@@ -5,8 +5,7 @@ metadata:
   labels:
     app: fib
     app.kubernetes.io/name: fib-go-deploy
-    app.kubernetes.io/part-of: fib-service
-    app.kubernetes.io/instance: fib-service-in-go
+    app.kubernetes.io/part-of: fib-service 
     app.kubernetes.io/component: backend
     app.openshift.io/runtime: golang
   annotations:
