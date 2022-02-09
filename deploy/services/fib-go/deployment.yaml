@@ -5,7 +5,7 @@ metadata:
   labels:
     app: fib
     app.kubernetes.io/name: fib-go-deploy
-    app.kubernetes.io/part-of: fib-service 
+    app.kubernetes.io/part-of: fib-service
     app.kubernetes.io/component: backend
     app.openshift.io/runtime: golang
   annotations:
@@ -24,7 +24,7 @@ spec:
         runAsNonRoot: true
       containers:
         - name: fib-go-deploy
-          image: quay.io/jduimovich0/fib-go:demo
+          image: docker.io/jduimovich/fib-go:b485b03
           resources:
             limits:
               cpu: "200m"
