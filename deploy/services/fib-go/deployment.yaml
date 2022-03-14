@@ -11,7 +11,7 @@ metadata:
   annotations:
     container.apparmor.security.beta.kubernetes.io/fib-go-deploy: runtime/default
 spec:
-  replicas: 2
+  replicas: 4
   selector:
     matchLabels:
       app: fib
