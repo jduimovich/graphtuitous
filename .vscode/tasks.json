@@ -1,0 +1,14 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+            "label": "Push to Preview Branch",
+            "type": "shell",
+            "command": "${workspaceFolder}/hack/preview.sh",
+            "args": [ 
+            ],
+            "problemMatcher": []
+        }
+		     
+	]
+}
