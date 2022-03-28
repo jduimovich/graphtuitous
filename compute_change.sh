@@ -22,6 +22,8 @@ then
     export CHANGE_ANY=true
 else
     export CHANGE_FIB_QUARKUS=false 
+    export CHANGE_FIB_QUARKUS=true
+    export CHANGE_ANY=true
 fi
 if grep haproxy $DELTA
 then
