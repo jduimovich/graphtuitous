@@ -81,7 +81,7 @@ jobs:
         if: env.CHANGE_FIB_QUARKUS == 'true' 
         run: |
           cd services/fib-quarkus
-          mvn clean package -Dquarkus.container-image.group=jduimovich  -Dquarkus.container-image.username=jduimovich -Dquarkus.container-image.push=true
+          mvn clean package -Dquarkus.container-image.group=jduimovich  -Dquarkus -Dquarkus.container-image.tag=${{ env.TAG }}
       - name: Push fib-go to registry
         if: env.CHANGE_FIB_GO == 'true'
         uses: redhat-actions/push-to-registry@v1
