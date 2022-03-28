@@ -25,7 +25,7 @@ spec:
         runAsNonRoot: true
       containers:
         - name: fib-quarkus-deploy
-          image: docker.io/jduimovich/fib-quarkus:4f9a533
+          image: docker.io/jduimovich/fib-quarkus:66b72e7
           resources:
             limits:
               cpu: "200m"
