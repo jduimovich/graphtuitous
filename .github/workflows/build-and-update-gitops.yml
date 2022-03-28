@@ -79,7 +79,9 @@ jobs:
           password: ${{  env.REGISTRY_PASSWORD}}
       - name: Build with Maven
         if: env.CHANGE_FIB_QUARKUS == 'true' 
-        run: mvn clean package -Dquarkus.container-image.group=jduimovich  -Dquarkus.container-image.username=jduimovich -Dquarkus.container-image.push=true
+        run: |
+          cd services/fib-quarkus
+          mvn clean package -Dquarkus.container-image.group=jduimovich  -Dquarkus.container-image.username=jduimovich -Dquarkus.container-image.push=true
       - name: Push fib-go to registry
         if: env.CHANGE_FIB_GO == 'true'
         uses: redhat-actions/push-to-registry@v1
