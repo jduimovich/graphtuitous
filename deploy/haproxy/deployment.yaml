@@ -22,7 +22,7 @@ spec:
         runAsNonRoot: true
       containers:
         - name: haproxy-deploy
-          image: quay.io/jduimovich0/haproxy:demo
+          image: docker.io/jduimovich/haproxy:95ecd29
           resources:
             limits:
               cpu: "200m"
