@@ -142,6 +142,9 @@ jobs:
           if [ "${{ env.CHANGE_FIB_NODE }}" = "true" ]; then 
             ./yq  e '.spec.template.spec.containers[0].image = "${{ env.REGISTRY }}/fib-node:${{ env.TAG }}"' deploy/services/fib-node/deployment.yaml  -i
           fi 
+          if [ "${{ env.CHANGE_FIB_QUARKUS }}" = "true" ]; then 
+            ./yq  e '.spec.template.spec.containers[0].image = "${{ env.REGISTRY }}/fib-quarkus:${{ env.TAG }}"' deploy/services/fib-quarkus/deployment.yaml  -i
+          fi 
       - name: Show list of current images
         run: |
           ./yq  e '.spec.template.spec.containers[0].image' deploy/frontend/deployment.yaml
