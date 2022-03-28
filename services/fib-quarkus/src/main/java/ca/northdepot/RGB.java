@@ -12,6 +12,6 @@ public class RGB {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response test() { 
-       return new Response("1.1", "orange", 5000, 12);
+       return new Response("1.1", "orange", 20000, 12);
     }
 } 
