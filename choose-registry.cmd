@@ -35,20 +35,23 @@ Set SERVER=%SERVERQ:"=%
 rem echo  The server is /%SERVER%/
 rem echo  The token is  /%LOGIN%/ 
 
- 
-yq w -i .github\workflows\build-all-and-deploy.yml env.REGISTRY %REGISTRY%/%REGISTRY_USER%
-yq w -i .github\workflows\build-all-and-deploy.yml env.REGISTRY_USER %REGISTRY_USER%
-yq w -i .github\workflows\build-all-and-deploy.yml env.REGISTRY_ROOT %REGISTRY%
 
+set WORKFLOW=".github\workflows\build-and-update-gitops.yml"
+ 
+
+yq -i e ".env.REGISTRY=\"%REGISTRY%/%REGISTRY_USER%\""  %WORKFLOW%
+yq -i e ".env.REGISTRY_USER=\"%REGISTRY_USER%\""        %WORKFLOW% 
+yq -i e ".env.REGISTRY_ROOT=\"%REGISTRY%\""             %WORKFLOW%
+
+ 
 echo This app will be running on /%SERVER%/
 echo Workflow is configured to the following registry, user and namespace
-yq r .github\workflows\build-all-and-deploy.yml env.REGISTRY 
-yq r .github\workflows\build-all-and-deploy.yml env.REGISTRY_USER  
-yq r .github\workflows\build-all-and-deploy.yml env.REGISTRY_ROOT 
-yq r .github\workflows\build-all-and-deploy.yml env.OPENSHIFT_NAMESPACE  
+yq e ".env.REGISTRY" %WORKFLOW%
+yq e ".env.REGISTRY_USER" %WORKFLOW% 
+yq e ".env.REGISTRY_ROOT"   %WORKFLOW% 
+yq e ".env.OPENSHIFT_NAMESPACE" %WORKFLOW%  
 
-
-
+ 
 gh secret set OPENSHIFT_SERVER -b %SERVER%
 gh secret set OPENSHIFT_TOKEN -b %LOGIN%
 gh secret set REGISTRY_PASSWORD -b %REGISTRY_PASSWORD%
