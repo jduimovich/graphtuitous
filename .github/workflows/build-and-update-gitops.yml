@@ -85,11 +85,11 @@ jobs:
           export QUSER="-Dquarkus.container-image.username=${{ env.REGISTRY_USER }}"
           export QPUSH="-Dquarkus.container-image.push=true"
           export QTAG="-Dquarkus.container-image.tag=${{ env.TAG }}"
-          echo "GRP ${{ env.QGRP }} " 
-          echo "QUSER ${{ env.QUSER }} " 
-          echo "QPUSH ${{ env.QPUSH }} " 
-          echo "GRQTAGP " ${{ env.QTAG }} 
-          mvn clean package ${{ env.QGRP }} ${{ env.QUSER }} ${{ env.QPUSH }} ${{ env.QTAG }} 
+          echo "GRP ${QGRP}" 
+          echo "QUSER ${QUSER}" 
+          echo "QPUSH ${QPUSH}" 
+          echo "QTAG  ${QTAG}"
+          mvn clean package "${QGRP}" "${QUSER}" "${QPUSH}" "${QTAG}"
       - name: Push fib-go to registry
         if: env.CHANGE_FIB_GO == 'true'
         uses: redhat-actions/push-to-registry@v1
