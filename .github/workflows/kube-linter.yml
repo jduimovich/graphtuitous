@@ -1,6 +1,6 @@
 # Lint my PRs 
 name: Lint Pull Requests    
-on: [pull_request, workflow_dispatch]
+on: [ workflow_dispatch]
 jobs:
   lint-no-error:
     name: Run Kube-Linter with no filter no fail if any errors
