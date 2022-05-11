@@ -2,8 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: fib-quarkus-deploy
-  labels:
-    app: fib
+  labels: 
     app.kubernetes.io/name: fib-quarkus-deploy
     app.kubernetes.io/part-of: fib-service
     app.kubernetes.io/instance: fib-service-in-quarkus
