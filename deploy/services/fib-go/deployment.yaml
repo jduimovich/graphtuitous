@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: fib-go-deploy
-  labels: 
+  labels:
     app.kubernetes.io/name: fib-go-deploy
     app.kubernetes.io/part-of: fib-service
     app.kubernetes.io/component: backend
@@ -23,7 +23,7 @@ spec:
         runAsNonRoot: true
       containers:
         - name: fib-go-deploy
-          image: docker.io/jduimovich/fib-go:64a0a76
+          image: docker.io/jduimovich/fib-go:65fbeb6
           resources:
             limits:
               cpu: "200m"
