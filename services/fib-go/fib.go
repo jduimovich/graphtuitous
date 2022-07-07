@@ -86,5 +86,6 @@ func main() {
 	fmt.Printf("WebServer running on %s\n", port)
 	http.HandleFunc("/fib", fibHandler)
 	http.HandleFunc("/health", healthHandler)
+	http.HandleFunc("/", healthHandler)
 	http.ListenAndServe(":"+port, nil)
 }

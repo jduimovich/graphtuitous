@@ -14,4 +14,10 @@ public class RGB {
     public Response test() { 
        return new Response("1.1", "blue", 10000, 12);
     }
+    @Path("/")
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response health() { 
+       return new Response("1.1", "ok", 1, 1);
+    }
 } 

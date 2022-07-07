@@ -32,11 +32,11 @@ docker tag jduimovich/fib-quarkus quay.io/jduimovich0/fib-quarkus
 docker tag jduimovich/frontend quay.io/jduimovich0/frontend
 docker tag jduimovich/haproxy quay.io/jduimovich0/haproxy
 
-docker push quay.io/jduimovich/fib-go
-docker push quay.io/jduimovich/fib-node
-docker push quay.io/jduimovich/fib-quarkus
-docker push quay.io/jduimovich/frontend
-docker push quay.io/jduimovich/haproxy
+docker push quay.io/jduimovich0/fib-go
+docker push quay.io/jduimovich0/fib-node
+docker push quay.io/jduimovich0/fib-quarkus
+docker push quay.io/jduimovich0/frontend
+docker push quay.io/jduimovich0/haproxy
 
 
 docker login docker.io

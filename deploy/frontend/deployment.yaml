@@ -5,7 +5,7 @@ metadata:
   labels:
     app: frontend
     app.kubernetes.io/name: frontend-deploy
-    app.kubernetes.io/part-of: frontend-service 
+    app.kubernetes.io/part-of: frontend
     app.kubernetes.io/component: frontend
     app.openshift.io/runtime: nginx
   annotations:

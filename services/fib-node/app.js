@@ -18,6 +18,13 @@ app.get("/health", function (req, res) {
 	res.setHeader('Content-Type', 'application/json; charset=utf-8');
 	res.send(JSON.stringify(response, undefined, 4));
 });
+app.get("/", function (req, res) {
+	var response = {
+		"status": 'OK'
+	};   
+	res.setHeader('Content-Type', 'application/json; charset=utf-8');
+	res.send(JSON.stringify(response, undefined, 4));
+});
 
 var count = 0; 
 var response = {
