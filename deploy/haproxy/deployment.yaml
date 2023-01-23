@@ -23,12 +23,9 @@ spec:
       containers:
         - name: haproxy-deploy
           image: quay.io/jduimovich0/haproxy:latest
-          resources:
-            limits:
-              cpu: "200m"
-              memory: "128Mi"
+          resources: 
             requests:
-              cpu: "100m"
+              cpu: "10m"
               memory: "128Mi"
           imagePullPolicy: Always
           ports:

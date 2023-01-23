@@ -25,12 +25,9 @@ spec:
       containers:
         - name: frontend-deploy
           image: quay.io/jduimovich0/frontend:latest
-          resources:
-            limits:
-              cpu: "200m"
-              memory: "64Mi"
+          resources: 
             requests:
-              cpu: "100m"
+              cpu: "10m"
               memory: "64Mi"
           imagePullPolicy: Always
           ports:

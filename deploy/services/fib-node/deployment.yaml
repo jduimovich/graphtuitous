@@ -11,7 +11,7 @@ metadata:
   annotations:
     container.apparmor.security.beta.kubernetes.io/fib-node-deploy: runtime/default
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: fib
@@ -25,12 +25,9 @@ spec:
       containers:
         - name: fib-node-deploy
           image: quay.io/jduimovich0/fib-node:latest
-          resources:
-            limits:
-              cpu: "200m"
-              memory: "48Mi"
+          resources: 
             requests:
-              cpu: "100m"
+              cpu: "10m"
               memory: "48Mi"
           imagePullPolicy: Always
           ports:

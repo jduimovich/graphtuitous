@@ -10,7 +10,7 @@ metadata:
   annotations:
     container.apparmor.security.beta.kubernetes.io/fib-go-deploy: runtime/default
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: fib
@@ -24,12 +24,9 @@ spec:
       containers:
         - name: fib-go-deploy
           image: quay.io/jduimovich0/fib-go:latest
-          resources:
-            limits:
-              cpu: "200m"
-              memory: "64Mi"
+          resources: 
             requests:
-              cpu: "100m"
+              cpu: "10m"
               memory: "64Mi"
           imagePullPolicy: Always
           ports:

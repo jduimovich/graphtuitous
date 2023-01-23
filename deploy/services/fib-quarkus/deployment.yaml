@@ -11,7 +11,7 @@ metadata:
   annotations:
     container.apparmor.security.beta.kubernetes.io/fib-quarkus-deploy: runtime/default
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: fib
@@ -25,12 +25,9 @@ spec:
       containers:
         - name: fib-quarkus-deploy
           image: quay.io/jduimovich0/fib-quarkus:latest
-          resources:
-            limits:
-              cpu: "200m"
-              memory: "512Mi"
+          resources: 
             requests:
-              cpu: "100m"
+              cpu: "10m"
               memory: "512Mi"
           imagePullPolicy: Always
           ports:
