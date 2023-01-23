@@ -24,7 +24,7 @@ spec:
         runAsNonRoot: true
       containers:
         - name: frontend-deploy
-          image: quay.io/jduimovich0/frontend:demo
+          image: quay.io/jduimovich0/frontend:latest
           resources:
             limits:
               cpu: "200m"
