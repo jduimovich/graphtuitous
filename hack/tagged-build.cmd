@@ -6,7 +6,7 @@ cd %SCRIPT_DIR%\..
 
 echo building tagged %1
 
-cd services\%1
+cd %1
 git rev-parse --short  HEAD > tag
 set /P TAG=<  tag
 del tag

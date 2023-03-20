@@ -7,7 +7,7 @@ DOCKER_USER=$(sh $script_dir/../hack/dockerusername.sh)
 
 CURRENT_DIR=$(pwd) 
 
-cd services/fib-go
+cd fib-go
 docker build -t $DOCKER_USER/fib-go .
 
 cd ../fib-node

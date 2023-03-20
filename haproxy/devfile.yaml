@@ -1,0 +1,19 @@
+schemaVersion: 2.2.0
+metadata:
+  name: binary
+  projectType: binary
+  language: binary
+  version: 1.0.0
+  provider: Red Hat  
+components:
+  - name: outerloop-build
+    image:
+      imageName: haproxy:latest
+      dockerfile:
+        uri: haproxy/Dockerfile
+        buildContext: .
+        rootRequired: false 
+commands:
+  - id: build-image
+    apply:
+      component: outerloop-build 
