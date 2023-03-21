@@ -3,7 +3,7 @@ set CURRENT_DIR=%cd%
 set SCRIPT_DIR=%~dp0
 cd %SCRIPT_DIR%\..
 
-cd services\fib-go
+cd fib-go
 docker build -t jduimovich/fib-go .
 
 cd ..\fib-node

@@ -1,0 +1,19 @@
+schemaVersion: 2.2.0
+metadata:
+  name: binary
+  projectType: binary
+  language: binary
+  version: 1.0.0
+  provider: Red Hat  
+components:
+  - name: outerloop-build
+    image:
+      imageName: frontend:latest
+      dockerfile:
+        uri:  frontend/Dockerfile
+        buildContext: .
+        rootRequired: false 
+commands:
+  - id: build-image
+    apply:
+      component: outerloop-build 

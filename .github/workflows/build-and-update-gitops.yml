@@ -40,32 +40,32 @@ jobs:
         with:
           image: "fib-go"
           tags: ${{ env.TAG }}
-          context: ./services/fib-go
-          dockerfiles: ./services/fib-go/Dockerfile
+          context: ./fib-go
+          dockerfiles: ./fib-go/Dockerfile
       - name: Build fib-node Dockerfile
         if: env.CHANGE_FIB_NODE == 'true'
         uses: redhat-actions/buildah-build@v2
         with:
           image: "fib-node"
           tags: ${{ env.TAG }}
-          context: ./services/fib-node
-          dockerfiles: ./services/fib-node/Dockerfile
+          context: ./fib-node
+          dockerfiles: ./fib-node/Dockerfile
       - name: Build haproxy Dockerfile
         if: env.CHANGE_HAPROXY == 'true'
         uses: redhat-actions/buildah-build@v2
         with:
           image: "haproxy"
           tags: ${{ env.TAG }}
-          context: ./services/haproxy
-          dockerfiles: ./services/haproxy/Dockerfile
+          context: ./haproxy
+          dockerfiles: ./haproxy/Dockerfile
       - name: Build frontend Dockerfile
         if: env.CHANGE_FRONTEND == 'true'
         uses: redhat-actions/buildah-build@v2
         with:
           image: "frontend"
           tags: ${{ env.TAG }}
-          context: ./services/frontend
-          dockerfiles: ./services/frontend/Dockerfile
+          context: ./frontend
+          dockerfiles: ./frontend/Dockerfile
       - uses: actions/setup-java@v2
         if: env.CHANGE_FIB_QUARKUS == 'true' 
         with:
@@ -80,7 +80,7 @@ jobs:
       - name: Build with Maven
         if: env.CHANGE_FIB_QUARKUS == 'true' 
         run: |
-          cd services/fib-quarkus  
+          cd fib-quarkus  
           export QGRP="-Dquarkus.container-image.group=${{ env.REGISTRY_USER }}"
           export QUSER="-Dquarkus.container-image.username=${{ env.REGISTRY_USER }}"
           export QPUSH="-Dquarkus.container-image.push=true"
