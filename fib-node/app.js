@@ -11,9 +11,13 @@ function fib(n) {
 	if (n < 3) return 1;
 	return fib(n - 1) + fib(n - 2);
 }
+
+var healthCount=0;
 app.get("/health", function (req, res) {
+	healthCount++;
 	var response = {
-		"status": 'OK'
+		"status": 'OK',
+		"healthCount": healthCount
 	};   
 	res.setHeader('Content-Type', 'application/json; charset=utf-8');
 	res.send(JSON.stringify(response, undefined, 4));
