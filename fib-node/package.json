@@ -10,7 +10,7 @@
   "author": "johnd",
   "license": "Apache-2.0",
   "dependencies": {
-    "express": "^4.16.4",
+    "express": "^5.0.0",
     "nodemon": "^2.0.21"
   }
 }
