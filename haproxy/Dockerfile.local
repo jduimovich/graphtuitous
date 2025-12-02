@@ -1,4 +1,4 @@
-FROM docker.io/library/haproxy:2.3
+FROM docker.io/library/haproxy:3.2
 RUN rm -rf /run/haproxy/
 RUN mkdir /run/haproxy
 RUN mkdir /local-health
