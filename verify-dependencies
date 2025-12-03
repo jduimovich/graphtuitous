@@ -31,16 +31,8 @@ ERROR=1
 else
 echo $0: "$1 found $TOOL"
 fi
-}
+} 
 
-verify_cmd kubectl
-verify_cmd oc 
-verify_cmd jq 
-verify_cmd go
-verify_cmd npm
-verify_cmd node
-verify_cmd nodemon
-verify_cmd java 
 verify_cmd docker  
 
 if [ -z $ERROR ]

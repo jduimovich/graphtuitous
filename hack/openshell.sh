@@ -7,6 +7,9 @@ case "$OS" in
 *microsoft*) PROGRAM="wt.exe " ;;
 *Linux*) PROGRAM="echo " ;;
 esac
+pwd
 
-$PROGRAM $1 
+ls -al $(pwd)/$1 
+
+$PROGRAM $(pwd)/$1 
 

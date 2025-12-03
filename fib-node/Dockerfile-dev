@@ -1,0 +1,5 @@
+ARG BASE_IMAGE=docker.io/library/node:15.6
+FROM ${BASE_IMAGE} 
+RUN npm install -g nodemon 
+ENTRYPOINT ["nodemon", "app.js"] 
+ 

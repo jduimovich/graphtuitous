@@ -1,8 +1,6 @@
 script_dir=$(dirname "$0") 
 cd $script_dir 
 echo $(pwd)
-go get -u github.com/cosmtrek/air
-export PORT=8082
-air
-
+bash _build
+docker run -it -v $(pwd):/app -p 8082:8080 fib-go-dev 
 

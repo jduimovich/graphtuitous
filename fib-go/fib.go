@@ -31,7 +31,7 @@ var health *Health = &Health{
 var response *Response = &Response{
 	Hostname: "GO",
 	Version:  "1.1",
-	Colour:   "yellow",
+	Colour:   "purple",
 	Count:    0,
 	Stack:    "golang",
 	Loop:     10000,

@@ -1,0 +1,10 @@
+NAME=$(basename "$PWD" | tr '[:upper:]' '[:lower:]')
+DEV_NAME="${NAME}-dev"
+
+echo "Building Container $NAME"
+docker buildx build . -f Dockerfile -t $NAME 
+echo "Done Building $NAME"
+
+echo "Building Container $DEV_NAME"
+docker buildx build . --build-arg BASE_IMAGE=$NAME  -f Dockerfile-dev -t $DEV_NAME 
+echo "Building Container $DEV_NAME"
