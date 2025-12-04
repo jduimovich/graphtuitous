@@ -21,14 +21,14 @@ fn get_count() -> u32 {
 
 #[derive(Serialize)]
 struct Response {
-	Hostname: String,
-	Version:  String,
-	Colour:   String,
-	Count:    u32,
-	Stack:     String,
+	hostname: String,
+	version:  String,
+	colour:   String,
+	count:    u32,
+	stack:     String,
 	Loop:     i32,
-	Compute:  String,
-	Time:     u128,
+	compute:  String,
+	time:     u128,
 }
 
 
@@ -46,19 +46,19 @@ fn fib_bench() -> Json<Response> {
     let c: u32 = get_count(); 
 
     let start: u128 = clockms();
-    for _n in 1..10000 { fib(12);};
+    for _n in 1..1000 { fib(12);};
     let end: u128 = clockms();
     let t=end - start;
 
     let r: Response =  Response {
-        Hostname: "GO".to_string(),
-        Version:  "1.1".to_string(),
-        Colour:   "purple".to_string(),
-        Count:    c,
-        Stack:    "rust".to_string(),
-        Loop:     10000,
-        Compute:  "fib(12)".to_string(),
-        Time:     t
+        hostname: "RUST".to_string(),
+        version:  "1.1".to_string(),
+        colour:   "purple".to_string(),
+        count:    c,
+        stack:    "rust".to_string(),
+        Loop:     1000,
+        compute:  "fib(12)".to_string(),
+        time:     t
     };
     Json(r)
 }
