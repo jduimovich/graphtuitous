@@ -9,6 +9,7 @@ chmod +x  haproxy/dev.sh
 
 fib-node/dev.sh &
 fib-go/dev.sh &
+fib-rust/dev.sh &
 frontend/dev.sh &
 haproxy/dev.sh &
  

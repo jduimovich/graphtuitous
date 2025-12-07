@@ -9,5 +9,5 @@ docker build -f Dockerfile.local -t haproxy-local .
 docker stop haproxy
 docker rm haproxy
 
-docker run  -it -p 8888:8080 --rm --name haproxy haproxy-local
+docker run -p 8888:8080 --rm --name haproxy haproxy-local
  

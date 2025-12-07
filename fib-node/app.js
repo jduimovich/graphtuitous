@@ -2,7 +2,7 @@ const express = require("express");
 const app = express();
 
 const APP_VERSION = '1.0'; 
-const APP_LOOP = 1000;
+const APP_LOOP = 65000;
 const APP_COLOUR = 'pink';
 const APP_COMPUTE = 12;
 const HOSTNAME = require('os').hostname();
@@ -32,7 +32,7 @@ app.get("/", function (req, res) {
 
 var count = 0; 
 var response = {
-	"hostname": HOSTNAME + ":N",
+	"hostname": HOSTNAME,
 	"version": APP_VERSION, 
 	"colour": APP_COLOUR, 
 	"count": count,

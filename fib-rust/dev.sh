@@ -10,5 +10,5 @@ DATA=$HOME/html
 docker stop $NAME >/dev/null 2>&1
 docker rm $NAME >/dev/null 2>&1 
 
-docker run -it -v $DATA:/app/data -p 8083:8000 fib-rust-dev 
+docker run  -v $DATA:/app/data -p 8083:8000 fib-rust-dev 
 

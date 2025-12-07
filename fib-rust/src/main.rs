@@ -51,7 +51,7 @@ fn fib_bench() -> Json<Response> {
     let t=end - start;
 
     let r: Response =  Response {
-        hostname: "RUST".to_string(),
+        hostname: gethostname::gethostname().to_string_lossy().into_owned(),
         version:  "1.1".to_string(),
         colour:   "purple".to_string(),
         count:    c,

@@ -147,7 +147,8 @@
 
       "historyByHostName": {
         'totals': 0,
-        'hosts': new Object()
+        'hosts': new Object(),
+        'stacks': new Object()
       }, // History of requests by hostname
 
       // cached data for graph
@@ -355,9 +356,11 @@
           "count": 0,
           "colour": cfg.justAdded.colour,
           "hostname": cfg.justAdded.hostname,
+          "stack": cfg.justAdded.stack,
           "version": cfg.justAdded.version
         }
         versions.hosts[cfg.justAdded.hostname] = element;
+        versions.stacks[cfg.justAdded.hostname] = cfg.justAdded.stack;
       }
       element.count++;
       element.colour = cfg.justAdded.colour;
@@ -379,10 +382,10 @@
       var title = hostnames.length == 1 ? '' + versions.hosts[hostnames[0]].count : "Pods";
       var counts = hostnames.map(name => versions.hosts[name].count)
       var colours = hostnames.map(name => versions.hosts[name].colour)
-
+      var stacks = hostnames.map(name => versions.hosts[name].stack + ' (' + name + ')');
       var data = [{
         values: counts,
-        labels: hostnames,
+        labels: stacks,
         type: 'pie',
         hole: .4,
         title: { text: title },
