@@ -1,0 +1,4 @@
+NAME=$(basename "$PWD" | tr '[:upper:]' '[:lower:]')
+DEV_NAME="${NAME}-dev"
+
+echo "No build for nginx, use it directly $NAME"

@@ -1,0 +1,117 @@
+# This workflow scans the artifacts in the deployments for security issues. 
+
+name: Snyk Action Integration
+
+# Controls when the action will run. 
+on: [ workflow_dispatch] 
+
+#
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    name: Scan YAML Artifacts with Snyk
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2 
+
+      - name: Run Snyk to check haproxy deployment
+        continue-on-error: true
+        uses: snyk/actions/iac@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          file: deploy/haproxy/deployment.yaml     
+      - uses: jduimovich/collect-sarif-files@main 
+        with:
+          input-file-name: snyk.sarif
+          merged-file-name: merged.sarif
+
+      - name: Run Snyk to check haproxy service 
+        continue-on-error: true
+        uses: snyk/actions/iac@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          file: deploy/haproxy/service.yaml  
+      - uses: jduimovich/collect-sarif-files@main 
+        with:
+          input-file-name: snyk.sarif
+          merged-file-name: merged.sarif 
+
+      - name: Run Snyk to check frontend deployment
+        continue-on-error: true
+        uses: snyk/actions/iac@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          file: deploy/frontend/deployment.yaml     
+      - uses: jduimovich/collect-sarif-files@main 
+        with:
+          input-file-name: snyk.sarif
+          merged-file-name: merged.sarif
+
+      - name: Run Snyk to check frontend service 
+        continue-on-error: true
+        uses: snyk/actions/iac@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          file: deploy/frontend/service.yaml  
+      - uses: jduimovich/collect-sarif-files@main 
+        with:
+          input-file-name: snyk.sarif
+          merged-file-name: merged.sarif
+
+      - name: Run Snyk to check fib-go deployment
+        continue-on-error: true
+        uses: snyk/actions/iac@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          file: deploy/services/fib-go/deployment.yaml  
+      - uses: jduimovich/collect-sarif-files@main 
+        with:
+          input-file-name: snyk.sarif
+          merged-file-name: merged.sarif
+
+      - name: Run Snyk to check fib-node deployment
+        continue-on-error: true
+        uses: snyk/actions/iac@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          file: deploy/services/fib-node/deployment.yaml 
+      - uses: jduimovich/collect-sarif-files@main 
+        with:
+          input-file-name: snyk.sarif
+          merged-file-name: merged.sarif
+
+      - name: Run Snyk to check fib-quarkus deployment
+        continue-on-error: true
+        uses: snyk/actions/iac@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          file: deploy/services/fib-quarkus/deployment.yaml    
+      - uses: jduimovich/collect-sarif-files@main 
+        with:
+          input-file-name: snyk.sarif
+          merged-file-name: merged.sarif
+          
+      - name: Save all sarif files
+        run: |  
+          mkdir -p uploads
+          mv *.sarif  uploads 
+      - name: Upload merged Results  
+        uses: actions/upload-artifact@v2
+        with: 
+          name: uploads
+          path: ./uploads
+      - name: Upload result to GitHub Code Scanning
+        uses: github/codeql-action/upload-sarif@v1
+        with:
+          sarif_file: uploads/merged.sarif

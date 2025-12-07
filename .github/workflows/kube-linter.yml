@@ -1,0 +1,26 @@
+# Lint my PRs 
+name: Lint Pull Requests    
+on: [ workflow_dispatch]
+jobs:
+  lint-no-error:
+    name: Run Kube-Linter with no filter no fail if any errors
+    runs-on: ubuntu-20.04
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v2
+      - name: Lint Repository
+        id: kube-lint-repo
+        uses: stackrox/kube-linter-action@v1
+        with:
+          directory: deploy    
+  lint-check-errors:
+    name: Run Kube-Linter with filter fail on any error
+    runs-on: ubuntu-20.04 
+    steps:
+      - uses: actions/checkout@v2
+      - name: Lint Repository
+        id: kube-lint-repo
+        uses: stackrox/kube-linter-action@v1
+        with:
+          directory: deploy   
+          config: kube-linter.yaml 

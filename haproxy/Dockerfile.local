@@ -1,0 +1,6 @@
+FROM docker.io/library/haproxy:3.3
+
+WORKDIR /local-health 
+COPY health.http /local-health/health.http
+
+COPY ./local/haproxy.cfg /usr/local/etc/haproxy/haproxy.cfg
