@@ -50,7 +50,7 @@ fn fib_bench() -> Json<Response> {
     let start: u128 = clockms();
     for _n in 1..loop_count{ fib(12);};
  
-    thread::sleep(Duration::from_millis(4));
+    // thread::sleep(Duration::from_millis(4));
 
 
     let end: u128 = clockms();
@@ -76,7 +76,7 @@ struct Health {
 }
 
 #[get("/")]
-fn sendOk() -> Json<Health> {
+fn send_ok() -> Json<Health> {
     let c: u32 = get_count(); 
    let r: Health =  Health {
         Health: "OK".to_string(),
@@ -88,7 +88,7 @@ fn sendOk() -> Json<Health> {
 #[rocket::main]
     async fn main() {
         rocket::build()
-            .mount("/", rocket::routes![sendOk])
+            .mount("/", rocket::routes![send_ok])
             .mount("/", rocket::routes![fib_bench])
             .launch()
             .await

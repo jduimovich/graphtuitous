@@ -48,7 +48,10 @@ func fib(n int) int {
 
 func healthHandler(w http.ResponseWriter, r *http.Request) {
 	health.Count++
-	fmt.Printf("healthHandler: called %d times\n", health.Count)
+	if (health.Count%100 == 0) {
+		fmt.Printf("healthHandler: called %d times\n", health.Count)
+	}		
+	 
 	switch r.Method {
 	case "GET":
 		j, _ := json.Marshal(health)
@@ -60,7 +63,9 @@ func healthHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func fibHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Printf("fibHandler: called %d times\n", response.Count)
+	if (response.Count%100 == 0) {
+		fmt.Printf("fibHandler: called %d times\n", response.Count)	
+	}		
 	switch r.Method {
 	case "GET":
 		response.Hostname, _ = os.Hostname()

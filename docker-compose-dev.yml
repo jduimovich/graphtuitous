@@ -7,7 +7,17 @@ services:
     volumes:
       - ./fib-node/app.js:/usr/src/app/app.js
     ports:
-      - "8081:8080"   
+      - "8081-8082:8080"  
+    deploy:
+      mode: replicated
+      replicas: 2
+      resources:
+        limits:
+          memory: 128m
+        reservations:
+          memory: 128m
+      restart_policy:
+        condition: on-failure
     environment:
       RUNTIME: NODJS  
   fib-go:
@@ -17,7 +27,17 @@ services:
     volumes: 
       - ./fib-go:/app
     ports:
-      - "8082:8080"   
+      - "8083-8084:8080"   
+    deploy:
+      mode: replicated
+      replicas: 2
+      resources:
+        limits:
+          memory: 128m
+        reservations:
+          memory: 128m
+      restart_policy:
+        condition: on-failure
     environment:
       RUNTIME: GOLANG
   fib-rust:
@@ -25,7 +45,17 @@ services:
       context: ./fib-rust 
       dockerfile: Dockerfile-dev  
     ports:
-      - "8083:8000"  
+      - "8085-8088:8000"   
+    deploy:
+      mode: replicated
+      replicas: 4
+      resources:
+        limits:
+          memory: 128m
+        reservations:
+          memory: 128m
+      restart_policy:
+        condition: on-failure
     volumes:
       - ./fib-rust/html:/app/data   
     environment:
@@ -39,6 +69,14 @@ services:
       - "8089:8080"    
     depends_on:
       - haproxy 
+    deploy:
+      resources:
+        limits:
+          memory: 128m
+        reservations:
+          memory: 128m
+      restart_policy:
+        condition: on-failure
     volumes:
       - ./frontend/html:/usr/share/nginx/html
       - ./frontend/local:/etc/nginx/conf.d  
@@ -46,6 +84,14 @@ services:
     build: 
       context: ./haproxy
       dockerfile: Dockerfile.local
+    deploy:
+      resources:
+        limits:
+          memory: 128m
+        reservations:
+          memory: 128m
+      restart_policy:
+        condition: on-failure
     depends_on:
       - fib-go
       - fib-node

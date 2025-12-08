@@ -3,7 +3,7 @@ const app = express();
 
 const APP_VERSION = '1.0'; 
 const APP_LOOP = 65000;
-const APP_COLOUR = 'red';
+const APP_COLOUR = 'pink';
 const APP_COMPUTE = 12;
 const HOSTNAME = require('os').hostname();
 
@@ -43,7 +43,9 @@ var response = {
 
 app.get("/fib", function (req, res) {
 	response.count++;
- 	console.log("/fib, called: " + response.count);
+	if (response.count % 100 === 0) { 
+ 		console.log("/fib, called: " + response.count + " times");
+	}
 	var start = new Date(); 
 	var c = APP_LOOP;
 	while (c--) fib(APP_COMPUTE);
