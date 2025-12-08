@@ -1,0 +1,57 @@
+
+services:
+  fib-node: 
+    build:
+      context: ./fib-node 
+      dockerfile: Dockerfile-dev
+    volumes:
+      - ./fib-node/app.js:/usr/src/app/app.js
+    ports:
+      - "8081:8080"   
+    environment:
+      RUNTIME: NODJS  
+  fib-go:
+    build: 
+      context: ./fib-go  
+      dockerfile: Dockerfile-dev
+    volumes: 
+      - ./fib-go:/app
+    ports:
+      - "8082:8080"   
+    environment:
+      RUNTIME: GOLANG
+  fib-rust:
+    build: 
+      context: ./fib-rust 
+      dockerfile: Dockerfile-dev  
+    ports:
+      - "8083:8000"  
+    volumes:
+      - ./fib-rust/html:/app/data   
+    environment:
+      RUNTIME: RUST 
+
+  nginx:
+    build: 
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "8089:8080"    
+    depends_on:
+      - haproxy 
+    volumes:
+      - ./frontend/html:/usr/share/nginx/html
+      - ./frontend/local:/etc/nginx/conf.d  
+  haproxy: 
+    build: 
+      context: ./haproxy
+      dockerfile: Dockerfile.local
+    depends_on:
+      - fib-go
+      - fib-node
+      - fib-rust 
+    ports:
+      - "8888:8080"     
+
+ 
+  

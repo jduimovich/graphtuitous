@@ -1,4 +1,6 @@
-ARG BASE_IMAGE=docker.io/library/golang:alpine
-FROM ${BASE_IMAGE} 
+FROM docker.io/library/golang:alpine
+WORKDIR /app
+COPY . .   
 RUN go install github.com/air-verse/air@latest 
+
 ENTRYPOINT ["air"]

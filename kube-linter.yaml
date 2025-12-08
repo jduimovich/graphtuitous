@@ -1,6 +1,0 @@
-checks:
-  addAllBuiltIn: true
-  exclude:
-  - "no-read-only-root-fs" 
-  - "dangling-service"
-  - "no-anti-affinity"
