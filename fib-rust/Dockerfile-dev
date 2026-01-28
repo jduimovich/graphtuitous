@@ -23,7 +23,7 @@ COPY ./Cargo.* ./
 RUN cargo build --release --bin fib-rust
 
 # RUNTIME
-FROM debian:bookworm-slim AS runtime 
+FROM debian:13.3-slim AS runtime 
 WORKDIR /app
 ENV ROCKET_ADDRESS=0.0.0.0
 ENV HTML_DIR=/app/data
