@@ -11,6 +11,6 @@
   "license": "Apache-2.0",
   "dependencies": {
     "express": "^4.16.4",
-    "nodemon": "^2.0.21"
+    "nodemon": "^3.0.0"
   }
 }
