@@ -1,5 +1,25 @@
 
 services:
+  fib-goru:
+    build: 
+      context: ./fib-goru 
+      dockerfile: Dockerfile-dev  
+    ports:
+      - "8060-8063:8080"   
+    deploy:
+      mode: replicated
+      replicas: 4
+      resources:
+        limits:
+          memory: 128m
+        reservations:
+          memory: 128m
+      restart_policy:
+        condition: on-failure
+    volumes:
+      - ./fib-goru/html:/app/data   
+    environment:
+      RUNTIME: GORUST
   fib-node: 
     build:
       context: ./fib-node 
@@ -95,7 +115,8 @@ services:
     depends_on:
       - fib-go
       - fib-node
-      - fib-rust 
+      - fib-rust  
+      - fib-goru 
     ports:
       - "8888:8080"     
 
